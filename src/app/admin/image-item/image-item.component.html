@@ -1,0 +1,11 @@
+<div class="img-item">
+  <p>File name: {{file.fileName}}</p>
+  <img src="{{file.src}}" alt="" width="10%" height="10%">
+  <select required (change)="onSelect(category.value)" #category>
+    <option selected disabled>Choose category</option>
+    <option>UK</option>
+    <option>France</option>
+    <option>Germany</option>
+    <option>Italy</option>
+  </select>
+</div>

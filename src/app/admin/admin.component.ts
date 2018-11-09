@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-
 import { ServiceService } from '../services/service.service';
 
 @Component({
@@ -11,6 +10,8 @@ export class AdminComponent implements OnInit {
 
   imagesList = [];
 
+  imageData = [];
+
   constructor(private service: ServiceService) { }
 
   ngOnInit() {
@@ -19,13 +20,14 @@ export class AdminComponent implements OnInit {
   onSubmit(e, form) {
     e.preventDefault();
     let data = new FormData(form);
+    data.append('filesData', JSON.stringify(this.imageData));
     this.service.postImages(data).subscribe((data: any) => {
       console.log(data);
     });
   }
 
   onChange(inputFiles) {
-    console.log(inputFiles.files);//FileReaderSync
+    console.log(inputFiles.files);//FileReader
     for(let file of inputFiles.files) {//readAsDataURL
       let reader = new FileReader();
       reader.addEventListener("load",  () => {
@@ -33,5 +35,10 @@ export class AdminComponent implements OnInit {
       }, false);
       reader.readAsDataURL(file);
     }
+  }
+
+  onImgSelect(e) {
+    console.log(e);
+    this.imageData.push(e);
   }
 }
