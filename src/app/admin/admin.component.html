@@ -1,0 +1,14 @@
+<div>
+  <form enctype="application/x-www-form-urlencoded" (submit)="onSubmit($event, form)" #form>
+    <input type="text" name="title">
+    <input type="file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles>
+    <button type="submit">Post</button>
+  </form>
+</div>
+
+<div>
+  <div *ngFor="let file of imagesList">
+    <p>{{file.fileName}}</p>
+    <img src="{{file.src}}" alt="" width="20%" height="20%">
+  </div>
+</div>
