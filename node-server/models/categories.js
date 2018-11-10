@@ -23,6 +23,13 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         name: { type: DataTypes.STRING, unique: true, allowNull: false },
-        tags: { type: DataTypes.STRING, allowNull: false },
+        tags: { type: DataTypes.STRING, allowNull: false, 
+            set(tagsArr) {
+                this.setDataValue('tags', tagsArr.join(' '))
+            },
+            get() {
+                return this.getDataValue('tags').split(' ');
+            }
+        },
     })
 }

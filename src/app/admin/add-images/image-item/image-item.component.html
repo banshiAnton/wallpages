@@ -3,15 +3,12 @@
     <p>File name: {{file.fileName}}</p>
     <img src="{{file.src}}" alt="" class="img-fluid">
   </div>
-  <div class="col-3 mr-auto">
+  <div class="col-5 mr-auto">
     <div *ngIf="!inOne">
       <label>Выберите категорию</label>
-      <select class="form-control" required (change)="onSelect(category.value)" #category>
+      <select class="form-control" (change)="onSelect(category.value)" #category>
         <option selected disabled>Choose category</option>
-        <option>UK</option>
-        <option>France</option>
-        <option>Germany</option>
-        <option>Italy</option>
+        <option *ngFor="let category of categories">{{category.name}}</option>
       </select>
     </div>
     <div>

@@ -56,6 +56,7 @@ module.exports = "<div>\n  <form (submit)=\"onSubmit(category.value)\">\n    <di
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddCategoryComponent", function() { return AddCategoryComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _services_service_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/service.service */ "./src/app/services/service.service.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -66,13 +67,20 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
 var AddCategoryComponent = /** @class */ (function () {
-    function AddCategoryComponent() {
+    function AddCategoryComponent(service) {
+        this.service = service;
     }
     AddCategoryComponent.prototype.ngOnInit = function () {
     };
     AddCategoryComponent.prototype.onSubmit = function (category) {
         console.log(this.tags, category);
+        this.service.addCategory(category, this.tags.map(function (item) {
+            return item.value;
+        })).subscribe(function (data) {
+            console.log(data);
+        });
     };
     AddCategoryComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -80,7 +88,7 @@ var AddCategoryComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./add-category.component.html */ "./src/app/admin/add-category/add-category.component.html"),
             styles: [__webpack_require__(/*! ./add-category.component.css */ "./src/app/admin/add-category/add-category.component.css")]
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [_services_service_service__WEBPACK_IMPORTED_MODULE_1__["ServiceService"]])
     ], AddCategoryComponent);
     return AddCategoryComponent;
 }());
@@ -107,7 +115,7 @@ module.exports = ":host {\r\n    display: block;\r\n    padding-left: 1%;\r\n}\r
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"main-form\">\n    <form enctype=\"application/x-www-form-urlencoded\" (submit)=\"onSubmit($event, form)\" #form>\n      <div class=\"form-check\">\n          <label class=\"form-check-label\">\n            <input class=\"form-check-input\" name=\"one\" type=\"checkbox\" [(ngModel)]=\"inOne\" [ngModelOptions]=\"{standalone: true}\">\n              Загрузить всё в одну категорию ?\n          </label>\n      </div>\n      <div class=\"form-group\" *ngIf=\"inOne\">\n          <label>Category</label>\n          <input type=\"text\" name=\"oneCategory\" class=\"form-control\" placeholder=\"type category\">\n      </div>\n      <div class=\"form-group\">\n        <input type=\"file\" class=\".form-control-file\" multiple name=\"images\" (change)=\"onChange(inputFiles)\" #inputFiles required>\n      </div>\n      <button type=\"submit\" class=\"btn btn-primary\">Post</button>\n    </form>\n  </div>\n  \n  <div>\n    <div *ngFor=\"let file of imagesList\">\n      <app-image-item [inOne]=\"inOne\" [file]=\"file\" (selected)=\"onImgSelect($event)\"></app-image-item>\n    </div>\n  </div>\n"
+module.exports = "<div class=\"main-form\">\n    <form enctype=\"application/x-www-form-urlencoded\" (submit)=\"onSubmit($event, form)\" #form>\n      <div class=\"form-check\">\n          <label class=\"form-check-label\">\n            <input class=\"form-check-input\" name=\"one\" type=\"checkbox\" [(ngModel)]=\"inOne\" [ngModelOptions]=\"{standalone: true}\">\n              Загрузить всё в одну категорию ?\n          </label>\n      </div>\n      <div class=\"form-group\" *ngIf=\"inOne\">\n          <label>Category</label>\n          <input type=\"text\" name=\"oneCategory\" class=\"form-control\" placeholder=\"type category\">\n      </div>\n      <div class=\"form-group\">\n        <input type=\"file\" class=\"form-control-file\" multiple name=\"images\" (change)=\"onChange(inputFiles)\" #inputFiles required>\n      </div>\n      <button type=\"submit\" class=\"btn btn-primary\">Post</button>\n    </form>\n  </div>\n  \n  <div>\n    <div *ngFor=\"let file of imagesList\">\n      <app-image-item [inOne]=\"inOne\" [categories]=\"categories\" [file]=\"file\" (selected)=\"onImgSelect($event)\"></app-image-item>\n    </div>\n  </div>\n"
 
 /***/ }),
 
@@ -136,9 +144,15 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 var AddImagesComponent = /** @class */ (function () {
     function AddImagesComponent(service) {
+        var _this = this;
         this.service = service;
         this.imagesList = [];
         this.imageData = Object.create(null);
+        this.service.getCategories().subscribe(function (data) {
+            if (data.success) {
+                _this.categories = data.categories;
+            }
+        });
     }
     AddImagesComponent.prototype.ngOnInit = function () {
     };
@@ -151,6 +165,9 @@ var AddImagesComponent = /** @class */ (function () {
             }
         }
         ;
+        for (var image in this.imageData) {
+            this.imageData[image]['tags'] = this.imageData[image]['tags'].map(function (tag) { return tag.value; });
+        }
         data.append('filesData', JSON.stringify(this.imageData));
         this.service.postImages(data).subscribe(function (data) {
             console.log(data);
@@ -175,7 +192,7 @@ var AddImagesComponent = /** @class */ (function () {
         if (e.file && !this.imageData[e.file])
             this.imageData[e.file] = Object.assign(this.imageData[e.file] || {});
         if (e.tags)
-            this.imageData[e.file]['tegs'] = e.tags;
+            this.imageData[e.file]['tags'] = e.tags;
         console.log();
         if (e.category)
             this.imageData[e.file]['category'] = e.category;
@@ -213,7 +230,7 @@ module.exports = ".img-item {\r\n    padding: 1% 0 1% 1%;\r\n    border: 2px sol
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"img-item row\">\n  <div class=\"col-3\">\n    <p>File name: {{file.fileName}}</p>\n    <img src=\"{{file.src}}\" alt=\"\" class=\"img-fluid\">\n  </div>\n  <div class=\"col-3 mr-auto\">\n    <div *ngIf=\"!inOne\">\n      <label>Выберите категорию</label>\n      <select class=\"form-control\" required (change)=\"onSelect(category.value)\" #category>\n        <option selected disabled>Choose category</option>\n        <option>UK</option>\n        <option>France</option>\n        <option>Germany</option>\n        <option>Italy</option>\n      </select>\n    </div>\n    <div>\n      <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\" (onAdd)=\"onTagChange()\" (onRemove)=\"onTagChange()\"></tag-input>\n    </div>\n  </div>\n</div>"
+module.exports = "<div class=\"img-item row\">\n  <div class=\"col-3\">\n    <p>File name: {{file.fileName}}</p>\n    <img src=\"{{file.src}}\" alt=\"\" class=\"img-fluid\">\n  </div>\n  <div class=\"col-5 mr-auto\">\n    <div *ngIf=\"!inOne\">\n      <label>Выберите категорию</label>\n      <select class=\"form-control\" (change)=\"onSelect(category.value)\" #category>\n        <option selected disabled>Choose category</option>\n        <option *ngFor=\"let category of categories\">{{category.name}}</option>\n      </select>\n    </div>\n    <div>\n      <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\" (onAdd)=\"onTagChange()\" (onRemove)=\"onTagChange()\"></tag-input>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -240,17 +257,19 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 var ImageItemComponent = /** @class */ (function () {
     function ImageItemComponent() {
+        this.tags = [];
         this.selected = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
     }
     ImageItemComponent.prototype.ngOnInit = function () {
     };
     ImageItemComponent.prototype.onSelect = function (category) {
-        console.log('test select', { category: category, file: this.file.fileName, tags: this.tags });
-        this.selected.emit({ category: category, file: this.file.fileName, tags: this.tags });
+        this.tags = this.categories.find(function (categ) { return categ.name === category; }).tags;
+        console.log('test select', { category: this.categories.find(function (categ) { return categ.name === category; }).id, file: this.file.fileName, tags: this.tags.filter(function (tag) { return !tag.readonly; }) });
+        this.selected.emit({ category: this.categories.find(function (categ) { return categ.name === category; }).id, file: this.file.fileName, tags: this.tags.filter(function (tag) { return !tag.readonly; }) });
     };
     ImageItemComponent.prototype.onTagChange = function () {
-        console.log('test tags input', { file: this.file.fileName, tags: this.tags });
-        this.selected.emit({ file: this.file.fileName, tags: this.tags });
+        console.log('test tags input', { file: this.file.fileName, tags: this.tags.filter(function (tag) { return !tag.readonly; }) });
+        this.selected.emit({ file: this.file.fileName, tags: this.tags.filter(function (tag) { return !tag.readonly; }) });
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
@@ -260,6 +279,10 @@ var ImageItemComponent = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
         __metadata("design:type", Object)
     ], ImageItemComponent.prototype, "inOne", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
+        __metadata("design:type", Object)
+    ], ImageItemComponent.prototype, "categories", void 0);
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
         __metadata("design:type", Object)
@@ -557,6 +580,15 @@ var ServiceService = /** @class */ (function () {
         return this.http.post(this.apiImageUrl + "/upload", data, {
             headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
         });
+    };
+    ServiceService.prototype.addCategory = function (name, tags) {
+        console.log('Service', name, tags);
+        return this.http.post(this.apiImageUrl + "add/category", JSON.stringify({ name: name, tags: tags }), {
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json' })
+        });
+    };
+    ServiceService.prototype.getCategories = function () {
+        return this.http.get(this.apiImageUrl + "/categories");
     };
     ServiceService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({

@@ -16,4 +16,15 @@ export class ServiceService {
       headers: new HttpHeaders()
     })
   }
+
+  addCategory(name, tags) {
+    console.log('Service', name, tags);
+    return this.http.post(`${this.apiImageUrl}add/category`, JSON.stringify({name, tags}), {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json'})
+    })
+  }
+
+  getCategories() {
+    return this.http.get(`${this.apiImageUrl}/categories`)
+  }
 }

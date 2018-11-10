@@ -10,7 +10,9 @@ export class ImageItemComponent implements OnInit {
   @Input() file;
   @Input() inOne;
 
-  tags;
+  @Input() categories;
+
+  tags = [];
 
   @Output() selected = new EventEmitter<any>();
 
@@ -20,12 +22,13 @@ export class ImageItemComponent implements OnInit {
   }
 
   onSelect(category) {
-    console.log('test select', {category, file: this.file.fileName, tags: this.tags});
-    this.selected.emit({category, file: this.file.fileName, tags: this.tags});
+    this.tags = this.categories.find(categ => categ.name === category).tags;
+    console.log('test select', {category: this.categories.find(categ => categ.name === category).id, file: this.file.fileName, tags: this.tags.filter(tag => !tag.readonly)});
+    this.selected.emit({category: this.categories.find(categ => categ.name === category).id, file: this.file.fileName, tags: this.tags.filter(tag => !tag.readonly)});
   }
 
   onTagChange() {
-    console.log('test tags input', {file: this.file.fileName, tags: this.tags});
-    this.selected.emit({file: this.file.fileName, tags: this.tags});
+    console.log('test tags input', {file: this.file.fileName, tags: this.tags.filter(tag => !tag.readonly)});
+    this.selected.emit({file: this.file.fileName, tags: this.tags.filter(tag => !tag.readonly)});
   }
 }

@@ -14,7 +14,15 @@ export class AddImagesComponent implements OnInit {
 
   inOne;
 
-  constructor(private service: ServiceService) { }
+  categories;
+
+  constructor(private service: ServiceService) { 
+    this.service.getCategories().subscribe((data: any) => {
+      if(data.success) {
+        this.categories = data.categories;
+      }
+    })
+  }
 
   ngOnInit() {
   }
@@ -23,8 +31,9 @@ export class AddImagesComponent implements OnInit {
     e.preventDefault();
     let data = new FormData(form);
     if(this.inOne) { 
-      for(let image in this.imageData) { delete  this.imageData[image]['category']}
+      for(let image in this.imageData) { delete  this.imageData[image]['category'] }
     };
+    for(let image in this.imageData) { this.imageData[image]['tags'] = this.imageData[image]['tags'].map(tag => tag.value); }
     data.append('filesData', JSON.stringify(this.imageData))
     this.service.postImages(data).subscribe((data: any) => {
       console.log(data);
@@ -44,7 +53,7 @@ export class AddImagesComponent implements OnInit {
 
   onImgSelect(e) {
     if(e.file && !this.imageData[e.file]) this.imageData[e.file] = Object.assign(this.imageData[e.file] || {});
-    if(e.tags) this.imageData[e.file]['tegs'] = e.tags;
+    if(e.tags) this.imageData[e.file]['tags'] = e.tags;
     console.log()
     if(e.category) this.imageData[e.file]['category'] = e.category;
   }

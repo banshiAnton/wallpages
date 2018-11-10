@@ -11,7 +11,7 @@
           <input type="text" name="oneCategory" class="form-control" placeholder="type category">
       </div>
       <div class="form-group">
-        <input type="file" class=".form-control-file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles required>
+        <input type="file" class="form-control-file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles required>
       </div>
       <button type="submit" class="btn btn-primary">Post</button>
     </form>
@@ -19,6 +19,6 @@
   
   <div>
     <div *ngFor="let file of imagesList">
-      <app-image-item [inOne]="inOne" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
+      <app-image-item [inOne]="inOne" [categories]="categories" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
     </div>
   </div>

@@ -35,7 +35,14 @@ module.exports = (sequelize, DataTypes) => {
         },
         file: { type: DataTypes.STRING, unique: true, allowNull: false },
         createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-        tags: { type: DataTypes.STRING, allowNull: false },
+        tags: { type: DataTypes.STRING, allowNull: false, 
+            set(tagsArr) {
+                this.setDataValue('tags', tagsArr.join(' '))
+            },
+            get() {
+                return this.getDataValue('tags').split(' ');
+            }
+        },
         category_id: {
             type: DataTypes.INTEGER,
             references: {

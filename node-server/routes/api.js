@@ -1,6 +1,18 @@
 const path = require('path');
 const fs = require('fs');
 
+const categoryGetRes = require('../funcs').categoryGetRes;
+
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize('wallpages', 'root', '', {
+    dialect: 'mysql',
+    host: "localhost",
+    port: 3306,
+});
+
+const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
+const Images = sequelize.import(path.join(__dirname, '../models/images'));
+
 const router = require('express').Router();
 
 //CREATE TABLE `wallpages`.`categories` ( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `name` VARCHAR(50) NOT NULL , `tags` TEXT NOT NULL , PRIMARY KEY (`id`), UNIQUE `category_name_uq` (`name`(50))) ENGINE = InnoDB;
@@ -43,14 +55,35 @@ router.post('/upload', function(req, res, next) {
     res.json({success: true});
 });
 
-router.post('/add/category', function(req, res, next) {
-    let category = req.body.category;
-    fs.mkdir(path.join(__dirname, `../public/images/${category}/`), function() {
-        console.log(arguments);
-        fs.mkdir(path.join(__dirname, `../public/images/${category}/small`), function(err) {
-            console.log(arguments);
+router.get('/categories', function(req, res, next) {
+    Categories.findAndCountAll().then(result => {
+        categoryGetRes(result, (resultForm) => {
+            console.log(resultForm);
+            res.json(resultForm);
         })
+    }).catch(err => {
+        console.log('Error category get', err.errors[0]);
+        res.json({success: false, error: err.errors[0]});
     })
+});
+
+router.post('/add/category', function(req, res, next) {
+    let name = req.body.name;
+    let tags = req.body.tags;
+    console.log(name);
+    Categories.create({name, tags}).then((result) => {
+        console.log(result);
+        fs.mkdir(path.join(__dirname, `../public/images/${name}/`), function() {
+            console.log(arguments);
+            fs.mkdir(path.join(__dirname, `../public/images/${name}/small`), function(err) {
+                console.log(arguments);
+                res.json({success: true, name: result.get('name'), tags: result.get('tags')});
+            })
+        });
+    }).catch(err => {
+        console.log('Error category', err.errors[0]);
+        res.json({success: false, error: err.errors[0]});
+    }) 
 });
 
 module.exports = router;
