@@ -19,14 +19,13 @@ export class AdminComponent implements OnInit {
   ngOnInit() {
   }
 
-  onChangeInOne() {
-    if(this.inOne) this.imageData = Object.create(null); 
-  }
-
   onSubmit(e, form) {
     e.preventDefault();
     let data = new FormData(form);
-    if(!this.inOne) { data.append('filesData', JSON.stringify(this.imageData)) };
+    if(this.inOne) { 
+      for(let image in this.imageData) { delete  this.imageData[image]['category']}
+    };
+    data.append('filesData', JSON.stringify(this.imageData))
     this.service.postImages(data).subscribe((data: any) => {
       console.log(data);
     });
@@ -44,7 +43,9 @@ export class AdminComponent implements OnInit {
   }
 
   onImgSelect(e) {
-    console.log(e);
-    this.imageData[e.file] = {categoty: e.category, tags: e.tags};
+    if(e.file && !this.imageData[e.file]) this.imageData[e.file] = Object.assign(this.imageData[e.file] || {});
+    if(e.tags) this.imageData[e.file]['tegs'] = e.tags;
+    console.log()
+    if(e.category) this.imageData[e.file]['category'] = e.category;
   }
 }

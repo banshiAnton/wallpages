@@ -17,7 +17,7 @@ app.use(fileUpload());
 
 app.post('/upload', function(req, res, next) {
   console.log(req.body);
-  if(req.body.one !== 'on') req.body.filesData = JSON.parse(req.body.filesData);
+  req.body.filesData = JSON.parse(req.body.filesData);
   next();
 }, function (req, res, next) {
   console.log('Work!', req.body, req.files);

@@ -2,11 +2,14 @@
     padding: 1% 1% 0 1%;
 }
 
-.img-item > p {
+.img-fluid {
+    max-width: 60%;
+}
+/* .img-item > p {
     margin: 0;
     padding: 10px 10px 10px 0;
 }
 
 select {
     
-}
+} */

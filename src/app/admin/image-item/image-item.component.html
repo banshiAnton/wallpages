@@ -1,12 +1,21 @@
-<div class="img-item">
-  <p>File name: {{file.fileName}}</p>
-  <img src="{{file.src}}" alt="" width="10%" height="10%">
-  <tag-input [(ngModel)]="tegs" [separatorKeys]="[' ', '  ']"></tag-input>
-  <select *ngIf="!inOne" required (change)="onSelect(category.value)" #category>
-    <option selected disabled>Choose category</option>
-    <option>UK</option>
-    <option>France</option>
-    <option>Germany</option>
-    <option>Italy</option>
-  </select>
+<div class="img-item row">
+  <div class="col-3">
+    <p>File name: {{file.fileName}}</p>
+    <img src="{{file.src}}" alt="" class="img-fluid">
+  </div>
+  <div class="col-3 mr-auto">
+    <div *ngIf="!inOne">
+      <label>Выберите категорию</label>
+      <select class="form-control" required (change)="onSelect(category.value)" #category>
+        <option selected disabled>Choose category</option>
+        <option>UK</option>
+        <option>France</option>
+        <option>Germany</option>
+        <option>Italy</option>
+      </select>
+    </div>
+    <div>
+      <tag-input [(ngModel)]="tegs" [separatorKeys]="[' ']" (onAdd)="onTagChange()" (onRemove)="onTagChange()"></tag-input>
+    </div>
+  </div>
 </div>

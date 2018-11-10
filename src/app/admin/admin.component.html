@@ -2,7 +2,7 @@
   <form enctype="application/x-www-form-urlencoded" (submit)="onSubmit($event, form)" #form>
     <div class="form-check">
         <label class="form-check-label">
-          <input class="form-check-input" name="one" type="checkbox" (change)="onChangeInOne();" [(ngModel)]="inOne" [ngModelOptions]="{standalone: true}">
+          <input class="form-check-input" name="one" type="checkbox" [(ngModel)]="inOne" [ngModelOptions]="{standalone: true}">
             Загрузить всё в одну категорию ?
         </label>
     </div>
