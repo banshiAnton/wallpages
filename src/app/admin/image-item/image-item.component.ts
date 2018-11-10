@@ -8,6 +8,9 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class ImageItemComponent implements OnInit {
 
   @Input() file;
+  @Input() inOne;
+
+  tegs;
 
   @Output() selected = new EventEmitter<any>();
 
@@ -17,7 +20,7 @@ export class ImageItemComponent implements OnInit {
   }
 
   onSelect(category) {
-    this.selected.emit({category, file: this.file.fileName});
+    this.selected.emit({category, file: this.file.fileName, tags: this.tegs});
   }
 
 }

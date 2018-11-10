@@ -15,10 +15,11 @@ app.use(bodyParser.json());
 
 app.use(fileUpload());
 
-app.post('/upload', function (req, res, next) {
-  req.body.filesData = JSON.parse(req.body.filesData);
+app.post('/upload', function(req, res, next) {
+  console.log(req.body);
+  if(req.body.one !== 'on') req.body.filesData = JSON.parse(req.body.filesData);
   next();
-},function (req, res, next) {
+}, function (req, res, next) {
   console.log('Work!', req.body, req.files);
   res.json({success: true});
 });

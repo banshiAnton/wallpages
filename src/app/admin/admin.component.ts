@@ -10,17 +10,23 @@ export class AdminComponent implements OnInit {
 
   imagesList = [];
 
-  imageData = [];
+  imageData = Object.create(null);
+
+  inOne;
 
   constructor(private service: ServiceService) { }
 
   ngOnInit() {
   }
 
+  onChangeInOne() {
+    if(this.inOne) this.imageData = Object.create(null); 
+  }
+
   onSubmit(e, form) {
     e.preventDefault();
     let data = new FormData(form);
-    data.append('filesData', JSON.stringify(this.imageData));
+    if(!this.inOne) { data.append('filesData', JSON.stringify(this.imageData)) };
     this.service.postImages(data).subscribe((data: any) => {
       console.log(data);
     });
@@ -39,6 +45,6 @@ export class AdminComponent implements OnInit {
 
   onImgSelect(e) {
     console.log(e);
-    this.imageData.push(e);
+    this.imageData[e.file] = {categoty: e.category, tags: e.tags};
   }
 }

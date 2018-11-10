@@ -41,7 +41,7 @@ module.exports = ".main-form {\r\n    padding: 1%;\r\n}"
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"main-form\">\n  <form enctype=\"application/x-www-form-urlencoded\" (submit)=\"onSubmit($event, form)\" #form>\n    <div class=\"form-group\">\n      <input type=\"text\" name=\"title\">\n    </div>\n    <div class=\"form-group\">\n      <input type=\"file\" multiple name=\"images\" (change)=\"onChange(inputFiles)\" #inputFiles required>\n    </div>\n    <button type=\"submit\">Post</button>\n  </form>\n</div>\n\n<div>\n  <div *ngFor=\"let file of imagesList\">\n    <app-image-item [file]=\"file\" (selected)=\"onImgSelect($event)\"></app-image-item>\n  </div>\n</div>"
+module.exports = "<div class=\"main-form\">\n  <form enctype=\"application/x-www-form-urlencoded\" (submit)=\"onSubmit($event, form)\" #form>\n    <div class=\"form-check\">\n        <label class=\"form-check-label\">\n          <input class=\"form-check-input\" name=\"one\" type=\"checkbox\" (change)=\"onChangeInOne();\" [(ngModel)]=\"inOne\" [ngModelOptions]=\"{standalone: true}\">\n            Загрузить всё в одну категорию ?\n        </label>\n    </div>\n    <div class=\"form-group\" *ngIf=\"inOne\">\n        <label>Category</label>\n        <input type=\"text\" name=\"oneCategory\" class=\"form-control\" placeholder=\"type category\">\n    </div>\n    <div class=\"form-group\">\n      <input type=\"file\" class=\".form-control-file\" multiple name=\"images\" (change)=\"onChange(inputFiles)\" #inputFiles required>\n    </div>\n    <button type=\"submit\">Post</button>\n  </form>\n</div>\n\n<div>\n  <div *ngFor=\"let file of imagesList\">\n    <app-image-item [inOne]=\"inOne\" [file]=\"file\" (selected)=\"onImgSelect($event)\"></app-image-item>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -72,14 +72,21 @@ var AdminComponent = /** @class */ (function () {
     function AdminComponent(service) {
         this.service = service;
         this.imagesList = [];
-        this.imageData = [];
+        this.imageData = Object.create(null);
     }
     AdminComponent.prototype.ngOnInit = function () {
+    };
+    AdminComponent.prototype.onChangeInOne = function () {
+        if (this.inOne)
+            this.imageData = Object.create(null);
     };
     AdminComponent.prototype.onSubmit = function (e, form) {
         e.preventDefault();
         var data = new FormData(form);
-        data.append('filesData', JSON.stringify(this.imageData));
+        if (!this.inOne) {
+            data.append('filesData', JSON.stringify(this.imageData));
+        }
+        ;
         this.service.postImages(data).subscribe(function (data) {
             console.log(data);
         });
@@ -101,7 +108,7 @@ var AdminComponent = /** @class */ (function () {
     };
     AdminComponent.prototype.onImgSelect = function (e) {
         console.log(e);
-        this.imageData.push(e);
+        this.imageData[e.file] = { categoty: e.category, tags: e.tags };
     };
     AdminComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -136,7 +143,7 @@ module.exports = ".img-item {\r\n    padding: 1% 1% 0 1%;\r\n}\r\n\r\n.img-item 
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"img-item\">\n  <p>File name: {{file.fileName}}</p>\n  <img src=\"{{file.src}}\" alt=\"\" width=\"10%\" height=\"10%\">\n  <select required (change)=\"onSelect(category.value)\" #category>\n    <option selected disabled>Choose category</option>\n    <option>UK</option>\n    <option>France</option>\n    <option>Germany</option>\n    <option>Italy</option>\n  </select>\n</div>"
+module.exports = "<div class=\"img-item\">\n  <p>File name: {{file.fileName}}</p>\n  <img src=\"{{file.src}}\" alt=\"\" width=\"10%\" height=\"10%\">\n  <tag-input [(ngModel)]=\"tegs\" [separatorKeys]=\"[' ', '  ']\"></tag-input>\n  <select *ngIf=\"!inOne\" required (change)=\"onSelect(category.value)\" #category>\n    <option selected disabled>Choose category</option>\n    <option>UK</option>\n    <option>France</option>\n    <option>Germany</option>\n    <option>Italy</option>\n  </select>\n</div>"
 
 /***/ }),
 
@@ -168,12 +175,16 @@ var ImageItemComponent = /** @class */ (function () {
     ImageItemComponent.prototype.ngOnInit = function () {
     };
     ImageItemComponent.prototype.onSelect = function (category) {
-        this.selected.emit({ category: category, file: this.file.fileName });
+        this.selected.emit({ category: category, file: this.file.fileName, tags: this.tegs });
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
         __metadata("design:type", Object)
     ], ImageItemComponent.prototype, "file", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
+        __metadata("design:type", Object)
+    ], ImageItemComponent.prototype, "inOne", void 0);
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
         __metadata("design:type", Object)
@@ -265,10 +276,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
-/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
-/* harmony import */ var _admin_admin_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./admin/admin.component */ "./src/app/admin/admin.component.ts");
-/* harmony import */ var _router_app_routing_module__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./router/app-routing.module */ "./src/app/router/app-routing.module.ts");
-/* harmony import */ var _admin_image_item_image_item_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./admin/image-item/image-item.component */ "./src/app/admin/image-item/image-item.component.ts");
+/* harmony import */ var ngx_chips__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ngx-chips */ "./node_modules/ngx-chips/esm5/ngx-chips.js");
+/* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/platform-browser/animations */ "./node_modules/@angular/platform-browser/fesm5/animations.js");
+/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
+/* harmony import */ var _admin_admin_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./admin/admin.component */ "./src/app/admin/admin.component.ts");
+/* harmony import */ var _router_app_routing_module__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./router/app-routing.module */ "./src/app/router/app-routing.module.ts");
+/* harmony import */ var _admin_image_item_image_item_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./admin/image-item/image-item.component */ "./src/app/admin/image-item/image-item.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -280,6 +293,8 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+ // this is needed!
+
 
 
 
@@ -289,18 +304,22 @@ var AppModule = /** @class */ (function () {
     AppModule = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
             declarations: [
-                _app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"],
-                _admin_admin_component__WEBPACK_IMPORTED_MODULE_5__["AdminComponent"],
-                _admin_image_item_image_item_component__WEBPACK_IMPORTED_MODULE_7__["ImageItemComponent"],
+                _app_component__WEBPACK_IMPORTED_MODULE_6__["AppComponent"],
+                _admin_admin_component__WEBPACK_IMPORTED_MODULE_7__["AdminComponent"],
+                _admin_image_item_image_item_component__WEBPACK_IMPORTED_MODULE_9__["ImageItemComponent"],
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
-                _router_app_routing_module__WEBPACK_IMPORTED_MODULE_6__["AppRoutingModule"],
+                _router_app_routing_module__WEBPACK_IMPORTED_MODULE_8__["AppRoutingModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormsModule"],
-                _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpClientModule"]
+                _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpClientModule"],
+                ngx_chips__WEBPACK_IMPORTED_MODULE_4__["TagInputModule"],
+                _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_5__["BrowserAnimationsModule"],
+                _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormsModule"],
+                _angular_forms__WEBPACK_IMPORTED_MODULE_2__["ReactiveFormsModule"]
             ],
             providers: [],
-            bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"]]
+            bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_6__["AppComponent"]]
         })
     ], AppModule);
     return AppModule;
