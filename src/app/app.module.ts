@@ -10,13 +10,17 @@ import { AppComponent } from './app.component';
 import { AdminComponent } from './admin/admin.component';
 
 import { AppRoutingModule } from './router/app-routing.module';
-import { ImageItemComponent } from './admin/image-item/image-item.component';
+import { ImageItemComponent } from './admin/add-images/image-item/image-item.component';
+import { AddImagesComponent } from './admin/add-images/add-images.component';
+import { AddCategoryComponent } from './admin/add-category/add-category.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AdminComponent,
     ImageItemComponent,
+    AddImagesComponent,
+    AddCategoryComponent,
   ],
   imports: [
     BrowserModule,

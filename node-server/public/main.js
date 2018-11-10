@@ -23,6 +23,262 @@ webpackEmptyAsyncContext.id = "./src/$$_lazy_route_resource lazy recursive";
 
 /***/ }),
 
+/***/ "./src/app/admin/add-category/add-category.component.css":
+/*!***************************************************************!*\
+  !*** ./src/app/admin/add-category/add-category.component.css ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = ""
+
+/***/ }),
+
+/***/ "./src/app/admin/add-category/add-category.component.html":
+/*!****************************************************************!*\
+  !*** ./src/app/admin/add-category/add-category.component.html ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div>\n  <form (submit)=\"onSubmit(category.value)\">\n    <div class=\"form-group\">\n        <label>Имя категории</label>\n        <input type=\"text\" class=\"form-control\" placeholder=\"Имя категории\" #category>\n    </div>\n    <div class=\"form-group\">\n        <label>Теги категории</label>\n        <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\" [ngModelOptions]=\"{standalone: true}\"></tag-input>\n    </div>\n    <button type=\"submit\" class=\"btn btn-primary\">Добавить Категорию</button>\n  </form>\n</div>\n"
+
+/***/ }),
+
+/***/ "./src/app/admin/add-category/add-category.component.ts":
+/*!**************************************************************!*\
+  !*** ./src/app/admin/add-category/add-category.component.ts ***!
+  \**************************************************************/
+/*! exports provided: AddCategoryComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddCategoryComponent", function() { return AddCategoryComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+var AddCategoryComponent = /** @class */ (function () {
+    function AddCategoryComponent() {
+    }
+    AddCategoryComponent.prototype.ngOnInit = function () {
+    };
+    AddCategoryComponent.prototype.onSubmit = function (category) {
+        console.log(this.tags, category);
+    };
+    AddCategoryComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            selector: 'app-add-category',
+            template: __webpack_require__(/*! ./add-category.component.html */ "./src/app/admin/add-category/add-category.component.html"),
+            styles: [__webpack_require__(/*! ./add-category.component.css */ "./src/app/admin/add-category/add-category.component.css")]
+        }),
+        __metadata("design:paramtypes", [])
+    ], AddCategoryComponent);
+    return AddCategoryComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/admin/add-images/add-images.component.css":
+/*!***********************************************************!*\
+  !*** ./src/app/admin/add-images/add-images.component.css ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = ":host {\r\n    display: block;\r\n    padding-left: 1%;\r\n}\r\n\r\n.main-form {\r\n    padding: 1% 1% 1% 0;\r\n}"
+
+/***/ }),
+
+/***/ "./src/app/admin/add-images/add-images.component.html":
+/*!************************************************************!*\
+  !*** ./src/app/admin/add-images/add-images.component.html ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"main-form\">\n    <form enctype=\"application/x-www-form-urlencoded\" (submit)=\"onSubmit($event, form)\" #form>\n      <div class=\"form-check\">\n          <label class=\"form-check-label\">\n            <input class=\"form-check-input\" name=\"one\" type=\"checkbox\" [(ngModel)]=\"inOne\" [ngModelOptions]=\"{standalone: true}\">\n              Загрузить всё в одну категорию ?\n          </label>\n      </div>\n      <div class=\"form-group\" *ngIf=\"inOne\">\n          <label>Category</label>\n          <input type=\"text\" name=\"oneCategory\" class=\"form-control\" placeholder=\"type category\">\n      </div>\n      <div class=\"form-group\">\n        <input type=\"file\" class=\".form-control-file\" multiple name=\"images\" (change)=\"onChange(inputFiles)\" #inputFiles required>\n      </div>\n      <button type=\"submit\" class=\"btn btn-primary\">Post</button>\n    </form>\n  </div>\n  \n  <div>\n    <div *ngFor=\"let file of imagesList\">\n      <app-image-item [inOne]=\"inOne\" [file]=\"file\" (selected)=\"onImgSelect($event)\"></app-image-item>\n    </div>\n  </div>\n"
+
+/***/ }),
+
+/***/ "./src/app/admin/add-images/add-images.component.ts":
+/*!**********************************************************!*\
+  !*** ./src/app/admin/add-images/add-images.component.ts ***!
+  \**********************************************************/
+/*! exports provided: AddImagesComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddImagesComponent", function() { return AddImagesComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _services_service_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/service.service */ "./src/app/services/service.service.ts");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var AddImagesComponent = /** @class */ (function () {
+    function AddImagesComponent(service) {
+        this.service = service;
+        this.imagesList = [];
+        this.imageData = Object.create(null);
+    }
+    AddImagesComponent.prototype.ngOnInit = function () {
+    };
+    AddImagesComponent.prototype.onSubmit = function (e, form) {
+        e.preventDefault();
+        var data = new FormData(form);
+        if (this.inOne) {
+            for (var image in this.imageData) {
+                delete this.imageData[image]['category'];
+            }
+        }
+        ;
+        data.append('filesData', JSON.stringify(this.imageData));
+        this.service.postImages(data).subscribe(function (data) {
+            console.log(data);
+        });
+    };
+    AddImagesComponent.prototype.onChange = function (inputFiles) {
+        var _this = this;
+        console.log(inputFiles.files); //FileReader
+        var _loop_1 = function (file) {
+            var reader = new FileReader();
+            reader.addEventListener("load", function () {
+                _this.imagesList.push({ src: reader.result, fileName: file.name });
+            }, false);
+            reader.readAsDataURL(file);
+        };
+        for (var _i = 0, _a = inputFiles.files; _i < _a.length; _i++) {
+            var file = _a[_i];
+            _loop_1(file);
+        }
+    };
+    AddImagesComponent.prototype.onImgSelect = function (e) {
+        if (e.file && !this.imageData[e.file])
+            this.imageData[e.file] = Object.assign(this.imageData[e.file] || {});
+        if (e.tags)
+            this.imageData[e.file]['tegs'] = e.tags;
+        console.log();
+        if (e.category)
+            this.imageData[e.file]['category'] = e.category;
+    };
+    AddImagesComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            selector: 'app-add-images',
+            template: __webpack_require__(/*! ./add-images.component.html */ "./src/app/admin/add-images/add-images.component.html"),
+            styles: [__webpack_require__(/*! ./add-images.component.css */ "./src/app/admin/add-images/add-images.component.css")]
+        }),
+        __metadata("design:paramtypes", [_services_service_service__WEBPACK_IMPORTED_MODULE_1__["ServiceService"]])
+    ], AddImagesComponent);
+    return AddImagesComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/admin/add-images/image-item/image-item.component.css":
+/*!**********************************************************************!*\
+  !*** ./src/app/admin/add-images/image-item/image-item.component.css ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = ".img-item {\r\n    padding: 1% 0 1% 1%;\r\n    border: 2px solid black;\r\n    border-radius: 15px;\r\n    margin-bottom: 1%;\r\n}\r\n\r\n.img-fluid {\r\n    max-width: 60%;\r\n}\r\n\r\n/* .img-item > p {\r\n    margin: 0;\r\n    padding: 10px 10px 10px 0;\r\n}\r\n\r\nselect {\r\n    \r\n} */"
+
+/***/ }),
+
+/***/ "./src/app/admin/add-images/image-item/image-item.component.html":
+/*!***********************************************************************!*\
+  !*** ./src/app/admin/add-images/image-item/image-item.component.html ***!
+  \***********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"img-item row\">\n  <div class=\"col-3\">\n    <p>File name: {{file.fileName}}</p>\n    <img src=\"{{file.src}}\" alt=\"\" class=\"img-fluid\">\n  </div>\n  <div class=\"col-3 mr-auto\">\n    <div *ngIf=\"!inOne\">\n      <label>Выберите категорию</label>\n      <select class=\"form-control\" required (change)=\"onSelect(category.value)\" #category>\n        <option selected disabled>Choose category</option>\n        <option>UK</option>\n        <option>France</option>\n        <option>Germany</option>\n        <option>Italy</option>\n      </select>\n    </div>\n    <div>\n      <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\" (onAdd)=\"onTagChange()\" (onRemove)=\"onTagChange()\"></tag-input>\n    </div>\n  </div>\n</div>"
+
+/***/ }),
+
+/***/ "./src/app/admin/add-images/image-item/image-item.component.ts":
+/*!*********************************************************************!*\
+  !*** ./src/app/admin/add-images/image-item/image-item.component.ts ***!
+  \*********************************************************************/
+/*! exports provided: ImageItemComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ImageItemComponent", function() { return ImageItemComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+var ImageItemComponent = /** @class */ (function () {
+    function ImageItemComponent() {
+        this.selected = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
+    }
+    ImageItemComponent.prototype.ngOnInit = function () {
+    };
+    ImageItemComponent.prototype.onSelect = function (category) {
+        console.log('test select', { category: category, file: this.file.fileName, tags: this.tags });
+        this.selected.emit({ category: category, file: this.file.fileName, tags: this.tags });
+    };
+    ImageItemComponent.prototype.onTagChange = function () {
+        console.log('test tags input', { file: this.file.fileName, tags: this.tags });
+        this.selected.emit({ file: this.file.fileName, tags: this.tags });
+    };
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
+        __metadata("design:type", Object)
+    ], ImageItemComponent.prototype, "file", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
+        __metadata("design:type", Object)
+    ], ImageItemComponent.prototype, "inOne", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
+        __metadata("design:type", Object)
+    ], ImageItemComponent.prototype, "selected", void 0);
+    ImageItemComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            selector: 'app-image-item',
+            template: __webpack_require__(/*! ./image-item.component.html */ "./src/app/admin/add-images/image-item/image-item.component.html"),
+            styles: [__webpack_require__(/*! ./image-item.component.css */ "./src/app/admin/add-images/image-item/image-item.component.css")]
+        }),
+        __metadata("design:paramtypes", [])
+    ], ImageItemComponent);
+    return ImageItemComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/admin/admin.component.css":
 /*!*******************************************!*\
   !*** ./src/app/admin/admin.component.css ***!
@@ -30,7 +286,7 @@ webpackEmptyAsyncContext.id = "./src/$$_lazy_route_resource lazy recursive";
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".main-form {\r\n    padding: 1%;\r\n}"
+module.exports = ""
 
 /***/ }),
 
@@ -41,7 +297,7 @@ module.exports = ".main-form {\r\n    padding: 1%;\r\n}"
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"main-form\">\n  <form enctype=\"application/x-www-form-urlencoded\" (submit)=\"onSubmit($event, form)\" #form>\n    <div class=\"form-check\">\n        <label class=\"form-check-label\">\n          <input class=\"form-check-input\" name=\"one\" type=\"checkbox\" [(ngModel)]=\"inOne\" [ngModelOptions]=\"{standalone: true}\">\n            Загрузить всё в одну категорию ?\n        </label>\n    </div>\n    <div class=\"form-group\" *ngIf=\"inOne\">\n        <label>Category</label>\n        <input type=\"text\" name=\"oneCategory\" class=\"form-control\" placeholder=\"type category\">\n    </div>\n    <div class=\"form-group\">\n      <input type=\"file\" class=\".form-control-file\" multiple name=\"images\" (change)=\"onChange(inputFiles)\" #inputFiles required>\n    </div>\n    <button type=\"submit\">Post</button>\n  </form>\n</div>\n\n<div>\n  <div *ngFor=\"let file of imagesList\">\n    <app-image-item [inOne]=\"inOne\" [file]=\"file\" (selected)=\"onImgSelect($event)\"></app-image-item>\n  </div>\n</div>"
+module.exports = "<div *ngIf=\"!isAuth\">\n  Auth Form!\n</div>\n\n<div *ngIf=\"isAuth\">\n  <a routerLink=\"addCategoty\">Add Category</a><br>\n  <a routerLink=\"addImages\">Add Images</a>\n</div>"
 
 /***/ }),
 
@@ -71,48 +327,9 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 var AdminComponent = /** @class */ (function () {
     function AdminComponent(service) {
         this.service = service;
-        this.imagesList = [];
-        this.imageData = Object.create(null);
+        this.isAuth = true;
     }
     AdminComponent.prototype.ngOnInit = function () {
-    };
-    AdminComponent.prototype.onSubmit = function (e, form) {
-        e.preventDefault();
-        var data = new FormData(form);
-        if (this.inOne) {
-            for (var image in this.imageData) {
-                delete this.imageData[image]['category'];
-            }
-        }
-        ;
-        data.append('filesData', JSON.stringify(this.imageData));
-        this.service.postImages(data).subscribe(function (data) {
-            console.log(data);
-        });
-    };
-    AdminComponent.prototype.onChange = function (inputFiles) {
-        var _this = this;
-        console.log(inputFiles.files); //FileReader
-        var _loop_1 = function (file) {
-            var reader = new FileReader();
-            reader.addEventListener("load", function () {
-                _this.imagesList.push({ src: reader.result, fileName: file.name });
-            }, false);
-            reader.readAsDataURL(file);
-        };
-        for (var _i = 0, _a = inputFiles.files; _i < _a.length; _i++) {
-            var file = _a[_i];
-            _loop_1(file);
-        }
-    };
-    AdminComponent.prototype.onImgSelect = function (e) {
-        if (e.file && !this.imageData[e.file])
-            this.imageData[e.file] = Object.assign(this.imageData[e.file] || {});
-        if (e.tags)
-            this.imageData[e.file]['tegs'] = e.tags;
-        console.log();
-        if (e.category)
-            this.imageData[e.file]['category'] = e.category;
     };
     AdminComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -123,90 +340,6 @@ var AdminComponent = /** @class */ (function () {
         __metadata("design:paramtypes", [_services_service_service__WEBPACK_IMPORTED_MODULE_1__["ServiceService"]])
     ], AdminComponent);
     return AdminComponent;
-}());
-
-
-
-/***/ }),
-
-/***/ "./src/app/admin/image-item/image-item.component.css":
-/*!***********************************************************!*\
-  !*** ./src/app/admin/image-item/image-item.component.css ***!
-  \***********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = ".img-item {\r\n    padding: 1% 1% 0 1%;\r\n}\r\n\r\n.img-fluid {\r\n    max-width: 60%;\r\n}\r\n\r\n/* .img-item > p {\r\n    margin: 0;\r\n    padding: 10px 10px 10px 0;\r\n}\r\n\r\nselect {\r\n    \r\n} */"
-
-/***/ }),
-
-/***/ "./src/app/admin/image-item/image-item.component.html":
-/*!************************************************************!*\
-  !*** ./src/app/admin/image-item/image-item.component.html ***!
-  \************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = "<div class=\"img-item row\">\n  <div class=\"col-3\">\n    <p>File name: {{file.fileName}}</p>\n    <img src=\"{{file.src}}\" alt=\"\" class=\"img-fluid\">\n  </div>\n  <div class=\"col-3 mr-auto\">\n    <div *ngIf=\"!inOne\">\n      <label>Выберите категорию</label>\n      <select class=\"form-control\" required (change)=\"onSelect(category.value)\" #category>\n        <option selected disabled>Choose category</option>\n        <option>UK</option>\n        <option>France</option>\n        <option>Germany</option>\n        <option>Italy</option>\n      </select>\n    </div>\n    <div>\n      <tag-input [(ngModel)]=\"tegs\" [separatorKeys]=\"[' ']\" (onAdd)=\"onTagChange()\" (onRemove)=\"onTagChange()\"></tag-input>\n    </div>\n  </div>\n</div>"
-
-/***/ }),
-
-/***/ "./src/app/admin/image-item/image-item.component.ts":
-/*!**********************************************************!*\
-  !*** ./src/app/admin/image-item/image-item.component.ts ***!
-  \**********************************************************/
-/*! exports provided: ImageItemComponent */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ImageItemComponent", function() { return ImageItemComponent; });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
-var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (undefined && undefined.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-var ImageItemComponent = /** @class */ (function () {
-    function ImageItemComponent() {
-        this.selected = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
-    }
-    ImageItemComponent.prototype.ngOnInit = function () {
-    };
-    ImageItemComponent.prototype.onSelect = function (category) {
-        console.log('test select', { category: category, file: this.file.fileName, tags: this.tegs });
-        this.selected.emit({ category: category, file: this.file.fileName, tags: this.tegs });
-    };
-    ImageItemComponent.prototype.onTagChange = function () {
-        console.log('test tegs input', { file: this.file.fileName, tags: this.tegs });
-        this.selected.emit({ file: this.file.fileName, tags: this.tegs });
-    };
-    __decorate([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
-        __metadata("design:type", Object)
-    ], ImageItemComponent.prototype, "file", void 0);
-    __decorate([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
-        __metadata("design:type", Object)
-    ], ImageItemComponent.prototype, "inOne", void 0);
-    __decorate([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
-        __metadata("design:type", Object)
-    ], ImageItemComponent.prototype, "selected", void 0);
-    ImageItemComponent = __decorate([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
-            selector: 'app-image-item',
-            template: __webpack_require__(/*! ./image-item.component.html */ "./src/app/admin/image-item/image-item.component.html"),
-            styles: [__webpack_require__(/*! ./image-item.component.css */ "./src/app/admin/image-item/image-item.component.css")]
-        }),
-        __metadata("design:paramtypes", [])
-    ], ImageItemComponent);
-    return ImageItemComponent;
 }());
 
 
@@ -231,7 +364,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<router-outlet></router-outlet>\n\n"
+module.exports = "<router-outlet></router-outlet>"
 
 /***/ }),
 
@@ -290,7 +423,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
 /* harmony import */ var _admin_admin_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./admin/admin.component */ "./src/app/admin/admin.component.ts");
 /* harmony import */ var _router_app_routing_module__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./router/app-routing.module */ "./src/app/router/app-routing.module.ts");
-/* harmony import */ var _admin_image_item_image_item_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./admin/image-item/image-item.component */ "./src/app/admin/image-item/image-item.component.ts");
+/* harmony import */ var _admin_add_images_image_item_image_item_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./admin/add-images/image-item/image-item.component */ "./src/app/admin/add-images/image-item/image-item.component.ts");
+/* harmony import */ var _admin_add_images_add_images_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./admin/add-images/add-images.component */ "./src/app/admin/add-images/add-images.component.ts");
+/* harmony import */ var _admin_add_category_add_category_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./admin/add-category/add-category.component */ "./src/app/admin/add-category/add-category.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -307,6 +442,8 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
+
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
@@ -315,7 +452,9 @@ var AppModule = /** @class */ (function () {
             declarations: [
                 _app_component__WEBPACK_IMPORTED_MODULE_6__["AppComponent"],
                 _admin_admin_component__WEBPACK_IMPORTED_MODULE_7__["AdminComponent"],
-                _admin_image_item_image_item_component__WEBPACK_IMPORTED_MODULE_9__["ImageItemComponent"],
+                _admin_add_images_image_item_image_item_component__WEBPACK_IMPORTED_MODULE_9__["ImageItemComponent"],
+                _admin_add_images_add_images_component__WEBPACK_IMPORTED_MODULE_10__["AddImagesComponent"],
+                _admin_add_category_add_category_component__WEBPACK_IMPORTED_MODULE_11__["AddCategoryComponent"],
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
@@ -351,6 +490,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var _admin_admin_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../admin/admin.component */ "./src/app/admin/admin.component.ts");
+/* harmony import */ var _admin_add_images_add_images_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../admin/add-images/add-images.component */ "./src/app/admin/add-images/add-images.component.ts");
+/* harmony import */ var _admin_add_category_add_category_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../admin/add-category/add-category.component */ "./src/app/admin/add-category/add-category.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -360,8 +501,12 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
+
 var routes = [
-    { path: 'admin', component: _admin_admin_component__WEBPACK_IMPORTED_MODULE_2__["AdminComponent"] }
+    { path: 'admin', component: _admin_admin_component__WEBPACK_IMPORTED_MODULE_2__["AdminComponent"] },
+    { path: 'admin/addImages', component: _admin_add_images_add_images_component__WEBPACK_IMPORTED_MODULE_3__["AddImagesComponent"] },
+    { path: 'admin/addCategoty', component: _admin_add_category_add_category_component__WEBPACK_IMPORTED_MODULE_4__["AddCategoryComponent"] }
 ];
 var AppRoutingModule = /** @class */ (function () {
     function AppRoutingModule() {
@@ -405,11 +550,11 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 var ServiceService = /** @class */ (function () {
     function ServiceService(http) {
         this.http = http;
-        this.url = '/';
+        this.apiImageUrl = '/api.images/';
     }
     ServiceService.prototype.postImages = function (data) {
         console.log('service', data);
-        return this.http.post(this.url + "upload", data, {
+        return this.http.post(this.apiImageUrl + "/upload", data, {
             headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
         });
     };

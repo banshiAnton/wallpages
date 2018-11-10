@@ -1,24 +1,8 @@
-<div class="main-form">
-  <form enctype="application/x-www-form-urlencoded" (submit)="onSubmit($event, form)" #form>
-    <div class="form-check">
-        <label class="form-check-label">
-          <input class="form-check-input" name="one" type="checkbox" [(ngModel)]="inOne" [ngModelOptions]="{standalone: true}">
-            Загрузить всё в одну категорию ?
-        </label>
-    </div>
-    <div class="form-group" *ngIf="inOne">
-        <label>Category</label>
-        <input type="text" name="oneCategory" class="form-control" placeholder="type category">
-    </div>
-    <div class="form-group">
-      <input type="file" class=".form-control-file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles required>
-    </div>
-    <button type="submit">Post</button>
-  </form>
+<div *ngIf="!isAuth">
+  Auth Form!
 </div>
 
-<div>
-  <div *ngFor="let file of imagesList">
-    <app-image-item [inOne]="inOne" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
-  </div>
+<div *ngIf="isAuth">
+  <a routerLink="addCategoty">Add Category</a><br>
+  <a routerLink="addImages">Add Images</a>
 </div>

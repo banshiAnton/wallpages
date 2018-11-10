@@ -6,13 +6,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class ServiceService {
 
-  url = '/';
+  apiImageUrl = '/api.images/';
 
   constructor(private http: HttpClient) { }
 
   postImages(data) {
     console.log('service', data);
-    return this.http.post(`${this.url}upload`, data, {
+    return this.http.post(`${this.apiImageUrl}/upload`, data, {
       headers: new HttpHeaders()
     })
   }

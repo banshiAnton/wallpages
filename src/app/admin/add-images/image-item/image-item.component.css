@@ -1,5 +1,8 @@
 .img-item {
-    padding: 1% 1% 0 1%;
+    padding: 1% 0 1% 1%;
+    border: 2px solid black;
+    border-radius: 15px;
+    margin-bottom: 1%;
 }
 
 .img-fluid {

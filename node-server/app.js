@@ -15,15 +15,6 @@ app.use(bodyParser.json());
 
 app.use(fileUpload());
 
-app.post('/upload', function(req, res, next) {
-  console.log(req.body);
-  req.body.filesData = JSON.parse(req.body.filesData);
-  next();
-}, function (req, res, next) {
-  console.log('Work!', req.body, req.files);
-  res.json({success: true});
-});
-
 app.use('/api.images', apiRouter);
 
 app.use('/*', function(req, res, next) {
