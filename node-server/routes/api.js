@@ -1,9 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const { categoryGetRes, buildSaveFiles, saveImages } = require('../funcs');
-
-const fspWrite = require('../funcs').fspWrite;
+const { categoryGetRes, saveImages } = require('../funcs');
 
 const { parseFilesData, groupFileDataToFiles } = require('../middleware');
 
@@ -62,8 +60,6 @@ router.post('/upload', parseFilesData, groupFileDataToFiles, function (req, res,
         console.log('Final error', err);
         res.json({success: false, errors});
     })
-
-    //res.json({success: true});
 });
 
 router.get('/categories', function(req, res, next) {
@@ -84,13 +80,13 @@ router.post('/add/category', function(req, res, next) {
     console.log(name);
     Categories.create({name, tags}).then((result) => {
         console.log(result);
-        fs.mkdir(path.join(__dirname, `../public/images/${name}/`), function() {
-            console.log(arguments);
-            fs.mkdir(path.join(__dirname, `../public/images/${name}/small`), function(err) {
-                console.log(arguments);
-                res.json({success: true, name: result.get('name'), tags: result.get('tags')});
-            })
-        });
+        // fs.mkdir(path.join(__dirname, `../public/images/${name}/`), function() {
+        //     console.log(arguments);
+        //     fs.mkdir(path.join(__dirname, `../public/images/${name}/small`), function(err) {
+        //         console.log(arguments);
+        //         res.json({success: true, name: result.get('name'), tags: result.get('tags')});
+        //     })
+        // });
     }).catch(err => {
         console.log('Error category', err.errors[0]);
         res.json({success: false, error: err.errors[0]});

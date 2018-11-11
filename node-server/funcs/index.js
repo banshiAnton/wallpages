@@ -40,13 +40,6 @@ let fspWrite = function(path, buffer) {
     })
 }
 
-let makePromArrToSave = function(files, writeFunc) {
-    let promisesArr = [];
-    for(let file of files) {
-        promisesArr.push(writeFunc(file))
-    }
-}
-
 let makePromiseToSave = function (arrError, pathToFolder, image, ImagesDb) {
     return () => new Promise((resolve, reject) => {
         fspWrite(path.join(pathToFolder, '/', image.name), image.data)
