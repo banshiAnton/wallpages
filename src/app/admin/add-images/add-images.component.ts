@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ServiceService } from '../../services/service.service';
 
+import { Tag } from './tag';
+
 @Component({
   selector: 'app-add-images',
   templateUrl: './add-images.component.html',
@@ -21,7 +23,10 @@ export class AddImagesComponent implements OnInit {
   constructor(private service: ServiceService) { 
     this.service.getCategories().subscribe((data: any) => {
       if(data.success) {
-        this.categories = data.categories;
+        this.categories = data.categories.map(categ => {
+          categ.tags = categ.tags.map(tag => new Tag(tag));
+          return categ;
+        });
       }
     })
   }
@@ -33,8 +38,7 @@ export class AddImagesComponent implements OnInit {
     e.preventDefault();
     let data = new FormData(form);
     if(this.inOne) { 
-      for(let image in this.imageData) { delete  this.imageData[image]['category'] }
-      data.set('category', this.categories.find(categ => categ.name === data.get('category')).id)
+      for(let image in this.imageData) { this.imageData[image]['category'] = this.categories.find(categ => categ.name === this.oneCategory).id }
     };
     for(let image in this.imageData) { this.imageData[image]['tags'] = this.imageData[image]['tags'].map(tag => tag.value); }
     data.append('filesData', JSON.stringify(this.imageData))

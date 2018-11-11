@@ -115,7 +115,7 @@ module.exports = ":host {\r\n    display: block;\r\n    padding-left: 1%;\r\n}\r
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"main-form\">\n    <form enctype=\"application/x-www-form-urlencoded\" (submit)=\"onSubmit($event, form)\" #form>\n      <div class=\"form-check\">\n          <label class=\"form-check-label\">\n            <input class=\"form-check-input\" name=\"one\" type=\"checkbox\" [(ngModel)]=\"inOne\" [ngModelOptions]=\"{standalone: true}\">\n              Загрузить всё в одну категорию ?\n          </label>\n      </div>\n      <div class=\"form-group\" *ngIf=\"inOne\">\n        <label>Выберите категорию</label>\n        <select name=\"category\" class=\"form-control\" [(ngModel)]=\"oneCategory\" [ngModelOptions]=\"{standalone: true}\">\n          <option selected disabled>Choose category</option>\n          <option *ngFor=\"let category of categories\">{{category.name}}</option>\n        </select>\n      </div>\n      <div class=\"form-group\">\n        <input type=\"file\" class=\"form-control-file\" multiple name=\"images\" (change)=\"onChange(inputFiles)\" #inputFiles required>\n      </div>\n      <button type=\"submit\" class=\"btn btn-primary\">Post</button>\n    </form>\n  </div>\n  \n  <div>\n    <div *ngFor=\"let file of imagesList\">\n      <app-image-item [inOne]=\"{inOne: inOne, category: oneCategory}\" [categories]=\"categories\" [file]=\"file\" (selected)=\"onImgSelect($event)\"></app-image-item>\n    </div>\n  </div>\n"
+module.exports = "<div class=\"main-form\">\n    <form enctype=\"application/x-www-form-urlencoded\" (submit)=\"onSubmit($event, form)\" #form>\n      <div class=\"form-check\">\n          <label class=\"form-check-label\">\n            <input class=\"form-check-input\" type=\"checkbox\" [(ngModel)]=\"inOne\" [ngModelOptions]=\"{standalone: true}\">\n              Загрузить всё в одну категорию ?\n          </label>\n      </div>\n      <div class=\"form-group\" *ngIf=\"inOne\">\n        <label>Выберите категорию</label>\n        <select class=\"form-control\" [(ngModel)]=\"oneCategory\" [ngModelOptions]=\"{standalone: true}\">\n          <option selected disabled>Choose category</option>\n          <option *ngFor=\"let category of categories\">{{category.name}}</option>\n        </select>\n      </div>\n      <div class=\"form-group\">\n        <input type=\"file\" class=\"form-control-file\" multiple name=\"images\" (change)=\"onChange(inputFiles)\" #inputFiles required>\n      </div>\n      <button type=\"submit\" class=\"btn btn-primary\">Post</button>\n    </form>\n  </div>\n  \n  <div>\n    <div *ngFor=\"let file of imagesList\">\n      <app-image-item [inOne]=\"{inOne: inOne, category: oneCategory}\" [categories]=\"categories\" [file]=\"file\" (selected)=\"onImgSelect($event)\"></app-image-item>\n    </div>\n  </div>\n"
 
 /***/ }),
 
@@ -131,6 +131,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddImagesComponent", function() { return AddImagesComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _services_service_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/service.service */ "./src/app/services/service.service.ts");
+/* harmony import */ var _tag__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./tag */ "./src/app/admin/add-images/tag.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -142,6 +143,7 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 };
 
 
+
 var AddImagesComponent = /** @class */ (function () {
     function AddImagesComponent(service) {
         var _this = this;
@@ -150,20 +152,23 @@ var AddImagesComponent = /** @class */ (function () {
         this.imageData = Object.create(null);
         this.service.getCategories().subscribe(function (data) {
             if (data.success) {
-                _this.categories = data.categories;
+                _this.categories = data.categories.map(function (categ) {
+                    categ.tags = categ.tags.map(function (tag) { return new _tag__WEBPACK_IMPORTED_MODULE_2__["Tag"](tag); });
+                    return categ;
+                });
             }
         });
     }
     AddImagesComponent.prototype.ngOnInit = function () {
     };
     AddImagesComponent.prototype.onSubmit = function (e, form) {
+        var _this = this;
         e.preventDefault();
         var data = new FormData(form);
         if (this.inOne) {
             for (var image in this.imageData) {
-                delete this.imageData[image]['category'];
+                this.imageData[image]['category'] = this.categories.find(function (categ) { return categ.name === _this.oneCategory; }).id;
             }
-            data.set('category', this.categories.find(function (categ) { return categ.name === data.get('category'); }).id);
         }
         ;
         for (var image in this.imageData) {
@@ -272,7 +277,7 @@ var ImageItemComponent = /** @class */ (function () {
     };
     ImageItemComponent.prototype.ngOnInit = function () {
         var _this = this;
-        if (this.inOne.inOne) {
+        if (this.inOne.inOne && this.inOne.category) {
             this.tags = this.categories.find(function (categ) { return categ.name === _this.inOne.category; }).tags;
         }
         else {
@@ -313,6 +318,30 @@ var ImageItemComponent = /** @class */ (function () {
         __metadata("design:paramtypes", [])
     ], ImageItemComponent);
     return ImageItemComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/admin/add-images/tag.ts":
+/*!*****************************************!*\
+  !*** ./src/app/admin/add-images/tag.ts ***!
+  \*****************************************/
+/*! exports provided: Tag */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Tag", function() { return Tag; });
+var Tag = /** @class */ (function () {
+    function Tag(value, readonly) {
+        if (readonly === void 0) { readonly = true; }
+        this.value = value;
+        this.display = value;
+        this.readonly = readonly;
+    }
+    return Tag;
 }());
 
 
@@ -594,7 +623,7 @@ var ServiceService = /** @class */ (function () {
     }
     ServiceService.prototype.postImages = function (data) {
         console.log('service', data);
-        return this.http.post(this.apiImageUrl + "/upload", data, {
+        return this.http.post(this.apiImageUrl + "upload", data, {
             headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
         });
     };

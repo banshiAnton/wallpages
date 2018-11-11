@@ -1,7 +1,11 @@
 const path = require('path');
 const fs = require('fs');
 
-const categoryGetRes = require('../funcs').categoryGetRes;
+const { categoryGetRes, buildSaveFiles, saveImages } = require('../funcs');
+
+const fspWrite = require('../funcs').fspWrite;
+
+const { parseFilesData, groupFileDataToFiles } = require('../middleware');
 
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('wallpages', 'root', '', {
@@ -46,13 +50,20 @@ router.get('/', function (req, res, next) {
     })
 });
 
-router.post('/upload', function(req, res, next) {
-    console.log(req.body);
-    req.body.filesData = JSON.parse(req.body.filesData);
-    next();
-}, function (req, res, next) {
-    console.log('Work!', req.body, req.files);
-    res.json({success: true});
+router.post('/upload', parseFilesData, groupFileDataToFiles, function (req, res, next) {
+    let errors = [];
+
+    saveImages(path.join(__dirname, `../public/images`), errors, req.files.images, Images)
+    .then(data => {
+        console.log('End', data);
+        res.json({success: true, errors, data});
+    })
+    .catch(err => {
+        console.log('Final error', err);
+        res.json({success: false, errors});
+    })
+
+    //res.json({success: true});
 });
 
 router.get('/categories', function(req, res, next) {

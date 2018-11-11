@@ -12,7 +12,7 @@ export class ServiceService {
 
   postImages(data) {
     console.log('service', data);
-    return this.http.post(`${this.apiImageUrl}/upload`, data, {
+    return this.http.post(`${this.apiImageUrl}upload`, data, {
       headers: new HttpHeaders()
     })
   }
