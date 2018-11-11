@@ -10,7 +10,7 @@ let groupFileDataToFiles = function(req, res, next) {
     for(let file of req.files.images) {
         file.category = req.body.filesData[file.name].category;
         file.tags = req.body.filesData[file.name].tags;
-        file.name = Date.now() + "" + file.name;
+        file.name = Date.now() + '_' + file.name;
         file.name.trim();
     }
 

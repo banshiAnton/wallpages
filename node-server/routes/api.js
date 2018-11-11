@@ -49,16 +49,14 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/upload', parseFilesData, groupFileDataToFiles, function (req, res, next) {
-    let errors = [];
-
-    saveImages(path.join(__dirname, `../public/images`), errors, req.files.images, Images)
-    .then(data => {
-        console.log('End', data);
-        res.json({success: true, errors, data});
+    saveImages(path.join(__dirname, `../public/images`), req.files.images, Images)
+    .then(results => {
+        console.log('End', results);
+        res.json({success: true, results});
     })
-    .catch(err => {
-        console.log('Final error', err);
-        res.json({success: false, errors});
+    .catch(error => {
+        console.log('Final error', error);
+        res.json({success: false, error});
     })
 });
 

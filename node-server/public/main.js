@@ -175,6 +175,7 @@ var AddImagesComponent = /** @class */ (function () {
             this.imageData[image]['tags'] = this.imageData[image]['tags'].map(function (tag) { return tag.value; });
         }
         data.append('filesData', JSON.stringify(this.imageData));
+        console.log(this.imageData);
         this.service.postImages(data).subscribe(function (data) {
             console.log(data);
         });
