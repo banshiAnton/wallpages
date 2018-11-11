@@ -7,8 +7,11 @@
           </label>
       </div>
       <div class="form-group" *ngIf="inOne">
-          <label>Category</label>
-          <input type="text" name="oneCategory" class="form-control" placeholder="type category">
+        <label>Выберите категорию</label>
+        <select name="category" class="form-control" [(ngModel)]="oneCategory" [ngModelOptions]="{standalone: true}">
+          <option selected disabled>Choose category</option>
+          <option *ngFor="let category of categories">{{category.name}}</option>
+        </select>
       </div>
       <div class="form-group">
         <input type="file" class="form-control-file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles required>
@@ -19,6 +22,6 @@
   
   <div>
     <div *ngFor="let file of imagesList">
-      <app-image-item [inOne]="inOne" [categories]="categories" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
+      <app-image-item [inOne]="{inOne: inOne, category: oneCategory}" [categories]="categories" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
     </div>
   </div>

@@ -115,7 +115,7 @@ module.exports = ":host {\r\n    display: block;\r\n    padding-left: 1%;\r\n}\r
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"main-form\">\n    <form enctype=\"application/x-www-form-urlencoded\" (submit)=\"onSubmit($event, form)\" #form>\n      <div class=\"form-check\">\n          <label class=\"form-check-label\">\n            <input class=\"form-check-input\" name=\"one\" type=\"checkbox\" [(ngModel)]=\"inOne\" [ngModelOptions]=\"{standalone: true}\">\n              Загрузить всё в одну категорию ?\n          </label>\n      </div>\n      <div class=\"form-group\" *ngIf=\"inOne\">\n          <label>Category</label>\n          <input type=\"text\" name=\"oneCategory\" class=\"form-control\" placeholder=\"type category\">\n      </div>\n      <div class=\"form-group\">\n        <input type=\"file\" class=\"form-control-file\" multiple name=\"images\" (change)=\"onChange(inputFiles)\" #inputFiles required>\n      </div>\n      <button type=\"submit\" class=\"btn btn-primary\">Post</button>\n    </form>\n  </div>\n  \n  <div>\n    <div *ngFor=\"let file of imagesList\">\n      <app-image-item [inOne]=\"inOne\" [categories]=\"categories\" [file]=\"file\" (selected)=\"onImgSelect($event)\"></app-image-item>\n    </div>\n  </div>\n"
+module.exports = "<div class=\"main-form\">\n    <form enctype=\"application/x-www-form-urlencoded\" (submit)=\"onSubmit($event, form)\" #form>\n      <div class=\"form-check\">\n          <label class=\"form-check-label\">\n            <input class=\"form-check-input\" name=\"one\" type=\"checkbox\" [(ngModel)]=\"inOne\" [ngModelOptions]=\"{standalone: true}\">\n              Загрузить всё в одну категорию ?\n          </label>\n      </div>\n      <div class=\"form-group\" *ngIf=\"inOne\">\n        <label>Выберите категорию</label>\n        <select name=\"category\" class=\"form-control\" [(ngModel)]=\"oneCategory\" [ngModelOptions]=\"{standalone: true}\">\n          <option selected disabled>Choose category</option>\n          <option *ngFor=\"let category of categories\">{{category.name}}</option>\n        </select>\n      </div>\n      <div class=\"form-group\">\n        <input type=\"file\" class=\"form-control-file\" multiple name=\"images\" (change)=\"onChange(inputFiles)\" #inputFiles required>\n      </div>\n      <button type=\"submit\" class=\"btn btn-primary\">Post</button>\n    </form>\n  </div>\n  \n  <div>\n    <div *ngFor=\"let file of imagesList\">\n      <app-image-item [inOne]=\"{inOne: inOne, category: oneCategory}\" [categories]=\"categories\" [file]=\"file\" (selected)=\"onImgSelect($event)\"></app-image-item>\n    </div>\n  </div>\n"
 
 /***/ }),
 
@@ -163,6 +163,7 @@ var AddImagesComponent = /** @class */ (function () {
             for (var image in this.imageData) {
                 delete this.imageData[image]['category'];
             }
+            data.set('category', this.categories.find(function (categ) { return categ.name === data.get('category'); }).id);
         }
         ;
         for (var image in this.imageData) {
@@ -230,7 +231,7 @@ module.exports = ".img-item {\r\n    padding: 1% 0 1% 1%;\r\n    border: 2px sol
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"img-item row\">\n  <div class=\"col-3\">\n    <p>File name: {{file.fileName}}</p>\n    <img src=\"{{file.src}}\" alt=\"\" class=\"img-fluid\">\n  </div>\n  <div class=\"col-5 mr-auto\">\n    <div *ngIf=\"!inOne\">\n      <label>Выберите категорию</label>\n      <select class=\"form-control\" (change)=\"onSelect(category.value)\" #category>\n        <option selected disabled>Choose category</option>\n        <option *ngFor=\"let category of categories\">{{category.name}}</option>\n      </select>\n    </div>\n    <div>\n      <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\" (onAdd)=\"onTagChange()\" (onRemove)=\"onTagChange()\"></tag-input>\n    </div>\n  </div>\n</div>"
+module.exports = "<div class=\"img-item row\">\n  <div class=\"col-3\">\n    <p>File name: {{file.fileName}}</p>\n    <img src=\"{{file.src}}\" alt=\"\" class=\"img-fluid\">\n  </div>\n  <div class=\"col-5 mr-auto\">\n    <div *ngIf=\"!inOne.inOne\">\n      <label>Выберите категорию</label>\n      <select class=\"form-control\" (change)=\"onSelect(category.value)\" #category>\n        <option selected disabled>Choose category</option>\n        <option *ngFor=\"let category of categories\">{{category.name}}</option>\n      </select>\n    </div>\n    <div>\n      <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\" (onAdd)=\"onTagChange()\" (onRemove)=\"onTagChange()\"></tag-input>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -260,7 +261,23 @@ var ImageItemComponent = /** @class */ (function () {
         this.tags = [];
         this.selected = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
     }
+    ImageItemComponent.prototype.ngOnChanges = function () {
+        var _this = this;
+        if (this.inOne.inOne && this.inOne.category) {
+            this.tags = this.categories.find(function (categ) { return categ.name === _this.inOne.category; }).tags;
+        }
+        else {
+            this.tags = [];
+        }
+    };
     ImageItemComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        if (this.inOne.inOne) {
+            this.tags = this.categories.find(function (categ) { return categ.name === _this.inOne.category; }).tags;
+        }
+        else {
+            this.tags = [];
+        }
     };
     ImageItemComponent.prototype.onSelect = function (category) {
         this.tags = this.categories.find(function (categ) { return categ.name === category; }).tags;

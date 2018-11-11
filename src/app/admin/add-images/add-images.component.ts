@@ -14,6 +14,8 @@ export class AddImagesComponent implements OnInit {
 
   inOne;
 
+  oneCategory;
+
   categories;
 
   constructor(private service: ServiceService) { 
@@ -32,6 +34,7 @@ export class AddImagesComponent implements OnInit {
     let data = new FormData(form);
     if(this.inOne) { 
       for(let image in this.imageData) { delete  this.imageData[image]['category'] }
+      data.set('category', this.categories.find(categ => categ.name === data.get('category')).id)
     };
     for(let image in this.imageData) { this.imageData[image]['tags'] = this.imageData[image]['tags'].map(tag => tag.value); }
     data.append('filesData', JSON.stringify(this.imageData))

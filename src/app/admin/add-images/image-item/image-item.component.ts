@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 
 @Component({
   selector: 'app-image-item',
   templateUrl: './image-item.component.html',
   styleUrls: ['./image-item.component.css']
 })
-export class ImageItemComponent implements OnInit {
+export class ImageItemComponent implements OnInit, OnChanges {
 
   @Input() file;
   @Input() inOne;
@@ -18,7 +18,20 @@ export class ImageItemComponent implements OnInit {
 
   constructor() { }
 
+  ngOnChanges() {
+    if(this.inOne.inOne && this.inOne.category) {
+      this.tags = this.categories.find(categ => categ.name === this.inOne.category).tags;
+    } else {
+      this.tags = [];
+    }
+  }
+
   ngOnInit() {
+    if(this.inOne.inOne) {
+      this.tags = this.categories.find(categ => categ.name === this.inOne.category).tags;
+    } else {
+      this.tags = [];
+    }
   }
 
   onSelect(category) {
