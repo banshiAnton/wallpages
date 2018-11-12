@@ -24,6 +24,7 @@
     "core-js": "^2.5.4",
     "express": "^4.16.4",
     "express-fileupload": "^1.0.0",
+    "express-validator": "^5.3.0",
     "mysql": "^2.16.0",
     "mysql2": "^1.6.4",
     "ng4-tag-input": "^1.0.5",

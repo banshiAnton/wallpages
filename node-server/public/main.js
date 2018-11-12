@@ -165,15 +165,17 @@ var AddImagesComponent = /** @class */ (function () {
         var _this = this;
         e.preventDefault();
         var data = new FormData(form);
-        if (this.inOne) {
+        if (this.inOne && this.oneCategory) {
+            console.log(this.oneCategory);
             for (var image in this.imageData) {
                 this.imageData[image]['category'] = this.categories.find(function (categ) { return categ.name === _this.oneCategory; }).id;
             }
         }
         ;
         for (var image in this.imageData) {
-            this.imageData[image]['tags'] = this.imageData[image]['tags'].map(function (tag) { return tag.value; });
-        }
+            console.log(this.imageData[image]['tags']);
+            this.imageData[image]['tags'] = this.imageData[image]['tags'].map(function (tag) { return tag ? tag.value : ''; });
+        } //this.imageData[image]['tags'] = this.imageData[image]['tags'].length ? this.imageData[image]['tags'].map(tag => tag.value) : [];
         data.append('filesData', JSON.stringify(this.imageData));
         this.service.postImages(data).subscribe(function (data) {
             console.log(data);

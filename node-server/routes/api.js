@@ -85,6 +85,7 @@ router.post('/add/category', function(req, res, next) {
         //         res.json({success: true, name: result.get('name'), tags: result.get('tags')});
         //     })
         // });
+        res.json({success: true, name: result.get('name'), tags: result.get('tags')});
     }).catch(err => {
         console.log('Error category', err.errors[0]);
         res.json({success: false, error: err.errors[0]});

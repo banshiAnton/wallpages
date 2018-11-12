@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path')
 const writeFile = require('util').promisify(fs.writeFile);
+const sharp = require('sharp');
 
 let categoryGetRes = function(seqRes, cb) {
     let res = {};
@@ -24,6 +25,8 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
             res();
         })
         .then(() => writeFile(path.join(pathToFolder, '/', image.name), image.data))
+        .then(() => sharp(image.data).metadata())
+        .then(metadata => sharp(image.data).resize(Math.round(metadata.width / 4), Math.round(metadata.height / 4)).toFile(path.join(pathToFolder, '/small/', image.name)))
         .then(() => ImagesDb.create({file: image.name, tags: image.tags, category_id: image.category}))
         .then(data => {
             console.log('File: ', image.name, ' saved ', data);
