@@ -48,11 +48,14 @@ export class AddImagesComponent implements OnInit {
   }
 
   onChange(inputFiles) {
+    this.imagesList = [];
     console.log(inputFiles.files);//FileReader
     for(let file of inputFiles.files) {//readAsDataURL
       let reader = new FileReader();
       reader.addEventListener("load",  () => {
         this.imagesList.push({src: reader.result, fileName: file.name});
+        this.imageData[file.name] = Object.create(null);
+        this.imageData[file.name]['tags'] = [];
       }, false);
       reader.readAsDataURL(file);
     }

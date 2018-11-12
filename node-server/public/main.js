@@ -175,18 +175,20 @@ var AddImagesComponent = /** @class */ (function () {
             this.imageData[image]['tags'] = this.imageData[image]['tags'].map(function (tag) { return tag.value; });
         }
         data.append('filesData', JSON.stringify(this.imageData));
-        console.log(this.imageData);
         this.service.postImages(data).subscribe(function (data) {
             console.log(data);
         });
     };
     AddImagesComponent.prototype.onChange = function (inputFiles) {
         var _this = this;
+        this.imagesList = [];
         console.log(inputFiles.files); //FileReader
         var _loop_1 = function (file) {
             var reader = new FileReader();
             reader.addEventListener("load", function () {
                 _this.imagesList.push({ src: reader.result, fileName: file.name });
+                _this.imageData[file.name] = Object.create(null);
+                _this.imageData[file.name]['tags'] = [];
             }, false);
             reader.readAsDataURL(file);
         };

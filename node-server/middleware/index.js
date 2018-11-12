@@ -7,6 +7,8 @@ let groupFileDataToFiles = function(req, res, next) {
 
     console.log(req.body.filesData, req.files);
 
+    if(!Array.isArray(req.files.images)) req.files.images = [req.files.images];
+
     for(let file of req.files.images) {
         file.category = req.body.filesData[file.name].category;
         file.tags = req.body.filesData[file.name].tags;

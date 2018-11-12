@@ -18,15 +18,21 @@ let categoryGetRes = function(seqRes, cb) {
 
 
 let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
-    return writeFile(path.join(pathToFolder, '/', image.name), image.data)
-            .then(() => ImagesDb.create({file: image.name, tags: image.tags, category_id: image.category}))
-            .then(data => {
-                console.log('File: ', image.name, ' saved ', data);
-                return {res: data.dataValues, success: true};
-            })
-            .catch(error => {
-                return {error, success: false}
-            })
+
+    return new Promise((res, rej) => {
+            if(!image.mimetype.match(/^image\//)) throw new Error('Type must be image');
+            res();
+        })
+        .then(() => writeFile(path.join(pathToFolder, '/', image.name), image.data))
+        .then(() => ImagesDb.create({file: image.name, tags: image.tags, category_id: image.category}))
+        .then(data => {
+            console.log('File: ', image.name, ' saved ', data);
+            return {res: data.dataValues, success: true};
+        })
+        .catch(error => {
+            console.log('error cahtch', error)
+            return {error: error.message, success: false}
+        })
 }
 
 let saveImages = async function(pathToFolder, imagesArr, ImagesDb) {
