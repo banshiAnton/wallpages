@@ -1,13 +1,30 @@
 <div>
-  <form (submit)="onSubmit(category.value)">
     <div class="form-group">
         <label>Имя категории</label>
-        <input type="text" class="form-control" placeholder="Имя категории" #category>
+        <input type="text" [(ngModel)]="addName" class="form-control" placeholder="Имя категории">
     </div>
     <div class="form-group">
         <label>Теги категории</label>
-        <tag-input [(ngModel)]="tags" [separatorKeys]="[' ']" [ngModelOptions]="{standalone: true}"></tag-input>
+        <tag-input [(ngModel)]="tags" [separatorKeys]="[' ']"></tag-input>
     </div>
-    <button type="submit" class="btn btn-primary">Добавить Категорию</button>
-  </form>
+    <button type="submit" (click)="onAdd()" class="btn btn-primary">Добавить Категорию</button>
+</div>
+
+<div>
+    <div class="form-group">
+        <label>Выберите категорию</label>
+        <select class="form-control" (change)="onSelect(categ.value)" #categ>
+          <option selected disabled>Choose category</option>
+          <option *ngFor="let category of categories">{{category.name}}</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Имя категории</label>
+        <input type="text" [(ngModel)]="selected.name" class="form-control" placeholder="Имя категории">
+    </div>
+    <div class="form-group">
+      <label>Теги категории</label>
+      <tag-input [(ngModel)]="selected.tags" [separatorKeys]="[' ']"></tag-input>
+    </div>
+    <button type="button" (click)="onUpdata()" class="btn btn-primary">Обновить категорию</button>
 </div>

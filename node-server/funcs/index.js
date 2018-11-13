@@ -5,8 +5,7 @@ const sharp = require('sharp');
 
 let categoryGetRes = function(seqRes, cb) {
     let res = {};
-    res.count = seqRes.count;
-    res.categories = seqRes.rows.map(category => {
+    res.categories = seqRes.map(category => {
         return {
             id: category.get('id'),
             name: category.get('name'), 

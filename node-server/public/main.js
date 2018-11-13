@@ -41,7 +41,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div>\n  <form (submit)=\"onSubmit(category.value)\">\n    <div class=\"form-group\">\n        <label>Имя категории</label>\n        <input type=\"text\" class=\"form-control\" placeholder=\"Имя категории\" #category>\n    </div>\n    <div class=\"form-group\">\n        <label>Теги категории</label>\n        <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\" [ngModelOptions]=\"{standalone: true}\"></tag-input>\n    </div>\n    <button type=\"submit\" class=\"btn btn-primary\">Добавить Категорию</button>\n  </form>\n</div>\n"
+module.exports = "<div>\n    <div class=\"form-group\">\n        <label>Имя категории</label>\n        <input type=\"text\" [(ngModel)]=\"addName\" class=\"form-control\" placeholder=\"Имя категории\">\n    </div>\n    <div class=\"form-group\">\n        <label>Теги категории</label>\n        <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\"></tag-input>\n    </div>\n    <button type=\"submit\" (click)=\"onAdd()\" class=\"btn btn-primary\">Добавить Категорию</button>\n</div>\n\n<div>\n    <div class=\"form-group\">\n        <label>Выберите категорию</label>\n        <select class=\"form-control\" (change)=\"onSelect(categ.value)\" #categ>\n          <option selected disabled>Choose category</option>\n          <option *ngFor=\"let category of categories\">{{category.name}}</option>\n        </select>\n    </div>\n    <div class=\"form-group\">\n        <label>Имя категории</label>\n        <input type=\"text\" [(ngModel)]=\"selected.name\" class=\"form-control\" placeholder=\"Имя категории\">\n    </div>\n    <div class=\"form-group\">\n      <label>Теги категории</label>\n      <tag-input [(ngModel)]=\"selected.tags\" [separatorKeys]=\"[' ']\"></tag-input>\n    </div>\n    <button type=\"button\" (click)=\"onUpdata()\" class=\"btn btn-primary\">Обновить категорию</button>\n</div>"
 
 /***/ }),
 
@@ -57,6 +57,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddCategoryComponent", function() { return AddCategoryComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _services_service_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/service.service */ "./src/app/services/service.service.ts");
+/* harmony import */ var _tag__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../tag */ "./src/app/admin/tag.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -68,18 +69,50 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 };
 
 
+
 var AddCategoryComponent = /** @class */ (function () {
     function AddCategoryComponent(service) {
         this.service = service;
+        this.tags = [];
+        this.categories = [];
+        this.selected = { name: null, tags: [] };
     }
     AddCategoryComponent.prototype.ngOnInit = function () {
+        this.getCaterories();
     };
-    AddCategoryComponent.prototype.onSubmit = function (category) {
-        console.log(this.tags, category);
-        this.service.addCategory(category, this.tags.map(function (item) {
+    AddCategoryComponent.prototype.getCaterories = function () {
+        var _this = this;
+        this.service.getCategories().subscribe(function (data) {
+            if (data.success) {
+                _this.categories = data.categories.map(function (categ) {
+                    categ.tags = categ.tags.map(function (tag) {
+                        return new _tag__WEBPACK_IMPORTED_MODULE_2__["Tag"](tag, false);
+                    });
+                    return categ;
+                });
+            }
+        });
+    };
+    AddCategoryComponent.prototype.onAdd = function () {
+        console.log(this.tags, this.addName);
+        this.service.addCategory(this.addName, this.tags.map(function (item) {
             return item.value;
         })).subscribe(function (data) {
             console.log(data);
+            if (data.success)
+                location.reload();
+        });
+    };
+    AddCategoryComponent.prototype.onSelect = function (category) {
+        console.log('Selected', category);
+        this.selected = Object.assign({}, this.categories.find(function (categ) { return categ.name === category; }));
+        console.log(this.selected);
+    };
+    AddCategoryComponent.prototype.onUpdata = function () {
+        console.log('On updata', this.selected);
+        this.service.updateCategory(this.selected).subscribe(function (data) {
+            console.log(data);
+            if (data.success) { } //location.reload();
         });
     };
     AddCategoryComponent = __decorate([
@@ -131,7 +164,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddImagesComponent", function() { return AddImagesComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _services_service_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/service.service */ "./src/app/services/service.service.ts");
-/* harmony import */ var _tag__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./tag */ "./src/app/admin/add-images/tag.ts");
+/* harmony import */ var _tag__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../tag */ "./src/app/admin/tag.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -329,30 +362,6 @@ var ImageItemComponent = /** @class */ (function () {
 
 /***/ }),
 
-/***/ "./src/app/admin/add-images/tag.ts":
-/*!*****************************************!*\
-  !*** ./src/app/admin/add-images/tag.ts ***!
-  \*****************************************/
-/*! exports provided: Tag */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Tag", function() { return Tag; });
-var Tag = /** @class */ (function () {
-    function Tag(value, readonly) {
-        if (readonly === void 0) { readonly = true; }
-        this.value = value;
-        this.display = value;
-        this.readonly = readonly;
-    }
-    return Tag;
-}());
-
-
-
-/***/ }),
-
 /***/ "./src/app/admin/admin.component.css":
 /*!*******************************************!*\
   !*** ./src/app/admin/admin.component.css ***!
@@ -414,6 +423,30 @@ var AdminComponent = /** @class */ (function () {
         __metadata("design:paramtypes", [_services_service_service__WEBPACK_IMPORTED_MODULE_1__["ServiceService"]])
     ], AdminComponent);
     return AdminComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/admin/tag.ts":
+/*!******************************!*\
+  !*** ./src/app/admin/tag.ts ***!
+  \******************************/
+/*! exports provided: Tag */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Tag", function() { return Tag; });
+var Tag = /** @class */ (function () {
+    function Tag(value, readonly) {
+        if (readonly === void 0) { readonly = true; }
+        this.value = value;
+        this.display = value;
+        this.readonly = readonly;
+    }
+    return Tag;
 }());
 
 
@@ -610,6 +643,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ServiceService", function() { return ServiceService; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -619,6 +653,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 
 var ServiceService = /** @class */ (function () {
@@ -639,7 +674,12 @@ var ServiceService = /** @class */ (function () {
         });
     };
     ServiceService.prototype.getCategories = function () {
-        return this.http.get(this.apiImageUrl + "/categories");
+        return this.http.get(this.apiImageUrl + "categories").pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function (item) { return console.log('Resp', item); }));
+    };
+    ServiceService.prototype.updateCategory = function (category) {
+        return this.http.put(this.apiImageUrl + "categories/" + category.id, JSON.stringify({ name: category.name, tags: category.tags.map(function (tag) { return tag.value; }) }), {
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json' })
+        });
     };
     ServiceService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({

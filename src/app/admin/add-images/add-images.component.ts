@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ServiceService } from '../../services/service.service';
 
-import { Tag } from './tag';
+import { Tag } from '../tag';
 
 @Component({
   selector: 'app-add-images',

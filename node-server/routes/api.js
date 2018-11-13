@@ -61,9 +61,10 @@ router.post('/upload', parseFilesData, groupFileDataToFiles, function (req, res,
 });
 
 router.get('/categories', function(req, res, next) {
-    Categories.findAndCountAll().then(result => {
+    Categories.findAll().then(result => {
         categoryGetRes(result, (resultForm) => {
             console.log(resultForm);
+            resultForm.categories.forEach(item => console.log(item.tags))
             res.json(resultForm);
         })
     }).catch(err => {
@@ -90,6 +91,26 @@ router.post('/add/category', function(req, res, next) {
         console.log('Error category', err.errors[0]);
         res.json({success: false, error: err.errors[0]});
     }) 
+});
+
+router.put('/categories/:id', function(req, res, next) {
+    console.log(req.params.id, req.body);
+    Categories.findById(req.params.id)
+    .then(categ => {
+        //console.log(categ);
+        return categ.update({
+            name: req.body.name,
+            tags: req.body.tags
+        })
+    }).then(data => {
+        console.log('Updated', data);
+        res.json({success: true, result: {
+            id: data.get('id'),
+            name: data.get('name'), 
+            tags: data.get('tags')
+        }})
+    })
+    .catch(error => res.json({success: false, error}))
 });
 
 module.exports = router;
