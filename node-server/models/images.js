@@ -32,6 +32,17 @@ module.exports = (sequelize, DataTypes) => {
             },
             allowNull: false
         }
+    }, {
+        getterMethods: {
+            clientData() {
+                return {
+                    id: this.get('id'),
+                    file: this.get('file'), 
+                    tags: this.get('tags'),
+                    category_id: this.get('category_id')
+                }
+            }
+        }
     });
 
     return Images;

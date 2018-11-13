@@ -15,6 +15,9 @@ const sequelize = new Sequelize('wallpages', 'root', '', {
 const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
 const Images = sequelize.import(path.join(__dirname, '../models/images'));
 
+Categories.hasMany(Images, {foreignKey: 'category_id', targetKey: 'id'})
+Images.belongsTo(Categories, {foreignKey: 'category_id', targetKey: 'id'});
+
 const router = require('express').Router();
 
 //CREATE TABLE `wallpages`.`categories` ( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `name` VARCHAR(50) NOT NULL , `tags` TEXT NOT NULL , PRIMARY KEY (`id`), UNIQUE `category_name_uq` (`name`(50))) ENGINE = InnoDB;
@@ -25,27 +28,45 @@ const router = require('express').Router();
 router.get('/', function (req, res, next) {
     console.log(req.query);
 
-    fs.readdir(path.join(__dirname, `../public/images/${req.query.category}/`), function(err, results) {
+    //const pathToStatics = path.join(__dirname, `../public/images/`);
 
-        if(err) return res.json({success: false});
+    const pathToStatics = `/images/`;
 
-        results.pop();//удаляем папку small
-
-        let response = [];
-        let i = req.query.offset || 0;
-
-        if(i >= results.length) return res.json({success: false});
-
-        for(let image of results.slice(req.query.offset, req.query.count || 10)) {
-            response.push({
-                url: `/${req.query.category}/${image}`,
-                minimizeUrl: `/${req.query.category}/small/${image}`,
-                index: ++i
+    Categories.findById( +req.query.category, { include: [{model: Images, required: true}], offset: +req.query.offset, limit: +req.query.count})
+    .then(result => {
+        let arr = [];
+         console.log(result.get('id')); result.get('images').forEach(item => {
+            console.log(item.dataValues);
+            arr.push({
+                id: item.get('id'),
+                url: `${pathToStatics}${item.get('file')}`,
+                minimizeUrl: `${pathToStatics}small/${item.get('file')}`
             })
-        }
+        })
+        res.json({success: true, results: arr});
+    }).catch(err => console.log('Error', err));
 
-        res.json({success: true, items: response});
-    })
+    // fs.readdir(path.join(__dirname, `../public/images/${req.query.category}/`), function(err, results) {
+
+    //     if(err) return res.json({success: false});
+
+    //     results.pop();//удаляем папку small
+
+    //     let response = [];
+    //     let i = req.query.offset || 0;
+
+    //     if(i >= results.length) return res.json({success: false});
+
+    //     for(let image of results.slice(req.query.offset, req.query.count || 10)) {
+    //         response.push({
+    //             url: `/${req.query.category}/${image}`,
+    //             minimizeUrl: `/${req.query.category}/small/${image}`,
+    //             index: ++i
+    //         })
+    //     }
+
+    //     res.json({success: true, items: response});
+    // })
 });
 
 router.post('/upload', parseFilesData, groupFileDataToFiles, function (req, res, next) {
@@ -68,8 +89,8 @@ router.get('/categories', function(req, res, next) {
             res.json(resultForm);
         })
     }).catch(err => {
-        console.log('Error category get', err.errors[0]);
-        res.json({success: false, error: err.errors[0]});
+        console.log('Error category get', err);
+        res.json({success: false, error: err});
     })
 });
 
@@ -104,11 +125,7 @@ router.put('/categories/:id', function(req, res, next) {
         })
     }).then(data => {
         console.log('Updated', data);
-        res.json({success: true, result: {
-            id: data.get('id'),
-            name: data.get('name'), 
-            tags: data.get('tags')
-        }})
+        res.json({success: true, result: data.get('clientData')})
     })
     .catch(error => res.json({success: false, error}))
 });

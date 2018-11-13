@@ -6,11 +6,7 @@ const sharp = require('sharp');
 let categoryGetRes = function(seqRes, cb) {
     let res = {};
     res.categories = seqRes.map(category => {
-        return {
-            id: category.get('id'),
-            name: category.get('name'), 
-            tags: category.get('tags')
-        }
+        return category.get('clientData');
     });
     res.success = true;
     cb(res);

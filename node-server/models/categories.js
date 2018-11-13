@@ -20,6 +20,16 @@ module.exports = (sequelize, DataTypes) => {
                 return this.getDataValue('tags').split(' ');
             }
         }
+    }, {
+        getterMethods: {
+            clientData() {
+                return {
+                    id: this.get('id'),
+                    name: this.get('name'), 
+                    tags: this.get('tags')
+                }
+            }
+        }
     });
 
     return Categories;
