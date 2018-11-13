@@ -6,6 +6,8 @@ const sequelize = new Sequelize('wallpages', 'root', '', {
     port: 3306,
 });
 
+
+
 const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
 const Images = sequelize.import(path.join(__dirname, '../models/images'));
 

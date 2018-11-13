@@ -12,6 +12,8 @@ const sequelize = new Sequelize('wallpages', 'root', '', {
     port: 3306,
 });
 
+const sequelizeBaseError = require('sequelize/lib/errors').BaseError;
+
 const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
 const Images = sequelize.import(path.join(__dirname, '../models/images'));
 
@@ -23,12 +25,10 @@ const router = require('express').Router();
 //CREATE TABLE `wallpages`.`categories` ( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `name` VARCHAR(50) NOT NULL , `tags` TEXT NOT NULL , PRIMARY KEY (`id`), UNIQUE `category_name_uq` (`name`(50))) ENGINE = InnoDB;
 //CREATE TABLE `wallpages`.`images` ( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `fileName` TEXT NOT NULL , `tags` TEXT NOT NULL , `category_id` INT UNSIGNED NOT NULL , `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 //ALTER TABLE `images` ADD CONSTRAINT `category_id_fk` FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-// api.images?category=test&count=10&offset=0
+// api.images?category=test&count=10&offset=0&tags[]=test&tags[]=pest
 
 router.get('/', function (req, res, next) {
     console.log(req.query);
-
-    //const pathToStatics = path.join(__dirname, `../public/images/`);
 
     const pathToStatics = `/images/`;
 
@@ -44,29 +44,7 @@ router.get('/', function (req, res, next) {
             })
         })
         res.json({success: true, results: arr});
-    }).catch(err => console.log('Error', err));
-
-    // fs.readdir(path.join(__dirname, `../public/images/${req.query.category}/`), function(err, results) {
-
-    //     if(err) return res.json({success: false});
-
-    //     results.pop();//удаляем папку small
-
-    //     let response = [];
-    //     let i = req.query.offset || 0;
-
-    //     if(i >= results.length) return res.json({success: false});
-
-    //     for(let image of results.slice(req.query.offset, req.query.count || 10)) {
-    //         response.push({
-    //             url: `/${req.query.category}/${image}`,
-    //             minimizeUrl: `/${req.query.category}/small/${image}`,
-    //             index: ++i
-    //         })
-    //     }
-
-    //     res.json({success: true, items: response});
-    // })
+    }).catch(err => next(err))
 });
 
 router.post('/upload', parseFilesData, groupFileDataToFiles, function (req, res, next) {
@@ -75,10 +53,7 @@ router.post('/upload', parseFilesData, groupFileDataToFiles, function (req, res,
         console.log('End', results);
         res.json({success: true, results});
     })
-    .catch(error => {
-        console.log('Final error', error);
-        res.json({success: false, error});
-    })
+    .catch(err => next(err))
 });
 
 router.get('/categories', function(req, res, next) {
@@ -88,30 +63,17 @@ router.get('/categories', function(req, res, next) {
             resultForm.categories.forEach(item => console.log(item.tags))
             res.json(resultForm);
         })
-    }).catch(err => {
-        console.log('Error category get', err);
-        res.json({success: false, error: err});
-    })
+    }).catch(err => next(err))
 });
 
 router.post('/add/category', function(req, res, next) {
     let name = req.body.name;
     let tags = req.body.tags;
-    console.log(name);
+    console.log(name, tags);
     Categories.create({name, tags}).then((result) => {
         console.log(result);
-        // fs.mkdir(path.join(__dirname, `../public/images/${name}/`), function() {
-        //     console.log(arguments);
-        //     fs.mkdir(path.join(__dirname, `../public/images/${name}/small`), function(err) {
-        //         console.log(arguments);
-        //         res.json({success: true, name: result.get('name'), tags: result.get('tags')});
-        //     })
-        // });
         res.json({success: true, name: result.get('name'), tags: result.get('tags')});
-    }).catch(err => {
-        console.log('Error category', err.errors[0]);
-        res.json({success: false, error: err.errors[0]});
-    }) 
+    }).catch(err => next(err))
 });
 
 router.put('/categories/:id', function(req, res, next) {
@@ -127,7 +89,7 @@ router.put('/categories/:id', function(req, res, next) {
         console.log('Updated', data);
         res.json({success: true, result: data.get('clientData')})
     })
-    .catch(error => res.json({success: false, error}))
+    .catch(error => next(error))
 });
 
 module.exports = router;
