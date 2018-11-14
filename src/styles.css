@@ -1,10 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
 body {
-    background-image: linear-gradient(to right, #1D2B64 , #F8CDDA);
+    background-image: linear-gradient(to right, #1D2B64 , #ff80ff);
 }
 
 tag-input input {
     background: transparent;
     border: none;
     color: white
+}
+
+body {
+    color: white;
+}
+
+label{
+    font-size: 1.7em;
 }

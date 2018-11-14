@@ -30,7 +30,7 @@ webpackEmptyAsyncContext.id = "./src/$$_lazy_route_resource lazy recursive";
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".form-block {\r\n    margin-bottom: 2%;\r\n    color: white;\r\n\r\n    /* background: transparent;\r\n    border: none; */\r\n}\r\n\r\n.form-block label{\r\n    font-size: 1.7em;\r\n}\r\n\r\n.form-block:first-child {\r\n    margin-top: 2%;\r\n}\r\n\r\n.form-block:last-child {\r\n    margin-bottom: 0;\r\n}"
+module.exports = ".form-block {\r\n    margin-bottom: 2%;\r\n}\r\n\r\n.form-block:first-child {\r\n    margin-top: 2%;\r\n}\r\n\r\n.form-block:last-child {\r\n    margin-bottom: 0;\r\n}"
 
 /***/ }),
 
@@ -137,7 +137,7 @@ var AddCategoryComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ":host {\r\n    display: block;\r\n    padding-left: 1%;\r\n}\r\n\r\n.main-form {\r\n    padding: 1% 1% 1% 0;\r\n}"
+module.exports = ":host {\r\n    display: block;\r\n    padding-left: 1%;\r\n}\r\n\r\n.main-form {\r\n    padding: 1% 1% 1% 0;\r\n}\r\n\r\ninput[type=\"checkbox\"] {\r\n    margin-top: 15px;\r\n}"
 
 /***/ }),
 
@@ -148,7 +148,7 @@ module.exports = ":host {\r\n    display: block;\r\n    padding-left: 1%;\r\n}\r
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"main-form\">\n    <form enctype=\"application/x-www-form-urlencoded\" (submit)=\"onSubmit($event, form)\" #form>\n      <div class=\"form-check\">\n          <label class=\"form-check-label\">\n            <input class=\"form-check-input\" type=\"checkbox\" [(ngModel)]=\"inOne\" [ngModelOptions]=\"{standalone: true}\">\n              Загрузить всё в одну категорию ?\n          </label>\n      </div>\n      <div class=\"form-group\" *ngIf=\"inOne\">\n        <label>Выберите категорию</label>\n        <select class=\"form-control\" [(ngModel)]=\"oneCategory\" [ngModelOptions]=\"{standalone: true}\">\n          <option selected disabled>Choose category</option>\n          <option *ngFor=\"let category of categories\">{{category.name}}</option>\n        </select>\n      </div>\n      <div class=\"form-group\">\n        <input type=\"file\" class=\"form-control-file\" multiple name=\"images\" (change)=\"onChange(inputFiles)\" #inputFiles required>\n      </div>\n      <button type=\"submit\" class=\"btn btn-primary\">Post</button>\n    </form>\n  </div>\n  \n  <div>\n    <div *ngFor=\"let file of imagesList\">\n      <app-image-item [inOne]=\"{inOne: inOne, category: oneCategory}\" [categories]=\"categories\" [file]=\"file\" (selected)=\"onImgSelect($event)\"></app-image-item>\n    </div>\n  </div>\n"
+module.exports = "<div class=\"container-fluid\">\n  <div class=\"main-form row\">\n      <div class=\"offset-1 col-6 mr-auto\">\n        <form enctype=\"application/x-www-form-urlencoded\" (submit)=\"onSubmit($event, form)\" #form>\n          <div class=\"form-check\">\n              <label class=\"form-check-label\">\n                <input class=\"form-check-input\" type=\"checkbox\" [(ngModel)]=\"inOne\" [ngModelOptions]=\"{standalone: true}\">\n                  Загрузить всё в одну категорию ?\n              </label>\n          </div>\n          <div class=\"form-group\" *ngIf=\"inOne\">\n            <label>Выберите категорию</label>\n            <select class=\"form-control\" [(ngModel)]=\"oneCategory\" [ngModelOptions]=\"{standalone: true}\">\n              <option selected disabled>Choose category</option>\n              <option *ngFor=\"let category of categories\">{{category.name}}</option>\n            </select>\n          </div>\n          <div class=\"form-group\">\n            <input type=\"file\" class=\"form-control-file\" multiple name=\"images\" (change)=\"onChange(inputFiles)\" #inputFiles required>\n          </div>\n          <button type=\"submit\" class=\"btn btn-primary\">Post</button>\n        </form>\n      </div>\n  </div>\n    \n  <div>\n    <div *ngFor=\"let file of imagesList\" class=\"row\">\n      <app-image-item class=\"offset-1 col-8 mr-auto\" [inOne]=\"{inOne: inOne, category: oneCategory}\" [categories]=\"categories\" [file]=\"file\" (selected)=\"onImgSelect($event)\"></app-image-item>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -263,7 +263,7 @@ var AddImagesComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".img-item {\r\n    padding: 1% 0 1% 1%;\r\n    border: 2px solid black;\r\n    border-radius: 15px;\r\n    margin-bottom: 1%;\r\n    width: 100%;\r\n}\r\n\r\n.img-fluid {\r\n    max-width: 60%;\r\n}\r\n\r\n/* .img-item > p {\r\n    margin: 0;\r\n    padding: 10px 10px 10px 0;\r\n}\r\n\r\nselect {\r\n    \r\n} */"
+module.exports = ".img-item {\r\n    padding: 1% 0 1% 1%;\r\n    border: 2px solid rgb(248, 233, 20);\r\n    border-radius: 15px;\r\n    margin-bottom: 1%;\r\n    width: 100%;\r\n}\r\n\r\n.img-fluid {\r\n    max-width: 60%;\r\n}"
 
 /***/ }),
 

@@ -1,13 +1,5 @@
 .form-block {
     margin-bottom: 2%;
-    color: white;
-
-    /* background: transparent;
-    border: none; */
-}
-
-.form-block label{
-    font-size: 1.7em;
 }
 
 .form-block:first-child {

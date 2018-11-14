@@ -1,6 +1,6 @@
 .img-item {
     padding: 1% 0 1% 1%;
-    border: 2px solid black;
+    border: 2px solid rgb(248, 233, 20);
     border-radius: 15px;
     margin-bottom: 1%;
     width: 100%;
@@ -9,11 +9,3 @@
 .img-fluid {
     max-width: 60%;
 }
-/* .img-item > p {
-    margin: 0;
-    padding: 10px 10px 10px 0;
-}
-
-select {
-    
-} */

@@ -1,27 +1,31 @@
-<div class="main-form">
-    <form enctype="application/x-www-form-urlencoded" (submit)="onSubmit($event, form)" #form>
-      <div class="form-check">
-          <label class="form-check-label">
-            <input class="form-check-input" type="checkbox" [(ngModel)]="inOne" [ngModelOptions]="{standalone: true}">
-              Загрузить всё в одну категорию ?
-          </label>
+<div class="container-fluid">
+  <div class="main-form row">
+      <div class="offset-1 col-6 mr-auto">
+        <form enctype="application/x-www-form-urlencoded" (submit)="onSubmit($event, form)" #form>
+          <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="inOne" [ngModelOptions]="{standalone: true}">
+                  Загрузить всё в одну категорию ?
+              </label>
+          </div>
+          <div class="form-group" *ngIf="inOne">
+            <label>Выберите категорию</label>
+            <select class="form-control" [(ngModel)]="oneCategory" [ngModelOptions]="{standalone: true}">
+              <option selected disabled>Choose category</option>
+              <option *ngFor="let category of categories">{{category.name}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input type="file" class="form-control-file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles required>
+          </div>
+          <button type="submit" class="btn btn-primary">Post</button>
+        </form>
       </div>
-      <div class="form-group" *ngIf="inOne">
-        <label>Выберите категорию</label>
-        <select class="form-control" [(ngModel)]="oneCategory" [ngModelOptions]="{standalone: true}">
-          <option selected disabled>Choose category</option>
-          <option *ngFor="let category of categories">{{category.name}}</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <input type="file" class="form-control-file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles required>
-      </div>
-      <button type="submit" class="btn btn-primary">Post</button>
-    </form>
   </div>
-  
+    
   <div>
-    <div *ngFor="let file of imagesList">
-      <app-image-item [inOne]="{inOne: inOne, category: oneCategory}" [categories]="categories" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
+    <div *ngFor="let file of imagesList" class="row">
+      <app-image-item class="offset-1 col-8 mr-auto" [inOne]="{inOne: inOne, category: oneCategory}" [categories]="categories" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
     </div>
   </div>
+</div>
