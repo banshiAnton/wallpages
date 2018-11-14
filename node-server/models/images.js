@@ -14,14 +14,18 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             allowNull: false
         },
-        file: { type: DataTypes.STRING, unique: true, allowNull: false },
-        createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+        file: { type: DataTypes.STRING, unique: true, allowNull: false,
+            validate: {
+                notEmpty: {
+                    msg: "Name must be not empty"
+                }
+            } },
         tags: { type: DataTypes.STRING, allowNull: false, 
             set(tagsArr) {
                 this.setDataValue('tags', tagsArr.join(' '))
             },
             get() {
-                return this.getDataValue('tags').split(' ');
+                return this.getDataValue('tags').length ? this.getDataValue('tags').split(' ') : [];
             }
         },
         category_id: {

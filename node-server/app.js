@@ -3,9 +3,9 @@ const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const path = require('path');
 
-const app = express();
+const { errorHandle } = require('./middleware');
 
-const sequelizeBaseError = require('sequelize/lib/errors').BaseError;
+const app = express();
 
 const apiRouter = require('./routes/api');
 
@@ -25,13 +25,8 @@ app.use('/*', function(req, res, next) {
 
 app.use(function(err, req, res, next) {
     console.log('Error last', err);
-    let obj = {sucess: false, errors: []}
-    if(err instanceof sequelizeBaseError) {
-        for(let error of err.errors) {
-            obj.errors.push({message: error.message, key: error.path, value: error.value})
-        }
-
-        return res.json(obj);
+    if(errorHandle(err, req, res, next)) {
+        return;
     }
     res.status(err.status || 500);
     res.json({message: err.message || 'error'});

@@ -3,13 +3,13 @@ const path = require('path')
 const writeFile = require('util').promisify(fs.writeFile);
 const sharp = require('sharp');
 
-let categoryGetRes = function(seqRes, cb) {
+let categoryGetRes = function(seqRes) {
     let res = {};
     res.categories = seqRes.map(category => {
         return category.get('clientData');
     });
     res.success = true;
-    cb(res);
+    return Promise.resolve(res);
 }
 
 

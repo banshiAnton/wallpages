@@ -30,7 +30,7 @@ webpackEmptyAsyncContext.id = "./src/$$_lazy_route_resource lazy recursive";
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ""
+module.exports = ".form-block {\r\n    margin-bottom: 2%;\r\n    color: white;\r\n\r\n    /* background: transparent;\r\n    border: none; */\r\n}\r\n\r\n.form-block label{\r\n    font-size: 1.7em;\r\n}\r\n\r\n.form-block:first-child {\r\n    margin-top: 2%;\r\n}\r\n\r\n.form-block:last-child {\r\n    margin-bottom: 0;\r\n}"
 
 /***/ }),
 
@@ -41,7 +41,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div>\n    <div class=\"form-group\">\n        <label>Имя категории</label>\n        <input type=\"text\" [(ngModel)]=\"addName\" class=\"form-control\" placeholder=\"Имя категории\">\n    </div>\n    <div class=\"form-group\">\n        <label>Теги категории</label>\n        <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\"></tag-input>\n    </div>\n    <button type=\"submit\" (click)=\"onAdd()\" class=\"btn btn-primary\">Добавить Категорию</button>\n</div>\n\n<div>\n    <div class=\"form-group\">\n        <label>Выберите категорию</label>\n        <select class=\"form-control\" (change)=\"onSelect(categ.value)\" #categ>\n          <option selected disabled>Choose category</option>\n          <option *ngFor=\"let category of categories\">{{category.name}}</option>\n        </select>\n    </div>\n    <div class=\"form-group\">\n        <label>Имя категории</label>\n        <input type=\"text\" [(ngModel)]=\"selected.name\" class=\"form-control\" placeholder=\"Имя категории\">\n    </div>\n    <div class=\"form-group\">\n      <label>Теги категории</label>\n      <tag-input [(ngModel)]=\"selected.tags\" [separatorKeys]=\"[' ']\"></tag-input>\n    </div>\n    <button type=\"button\" (click)=\"onUpdata()\" class=\"btn btn-primary\">Обновить категорию</button>\n</div>"
+module.exports = "<div class=\"container-fluid row form-block\">\n    <div class=\"offset-1 col-6 mr-auto\">\n        <div class=\"form-group\">\n            <label>Имя категории</label>\n            <input type=\"text\" [(ngModel)]=\"addName\" class=\"form-control\" placeholder=\"Имя категории\">\n        </div>\n        <div class=\"form-group\">\n            <label>Теги категории</label>\n            <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\"></tag-input>\n        </div>\n        <button type=\"submit\" (click)=\"onAdd()\" class=\"btn btn-primary\">Добавить Категорию</button>\n    </div>\n</div>\n\n<div class=\"container-fluid row form-block\">\n    <div class=\"offset-1 col-6 mr-auto\">\n        <div class=\"form-group\">\n            <label>Выберите категорию</label>\n            <select class=\"form-control\" (change)=\"onSelect(categ.value)\" #categ>\n                <option selected disabled>Choose category</option>\n                <option *ngFor=\"let category of categories\">{{category.name}}</option>\n            </select>\n        </div>\n        <div class=\"form-group\">\n            <label>Имя категории</label>\n            <input type=\"text\" [(ngModel)]=\"selected.name\" class=\"form-control\" placeholder=\"Имя категории\">\n        </div>\n        <div class=\"form-group\">\n            <label>Теги категории</label>\n            <tag-input [(ngModel)]=\"selected.tags\" [separatorKeys]=\"[' ']\"></tag-input>\n        </div>\n        <button type=\"button\" (click)=\"onUpdata()\" class=\"btn btn-primary\">Обновить категорию</button>\n    </div>\n</div>"
 
 /***/ }),
 
@@ -263,7 +263,7 @@ var AddImagesComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".img-item {\r\n    padding: 1% 0 1% 1%;\r\n    border: 2px solid black;\r\n    border-radius: 15px;\r\n    margin-bottom: 1%;\r\n}\r\n\r\n.img-fluid {\r\n    max-width: 60%;\r\n}\r\n\r\n/* .img-item > p {\r\n    margin: 0;\r\n    padding: 10px 10px 10px 0;\r\n}\r\n\r\nselect {\r\n    \r\n} */"
+module.exports = ".img-item {\r\n    padding: 1% 0 1% 1%;\r\n    border: 2px solid black;\r\n    border-radius: 15px;\r\n    margin-bottom: 1%;\r\n    width: 100%;\r\n}\r\n\r\n.img-fluid {\r\n    max-width: 60%;\r\n}\r\n\r\n/* .img-item > p {\r\n    margin: 0;\r\n    padding: 10px 10px 10px 0;\r\n}\r\n\r\nselect {\r\n    \r\n} */"
 
 /***/ }),
 

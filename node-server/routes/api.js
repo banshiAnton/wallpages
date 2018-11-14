@@ -34,6 +34,12 @@ router.get('/', function (req, res, next) {
 
     Categories.findById( +req.query.category, { include: [{model: Images, required: true}], offset: +req.query.offset, limit: +req.query.count})
     .then(result => {
+        if(!result) {
+            throw new Error('No such category');
+        }
+        return result;
+    })
+    .then(result => {
         let arr = [];
          console.log(result.get('id')); result.get('images').forEach(item => {
             console.log(item.dataValues);
@@ -57,13 +63,14 @@ router.post('/upload', parseFilesData, groupFileDataToFiles, function (req, res,
 });
 
 router.get('/categories', function(req, res, next) {
-    Categories.findAll().then(result => {
-        categoryGetRes(result, (resultForm) => {
-            console.log(resultForm);
-            resultForm.categories.forEach(item => console.log(item.tags))
-            res.json(resultForm);
-        })
-    }).catch(err => next(err))
+    Categories.findAll()
+    .then(result => categoryGetRes(result))
+    .then(resultForm => {
+        console.log(resultForm);
+        resultForm.categories.forEach(item => console.log(item.tags))
+        res.json(resultForm);
+    })
+    .catch(err => next(err))
 });
 
 router.post('/add/category', function(req, res, next) {
