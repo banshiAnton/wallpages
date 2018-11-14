@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const { categoryGetRes, saveImages } = require('../funcs');
 
-const { parseFilesData, groupFileDataToFiles } = require('../middleware');
+const { parseFilesData, groupFileDataToFiles, makeApiQuery } = require('../middleware');
 
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('wallpages', 'root', '', {
@@ -17,36 +17,42 @@ const sequelizeBaseError = require('sequelize/lib/errors').BaseError;
 const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
 const Images = sequelize.import(path.join(__dirname, '../models/images'));
 
-Categories.hasMany(Images, {foreignKey: 'category_id', targetKey: 'id'})
-Images.belongsTo(Categories, {foreignKey: 'category_id', targetKey: 'id'});
+Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
+Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
 
 const router = require('express').Router();
 
-//CREATE TABLE `wallpages`.`categories` ( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `name` VARCHAR(50) NOT NULL , `tags` TEXT NOT NULL , PRIMARY KEY (`id`), UNIQUE `category_name_uq` (`name`(50))) ENGINE = InnoDB;
-//CREATE TABLE `wallpages`.`images` ( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `fileName` TEXT NOT NULL , `tags` TEXT NOT NULL , `category_id` INT UNSIGNED NOT NULL , `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
-//ALTER TABLE `images` ADD CONSTRAINT `category_id_fk` FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 // api.images?category=test&count=10&offset=0&tags[]=test&tags[]=pest
 
-router.get('/', function (req, res, next) {
-    console.log(req.query);
+router.get('/', makeApiQuery, function (req, res, next) {
 
     const pathToStatics = `/images/`;
+    let reg = req.query.tags ? req.query.tags.join('|') : '.'; 
 
-    Categories.findById( +req.query.category, { include: [{model: Images, required: true}], offset: +req.query.offset, limit: +req.query.count})
-    .then(result => {
-        if(!result) {
-            throw new Error('No such category');
-        }
-        return result;
-    })
+    let queryObj = {attributes: ['category_id', [Sequelize.fn('CONCAT', Sequelize.col('`images`.`tags`'), ' ', Sequelize.col('`category`.`tags`')), 'tags']],
+    where: {
+        $and: [
+            Sequelize.where(Sequelize.fn('CONCAT', Sequelize.col('`images`.`tags`'), ' ', Sequelize.col('`category`.`tags`')), {
+                [Sequelize.Op.regexp]: reg
+            }),
+            req.queryOps.where
+        ]
+    },
+    include: [{model: Categories, required: true}]};
+
+    queryObj = Object.assign(req.queryOps.limOps, queryObj);
+
+    Images.findAll(queryObj)
     .then(result => {
         let arr = [];
-         console.log(result.get('id')); result.get('images').forEach(item => {
-            console.log(item.dataValues);
-            arr.push({
+        result.forEach(item => {
+            console.log(item.get('category_id'));
+        arr.push({
                 id: item.get('id'),
                 url: `${pathToStatics}${item.get('file')}`,
-                minimizeUrl: `${pathToStatics}small/${item.get('file')}`
+                minimizeUrl: `${pathToStatics}small/${item.get('file')}`,
+                tags: item.get('tags'),
+                category_id: item.get('category_id')
             })
         })
         res.json({success: true, results: arr});

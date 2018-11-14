@@ -1,4 +1,50 @@
 const sequelizeBaseError = require('sequelize/lib/errors').BaseError;
+const util = require('util');
+
+let makeApiQuery = function(req, res, next) {
+    
+    let limOps = {};
+    let where = {};
+
+    console.log('Query params', req.query);
+
+    if(req.query.category && !req.query.category.match(/\D/i)) {
+        where.category_id = +req.query.category;
+    }
+
+    if(req.query.count && !req.query.count.match(/\D/i)) {
+        limOps.limit = +req.query.count;
+    }
+
+    if(req.query.offset && !req.query.offset.match(/\D/i)) {
+        limOps.offset = +req.query.offset;
+    }
+
+    if(!req.query.tags || !Array.isArray(req.query.tags)) {
+        delete req.query.tags;
+    } else {
+        let newArr = [];
+        for(let i = 0; i < req.query.tags.length; ++i) {
+            if(req.query.tags[i].length) {
+                newArr.push(req.query.tags[i]);
+            }
+        }
+        req.query.tags = newArr;
+    }
+
+    // let where = {};
+    // if(req.query.category) where.category = req.query.category;
+    // if(req.query.category) where.category = req.query.category;
+
+
+    //res.json(req.query);
+
+    req.queryOps = {where, limOps};
+
+    console.log(req.query);
+
+    next();
+}
 
 let parseFilesData = function (req, res, next) {
     req.body.filesData = JSON.parse(req.body.filesData);
@@ -36,6 +82,7 @@ let errorHandle = function(err, req, res, next) {
     }
 }
 
+exports.makeApiQuery = makeApiQuery;
 exports.errorHandle = errorHandle;
 exports.groupFileDataToFiles = groupFileDataToFiles;
 exports.parseFilesData = parseFilesData;
