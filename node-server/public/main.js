@@ -369,7 +369,7 @@ var ImageItemComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ""
+module.exports = "a {\r\n    text-decoration: none;\r\n    font-size: 2em;\r\n    padding: 1%;\r\n    width: -webkit-max-content;\r\n    width: -moz-max-content;\r\n    width: max-content;\r\n    border-right: 5px solid yellowgreen;\r\n}"
 
 /***/ }),
 
@@ -380,7 +380,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"!isAuth\">\n  Auth Form!\n</div>\n\n<div *ngIf=\"isAuth\">\n  <a routerLink=\"addCategoty\">Add Category</a><br>\n  <a routerLink=\"addImages\">Add Images</a>\n</div>"
+module.exports = "<div *ngIf=\"!isAuth\">\n  Auth Form!\n</div>\n\n<div *ngIf=\"isAuth\">\n  <nav class=\"nav nav-pills\">\n    <a class=\"nav-item\" routerLink=\"addCategoty\">Add Category</a>\n    <a class=\"nav-item\" routerLink=\"addImages\">Add Images</a>\n  </nav>\n</div>"
 
 /***/ }),
 
