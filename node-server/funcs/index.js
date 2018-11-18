@@ -27,6 +27,7 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
             console.log('File: ', image.name, ' saved ', data);
             return {res: data.dataValues, success: true};
         })
+        .then()
         .catch(error => {
             console.log('error cahtch', error)
             return {error: error.message, success: false}
@@ -35,10 +36,14 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
 
 let saveImages = async function(pathToFolder, imagesArr, ImagesDb) {
     let results = [];
+    let filesVk = [];
     for(let image of imagesArr) {
         try {
             let res = await makePromiseToSave(pathToFolder, image, ImagesDb);
             res.file = image.name;
+            if(res.success) {
+                filesVk.push(image.data);
+            }
             results.push(res);
         } catch (err) {
         }

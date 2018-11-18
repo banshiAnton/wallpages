@@ -369,7 +369,7 @@ var ImageItemComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "a {\r\n    text-decoration: none;\r\n    font-size: 2em;\r\n    padding: 1%;\r\n    width: -webkit-max-content;\r\n    width: -moz-max-content;\r\n    width: max-content;\r\n    border-right: 5px solid yellowgreen;\r\n}"
+module.exports = "a {\r\n    text-decoration: none;\r\n    font-size: 2em;\r\n    padding: 1%;\r\n    width: -webkit-max-content;\r\n    width: -moz-max-content;\r\n    width: max-content;\r\n    border-right: 5px solid yellowgreen;\r\n}\r\n\r\n.nav-item {\r\n    display: block;\r\n}"
 
 /***/ }),
 

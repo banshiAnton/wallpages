@@ -3,6 +3,11 @@ const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const path = require('path');
 
+const env = require('node-env-file');
+env(__dirname + '/.env');
+
+console.log(process.env)
+
 const { errorHandle } = require('./middleware');
 
 const app = express();

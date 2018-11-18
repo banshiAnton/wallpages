@@ -5,6 +5,8 @@
 /tmp
 /out-tsc
 /node-server/public/images
+/node-server/.env
+/node-server/scripts/loadImagesVK.js
 
 # dependencies
 /node_modules
