@@ -31,7 +31,7 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
         })
         .then()
         .catch(error => {
-            console.log('error cahtch', error)
+            console.log('Error cahtch VK', error)
             return {error: error.message, success: false}
         })
 }
@@ -65,7 +65,8 @@ let postVK = function(images) {
             })
             .then(data => data.json())
             .then(data => {
-                let message = "%23testupload";
+                let message = images.map(img => img.tags.map(tag => `%23${tag}`).join('')).join('');
+                console.log('Message', message);
                 let attachments  = data.response.map(photo => `photo${photo.owner_id}_${photo.id}`).join(',');
                 let postUrl = `https://api.vk.com/method/wall.post?&owner_id=${-process.env.vkgid}&message=${message}&attachments=${attachments}&from_group=1&v=5.67&access_token=${process.env.vktoken}`;
                 return fetch(postUrl)
@@ -76,7 +77,7 @@ let postVK = function(images) {
                 return {res: post, success: true, vk: 'VK'};
             })
             .catch(error => {
-                console.log('Promis error', error);
+                console.log('Promis error VK', error);
                 return {error, success: false, vk: 'VK'};
             });
 }
@@ -105,6 +106,5 @@ let saveImages = async function(pathToFolder, imagesArr, ImagesDb) {
     return results;
 }
 
-//exports.postVK = postVK;
 exports.categoryGetRes = categoryGetRes;
 exports.saveImages = saveImages;
