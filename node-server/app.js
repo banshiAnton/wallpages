@@ -6,7 +6,7 @@ const path = require('path');
 const env = require('node-env-file');
 env(__dirname + '/.env');
 
-console.log(process.env)
+//console.log(process.env)
 
 const { errorHandle } = require('./middleware');
 

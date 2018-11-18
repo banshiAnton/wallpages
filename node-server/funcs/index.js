@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path')
 const writeFile = require('util').promisify(fs.writeFile);
 const sharp = require('sharp');
+const fetch = require('node-fetch');
+const FormData = require('form-data');
 
 let categoryGetRes = function(seqRes) {
     let res = {};
@@ -34,6 +36,51 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
         })
 }
 
+let postVK = function(images) {
+
+    console.log('VK start', images);
+
+    let form = new FormData();
+    images.forEach( (image, i) => {
+        form.append(`file${i+1}`, image.data, {
+            filename: image.name,
+            contentType: image.mimetype
+        });
+    })
+
+    let getServer = `https://api.vk.com/method/photos.getUploadServer?&album_id=${process.env.vkaid}&group_id=${process.env.vkgid}&access_token=${process.env.vktoken}&v=5.62`;
+    return fetch(getServer)
+            .then(data => data.json())
+            .then(data => data.response.upload_url)
+            .then(url => fetch(url, {
+                method: 'POST',
+                body:    form,
+                headers: form.getHeaders(),
+            }))
+            .then(data => data.json())
+            .then(data => {
+                console.log('Photos list', data.photos_list);
+                let url = `https://api.vk.com/method/photos.save?album_id=${data.aid}&group_id=${data.gid}&server=${data.server}&hash=${data.hash}&photos_list=${data.photos_list}&access_token=${process.env.vktoken}&v=5.62`
+                return fetch(url);
+            })
+            .then(data => data.json())
+            .then(data => {
+                let message = "%23testupload";
+                let attachments  = data.response.map(photo => `photo${photo.owner_id}_${photo.id}`).join(',');
+                let postUrl = `https://api.vk.com/method/wall.post?&owner_id=${-process.env.vkgid}&message=${message}&attachments=${attachments}&from_group=1&v=5.67&access_token=${process.env.vktoken}`;
+                return fetch(postUrl)
+            })
+            .then(data => data.json())
+            .then(post => {
+                console.log('End post', post);
+                return {res: post, success: true, vk: 'VK'};
+            })
+            .catch(error => {
+                console.log('Promis error', error);
+                return {error, success: false, vk: 'VK'};
+            });
+}
+
 let saveImages = async function(pathToFolder, imagesArr, ImagesDb) {
     let results = [];
     let filesVk = [];
@@ -42,16 +89,22 @@ let saveImages = async function(pathToFolder, imagesArr, ImagesDb) {
             let res = await makePromiseToSave(pathToFolder, image, ImagesDb);
             res.file = image.name;
             if(res.success) {
-                filesVk.push(image.data);
+                filesVk.push(image);
             }
             results.push(res);
         } catch (err) {
         }
     }
 
+    try {
+        let res = await postVK(filesVk);
+        results.push(res);
+    } catch (err) {
+    }
+
     return results;
 }
 
-
+//exports.postVK = postVK;
 exports.categoryGetRes = categoryGetRes;
 exports.saveImages = saveImages;
