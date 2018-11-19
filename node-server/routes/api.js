@@ -6,11 +6,13 @@ const { categoryGetRes, saveImages } = require('../funcs');
 const { parseFilesData, groupFileDataToFiles, makeApiQuery } = require('../middleware');
 
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize(process.env.sqlDb, process.env.sqlUser, process.env.sqlPassword, {
-    dialect: process.env.sqlDialect,
-    host: process.env.sqlHost,
-    port: process.env.sqlPort,
-});
+// const sequelize = new Sequelize(process.env.sqlDb, process.env.sqlUser, process.env.sqlPassword, {
+//     dialect: process.env.sqlDialect,
+//     host: process.env.sqlHost,
+//     port: process.env.sqlPort,
+// });
+
+const sequelize = new Sequelize(process.env.sqlUrl);
 
 const sequelizeBaseError = require('sequelize/lib/errors').BaseError;
 
