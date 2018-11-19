@@ -17,8 +17,23 @@ const sequelizeBaseError = require('sequelize/lib/errors').BaseError;
 const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
 const Images = sequelize.import(path.join(__dirname, '../models/images'));
 
-Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
-Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
+Categories.sync({force: false}).then(() => {
+}).then((res) => {
+    console.log(res);
+    Images.sync({force: false}).then(() => {
+    }).then((res) => {
+        console.log(res);
+        Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
+        Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
+    }).catch(err => {
+        console.error('ERROR in MYSQL',err);
+    });
+}).catch(err => {
+    console.error('ERROR in MYSQL', err);
+});
+
+// Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
+// Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
 
 const router = require('express').Router();
 
