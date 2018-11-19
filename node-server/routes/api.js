@@ -62,8 +62,9 @@ router.get('/', makeApiQuery, function (req, res, next) {
     Images.findAll(queryObj)
     .then(result => {
         let arr = [];
+        console.log('Results', result);
         result.forEach(item => {
-            console.log(item.get('category_id'));
+            console.log('Test 2', item.get('category_id'), item.get('file'));
         arr.push({
                 id: item.get('id'),
                 url: `${pathToStatics}${item.get('file')}`,
