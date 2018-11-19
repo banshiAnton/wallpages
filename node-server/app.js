@@ -14,7 +14,7 @@ const app = express();
 
 const apiRouter = require('./routes/api');
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public/'));
 
 app.use(bodyParser.urlencoded({extended: false}));
 // parse application/json
