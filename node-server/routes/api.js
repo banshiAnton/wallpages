@@ -46,7 +46,7 @@ router.get('/', makeApiQuery, function (req, res, next) {
     const pathToStatics = `/images/`;
     let reg = req.query.tags ? req.query.tags.join('|') : '.'; 
 
-    let queryObj = {attributes: ['category_id', [Sequelize.fn('CONCAT', Sequelize.col('`images`.`tags`'), ' ', Sequelize.col('`category`.`tags`')), 'tags']],
+    let queryObj = {attributes: ['category_id', 'file', [Sequelize.fn('CONCAT', Sequelize.col('`images`.`tags`'), ' ', Sequelize.col('`category`.`tags`')), 'tags']],
     where: {
         $and: [
             Sequelize.where(Sequelize.fn('CONCAT', Sequelize.col('`images`.`tags`'), ' ', Sequelize.col('`category`.`tags`')), {
