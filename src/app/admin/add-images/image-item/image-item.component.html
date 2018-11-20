@@ -3,7 +3,7 @@
     <p>File name: {{file.fileName}}</p>
     <img src="{{file.src}}" alt="" class="img-fluid">
   </div>
-  <div class="col-5 mr-auto">
+  <div class="col-7 mr-auto">
     <div *ngIf="!inOne.inOne">
       <label>Выберите категорию</label>
       <select class="form-control" (change)="onSelect(category.value)" #category>

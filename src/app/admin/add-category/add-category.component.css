@@ -9,3 +9,7 @@
 .form-block:last-child {
     margin-bottom: 0;
 }
+
+.btn.btn-danger {
+    margin-left: 1%;
+}

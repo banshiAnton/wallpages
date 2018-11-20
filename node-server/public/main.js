@@ -30,7 +30,7 @@ webpackEmptyAsyncContext.id = "./src/$$_lazy_route_resource lazy recursive";
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".form-block {\r\n    margin-bottom: 2%;\r\n}\r\n\r\n.form-block:first-child {\r\n    margin-top: 2%;\r\n}\r\n\r\n.form-block:last-child {\r\n    margin-bottom: 0;\r\n}"
+module.exports = ".form-block {\r\n    margin-bottom: 2%;\r\n}\r\n\r\n.form-block:first-child {\r\n    margin-top: 2%;\r\n}\r\n\r\n.form-block:last-child {\r\n    margin-bottom: 0;\r\n}\r\n\r\n.btn.btn-danger {\r\n    margin-left: 1%;\r\n}"
 
 /***/ }),
 
@@ -41,7 +41,7 @@ module.exports = ".form-block {\r\n    margin-bottom: 2%;\r\n}\r\n\r\n.form-bloc
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container-fluid row form-block\">\n    <div class=\"offset-1 col-6 mr-auto\">\n        <div class=\"form-group\">\n            <label>Имя категории</label>\n            <input type=\"text\" [(ngModel)]=\"addName\" class=\"form-control\" placeholder=\"Имя категории\">\n        </div>\n        <div class=\"form-group\">\n            <label>Теги категории</label>\n            <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\"></tag-input>\n        </div>\n        <button type=\"submit\" (click)=\"onAdd()\" class=\"btn btn-primary\">Добавить Категорию</button>\n    </div>\n</div>\n\n<div class=\"container-fluid row form-block\">\n    <div class=\"offset-1 col-6 mr-auto\">\n        <div class=\"form-group\">\n            <label>Выберите категорию</label>\n            <select class=\"form-control\" (change)=\"onSelect(categ.value)\" #categ>\n                <option selected disabled>Choose category</option>\n                <option *ngFor=\"let category of categories\">{{category.name}}</option>\n            </select>\n        </div>\n        <div class=\"form-group\">\n            <label>Имя категории</label>\n            <input type=\"text\" [(ngModel)]=\"selected.name\" class=\"form-control\" placeholder=\"Имя категории\">\n        </div>\n        <div class=\"form-group\">\n            <label>Теги категории</label>\n            <tag-input [(ngModel)]=\"selected.tags\" [separatorKeys]=\"[' ']\"></tag-input>\n        </div>\n        <button type=\"button\" (click)=\"onUpdata()\" class=\"btn btn-primary\">Обновить категорию</button>\n    </div>\n</div>"
+module.exports = "<div class=\"container-fluid row form-block\">\n    <div class=\"offset-1 col-6 mr-auto\">\n        <div class=\"form-group\">\n            <label>Имя категории</label>\n            <input type=\"text\" [(ngModel)]=\"addName\" class=\"form-control\" placeholder=\"Имя категории\">\n        </div>\n        <div class=\"form-group\">\n            <label>Теги категории</label>\n            <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\"></tag-input>\n        </div>\n        <button type=\"submit\" (click)=\"onAdd()\" class=\"btn btn-primary\">Добавить Категорию</button>\n    </div>\n</div>\n\n<div class=\"container-fluid row form-block\">\n    <div class=\"offset-1 col-6 mr-auto\">\n        <div class=\"form-group\">\n            <label>Выберите категорию</label>\n            <select class=\"form-control\" (change)=\"onSelect(categ.value)\" #categ>\n                <option selected disabled>Choose category</option>\n                <option *ngFor=\"let category of categories\">{{category.name}}</option>\n            </select>\n        </div>\n        <div class=\"form-group\">\n            <label>Имя категории</label>\n            <input type=\"text\" [(ngModel)]=\"selected.name\" class=\"form-control\" placeholder=\"Имя категории\">\n        </div>\n        <div class=\"form-group\">\n            <label>Теги категории</label>\n            <tag-input [(ngModel)]=\"selected.tags\" [separatorKeys]=\"[' ']\"></tag-input>\n        </div>\n        <button type=\"button\" (click)=\"onUpdata()\" class=\"btn btn-primary\">Обновить категорию</button>\n        <button type=\"button\" (click)=\"onDelete()\" class=\"btn btn-danger\">Удалить категорию</button>\n    </div>\n</div>"
 
 /***/ }),
 
@@ -75,7 +75,7 @@ var AddCategoryComponent = /** @class */ (function () {
         this.service = service;
         this.tags = [];
         this.categories = [];
-        this.selected = { name: null, tags: [] };
+        this.selected = { name: null, tags: [], id: null };
     }
     AddCategoryComponent.prototype.ngOnInit = function () {
         this.getCaterories();
@@ -113,6 +113,14 @@ var AddCategoryComponent = /** @class */ (function () {
         this.service.updateCategory(this.selected).subscribe(function (data) {
             console.log(data);
             if (data.success) { } //location.reload();
+        });
+    };
+    AddCategoryComponent.prototype.onDelete = function () {
+        console.log('On delete', this.selected);
+        this.service.deleteCategory(this.selected.id).subscribe(function (data) {
+            if (data.success) {
+                console.log(data);
+            }
         });
     };
     AddCategoryComponent = __decorate([
@@ -218,6 +226,11 @@ var AddImagesComponent = /** @class */ (function () {
         var _this = this;
         this.imagesList = [];
         console.log(inputFiles.files); //FileReader
+        if (inputFiles.files.length > 5) {
+            alert('Не больше 5 файлов');
+            inputFiles.value = "";
+            return;
+        }
         var _loop_1 = function (file) {
             var reader = new FileReader();
             reader.addEventListener("load", function () {
@@ -274,7 +287,7 @@ module.exports = ".img-item {\r\n    padding: 1% 0 1% 1%;\r\n    border: 2px sol
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"img-item row\">\n  <div class=\"col-3\">\n    <p>File name: {{file.fileName}}</p>\n    <img src=\"{{file.src}}\" alt=\"\" class=\"img-fluid\">\n  </div>\n  <div class=\"col-5 mr-auto\">\n    <div *ngIf=\"!inOne.inOne\">\n      <label>Выберите категорию</label>\n      <select class=\"form-control\" (change)=\"onSelect(category.value)\" #category>\n        <option selected disabled>Choose category</option>\n        <option *ngFor=\"let category of categories\">{{category.name}}</option>\n      </select>\n    </div>\n    <div>\n      <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\" (onAdd)=\"onTagChange()\" (onRemove)=\"onTagChange()\"></tag-input>\n    </div>\n  </div>\n</div>"
+module.exports = "<div class=\"img-item row\">\n  <div class=\"col-3\">\n    <p>File name: {{file.fileName}}</p>\n    <img src=\"{{file.src}}\" alt=\"\" class=\"img-fluid\">\n  </div>\n  <div class=\"col-7 mr-auto\">\n    <div *ngIf=\"!inOne.inOne\">\n      <label>Выберите категорию</label>\n      <select class=\"form-control\" (change)=\"onSelect(category.value)\" #category>\n        <option selected disabled>Choose category</option>\n        <option *ngFor=\"let category of categories\">{{category.name}}</option>\n      </select>\n    </div>\n    <div>\n      <tag-input [(ngModel)]=\"tags\" [separatorKeys]=\"[' ']\" (onAdd)=\"onTagChange()\" (onRemove)=\"onTagChange()\"></tag-input>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -694,7 +707,12 @@ var ServiceService = /** @class */ (function () {
         return this.http.get(this.apiImageUrl + "categories").pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function (item) { return console.log('Resp', item); }));
     };
     ServiceService.prototype.updateCategory = function (category) {
-        return this.http.put(this.apiImageUrl + "categories/" + category.id, JSON.stringify({ name: category.name, tags: category.tags.map(function (tag) { return tag.value; }) }), {
+        return this.http.put(this.apiImageUrl + "category/" + category.id, JSON.stringify({ name: category.name, tags: category.tags.map(function (tag) { return tag.value; }) }), {
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || '' })
+        });
+    };
+    ServiceService.prototype.deleteCategory = function (id) {
+        return this.http.delete(this.apiImageUrl + "category/" + id, {
             headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || '' })
         });
     };

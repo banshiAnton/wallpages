@@ -12,7 +12,7 @@ export class AddCategoryComponent implements OnInit {
 
   tags = [];
   categories = [];
-  selected = {name: null, tags: []};
+  selected = {name: null, tags: [], id: null};
   addName: string;
 
   constructor(private service: ServiceService) {
@@ -56,6 +56,15 @@ export class AddCategoryComponent implements OnInit {
     this.service.updateCategory(this.selected).subscribe((data: any) => {
       console.log(data);
       if(data.success) {}//location.reload();
+    })
+  }
+
+  onDelete() {
+    console.log('On delete', this.selected);
+    this.service.deleteCategory(this.selected.id).subscribe((data:any) => {
+      if(data.success) {
+        console.log(data);
+      }
     })
   }
 

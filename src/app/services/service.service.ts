@@ -36,7 +36,13 @@ export class ServiceService {
   }
 
   updateCategory(category) {
-    return this.http.put(`${this.apiImageUrl}categories/${category.id}`, JSON.stringify({name: category.name, tags: category.tags.map(tag => tag.value)}), {
+    return this.http.put(`${this.apiImageUrl}category/${category.id}`, JSON.stringify({name: category.name, tags: category.tags.map(tag => tag.value)}), {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || ''})
+    });
+  }
+
+  deleteCategory(id) {
+    return this.http.delete(`${this.apiImageUrl}category/${id}`, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || ''})
     });
   }

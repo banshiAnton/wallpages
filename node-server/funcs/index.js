@@ -66,7 +66,7 @@ let postVK = function(images) {
             .then(data => data.json())
             .then(data => {
                 let message = images.map(img => img.tags.map(tag => `%23${tag}`).join('')).join('');
-                console.log('Message', message);
+                console.log('Message', message, data);
                 let attachments  = data.response.map(photo => `photo${photo.owner_id}_${photo.id}`).join(',');
                 let postUrl = `https://api.vk.com/method/wall.post?&owner_id=${-process.env.vkgid}&message=${message}&attachments=${attachments}&from_group=1&v=5.67&access_token=${process.env.vktoken}`;
                 return fetch(postUrl)

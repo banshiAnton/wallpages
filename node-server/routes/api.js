@@ -96,7 +96,27 @@ router.get('/categories', function(req, res, next) {
     .catch(err => next(err))
 });
 
-router.post('/add/category', function(req, res, next) {
+router.delete('/category/:id',isAuth, function(req, res, next) {
+    console.log(req.params);
+    Images.destroy({
+        where: {
+            category_id: +req.params.id
+        }
+    }).then(data => {
+        console.log('Delete images', data);
+        return Categories.destroy({
+            where: {
+                id: +req.params.id
+            }
+        })
+    }).then(data => {
+        console.log('Delete categoty', data);
+        res.json({success: true});
+    })
+    .catch(error => res.json({success: false, error}))
+});
+
+router.post('/add/category', isAuth, function(req, res, next) {
     let name = req.body.name;
     let tags = req.body.tags;
     console.log(name, tags);
@@ -106,7 +126,7 @@ router.post('/add/category', function(req, res, next) {
     }).catch(err => next(err))
 });
 
-router.put('/categories/:id', function(req, res, next) {
+router.put('/category/:id', isAuth, function(req, res, next) {
     console.log(req.params.id, req.body);
     Categories.findById(req.params.id)
     .then(categ => {
