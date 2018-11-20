@@ -380,7 +380,7 @@ module.exports = "a {\r\n    text-decoration: none;\r\n    font-size: 2em;\r\n  
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"!isAuth\">\n  Auth Form!\n</div>\n\n<div *ngIf=\"isAuth\">\n  <nav class=\"nav nav-pills\">\n    <a class=\"nav-item\" routerLink=\"addCategoty\">Add Category</a>\n    <a class=\"nav-item\" routerLink=\"addImages\">Add Images</a>\n  </nav>\n</div>"
+module.exports = "<div *ngIf=\"!isAuth\">\r\n  Auth Form!\r\n</div>\r\n\r\n<div *ngIf=\"isAuth\">\r\n  <nav class=\"nav nav-pills\">\r\n    <a class=\"nav-item\" routerLink=\"addCategoty\">Add Category</a>\r\n    <a class=\"nav-item\" routerLink=\"addImages\">Add Images</a>\r\n  </nav>\r\n</div>"
 
 /***/ }),
 
