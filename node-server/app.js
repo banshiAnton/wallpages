@@ -13,6 +13,7 @@ const { errorHandle } = require('./middleware');
 const app = express();
 
 const apiRouter = require('./routes/api');
+const authRouter = require('./routes/auth');
 
 app.use(express.static(__dirname + '/public/'));
 
@@ -23,6 +24,8 @@ app.use(bodyParser.json());
 app.use(fileUpload());
 
 app.use('/api.images', apiRouter);
+
+app.use('/auth', authRouter);
 
 app.use('/*', function(req, res, next) {
   res.sendFile(path.join(__dirname, '/public/index.html'));

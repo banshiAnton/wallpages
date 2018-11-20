@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const { categoryGetRes, saveImages } = require('../funcs');
 
-const { parseFilesData, groupFileDataToFiles, makeApiQuery } = require('../middleware');
+const { parseFilesData, groupFileDataToFiles, makeApiQuery, isAuth } = require('../middleware');
 
 const Sequelize = require('sequelize');
 // const sequelize = new Sequelize(process.env.sqlDb, process.env.sqlUser, process.env.sqlPassword, {
@@ -62,7 +62,6 @@ router.get('/', makeApiQuery, function (req, res, next) {
     Images.findAll(queryObj)
     .then(result => {
         let arr = [];
-        console.log('Results', result);
         result.forEach(item => {
             console.log('Test 2', item.get('category_id'), item.get('file'));
         arr.push({
@@ -77,7 +76,7 @@ router.get('/', makeApiQuery, function (req, res, next) {
     }).catch(err => next(err))
 });
 
-router.post('/upload', parseFilesData, groupFileDataToFiles, function (req, res, next) {
+router.post('/upload', isAuth, parseFilesData, groupFileDataToFiles, function (req, res, next) {
     saveImages(path.join(__dirname, `../public/images`), req.files.images, Images)
     .then(results => {
         console.log('End', results);

@@ -11,20 +11,21 @@ import {
 export class ServiceService {
 
   apiImageUrl = '/api.images/';
+  authUrl = '/auth/';
 
   constructor(private http: HttpClient) { }
 
   postImages(data) {
     console.log('service', data);
     return this.http.post(`${this.apiImageUrl}upload`, data, {
-      headers: new HttpHeaders()
+      headers: new HttpHeaders({'auth': window.localStorage.getItem('token') || ''})
     })
   }
 
   addCategory(name, tags) {
     console.log('Service', name, tags);
     return this.http.post(`${this.apiImageUrl}add/category`, JSON.stringify({name, tags}), {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json'})
+      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || ''})
     })
   }
 
@@ -36,7 +37,19 @@ export class ServiceService {
 
   updateCategory(category) {
     return this.http.put(`${this.apiImageUrl}categories/${category.id}`, JSON.stringify({name: category.name, tags: category.tags.map(tag => tag.value)}), {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json'})
+      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || ''})
     });
+  }
+
+  login(pwd) {
+    return this.http.post(`${this.authUrl}login`, JSON.stringify({pwd}), {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json'})
+    })
+  }
+
+  getUser() {
+    return this.http.get(`${this.authUrl}user`, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || ''})
+    })
   }
 }

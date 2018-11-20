@@ -380,7 +380,7 @@ module.exports = "a {\r\n    text-decoration: none;\r\n    font-size: 2em;\r\n  
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"!isAuth\">\r\n  Auth Form!\r\n</div>\r\n\r\n<div *ngIf=\"isAuth\">\r\n  <nav class=\"nav nav-pills\">\r\n    <a class=\"nav-item\" routerLink=\"addCategoty\">Add Category</a>\r\n    <a class=\"nav-item\" routerLink=\"addImages\">Add Images</a>\r\n  </nav>\r\n</div>"
+module.exports = "<div *ngIf=\"!isAuth\">\r\n  <form (submit)=\"auth($event, pwd.value)\">\r\n    <input type=\"password\" #pwd>\r\n    <input type=\"submit\" value=\"login\">\r\n  </form>\r\n</div>\r\n\r\n<div *ngIf=\"isAuth\">\r\n  <nav class=\"nav nav-pills\">\r\n    <a class=\"nav-item\" routerLink=\"addCategoty\">Add Category</a>\r\n    <a class=\"nav-item\" routerLink=\"addImages\">Add Images</a>\r\n  </nav>\r\n</div>"
 
 /***/ }),
 
@@ -410,9 +410,25 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 var AdminComponent = /** @class */ (function () {
     function AdminComponent(service) {
         this.service = service;
-        this.isAuth = true;
+        this.isAuth = false;
     }
     AdminComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.service.getUser().subscribe(function (data) {
+            _this.isAuth = data.success;
+        });
+    };
+    AdminComponent.prototype.auth = function (e, pwd) {
+        var _this = this;
+        e.preventDefault();
+        console.log(pwd);
+        this.service.login(pwd).subscribe(function (data) {
+            if (data.success) {
+                window.localStorage.setItem('token', data.token);
+                console.log(window.localStorage.getItem('token'));
+                _this.isAuth = true;
+            }
+        });
     };
     AdminComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -460,7 +476,7 @@ var Tag = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ""
+module.exports = "a.nav-item {\r\n    font-size: 2.5em;\r\n}"
 
 /***/ }),
 
@@ -471,7 +487,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<router-outlet></router-outlet>"
+module.exports = "<a class=\"nav-item\" routerLink=\"admin\">Admin</a>\r\n<router-outlet></router-outlet>"
 
 /***/ }),
 
@@ -660,17 +676,18 @@ var ServiceService = /** @class */ (function () {
     function ServiceService(http) {
         this.http = http;
         this.apiImageUrl = '/api.images/';
+        this.authUrl = '/auth/';
     }
     ServiceService.prototype.postImages = function (data) {
         console.log('service', data);
         return this.http.post(this.apiImageUrl + "upload", data, {
-            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'auth': window.localStorage.getItem('token') || '' })
         });
     };
     ServiceService.prototype.addCategory = function (name, tags) {
         console.log('Service', name, tags);
         return this.http.post(this.apiImageUrl + "add/category", JSON.stringify({ name: name, tags: tags }), {
-            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json' })
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || '' })
         });
     };
     ServiceService.prototype.getCategories = function () {
@@ -678,7 +695,17 @@ var ServiceService = /** @class */ (function () {
     };
     ServiceService.prototype.updateCategory = function (category) {
         return this.http.put(this.apiImageUrl + "categories/" + category.id, JSON.stringify({ name: category.name, tags: category.tags.map(function (tag) { return tag.value; }) }), {
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || '' })
+        });
+    };
+    ServiceService.prototype.login = function (pwd) {
+        return this.http.post(this.authUrl + "login", JSON.stringify({ pwd: pwd }), {
             headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json' })
+        });
+    };
+    ServiceService.prototype.getUser = function () {
+        return this.http.get(this.authUrl + "user", {
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || '' })
         });
     };
     ServiceService = __decorate([

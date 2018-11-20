@@ -1,5 +1,8 @@
 <div *ngIf="!isAuth">
-  Auth Form!
+  <form (submit)="auth($event, pwd.value)">
+    <input type="password" #pwd>
+    <input type="submit" value="login">
+  </form>
 </div>
 
 <div *ngIf="isAuth">

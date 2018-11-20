@@ -82,6 +82,15 @@ let errorHandle = function(err, req, res, next) {
     }
 }
 
+let isAuth = function(req, res, next) {
+    if(req.header('auth') === process.env.token) {
+        next();
+    } else {
+        res.json({success: false})
+    }
+}
+
+exports.isAuth = isAuth;
 exports.makeApiQuery = makeApiQuery;
 exports.errorHandle = errorHandle;
 exports.groupFileDataToFiles = groupFileDataToFiles;
