@@ -12,7 +12,7 @@ const Sequelize = require('sequelize');
 //     port: process.env.sqlPort,
 // });
 
-const sequelize = new Sequelize(process.env.sqlUrl);
+const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
 
 const sequelizeBaseError = require('sequelize/lib/errors').BaseError;
 
