@@ -11,7 +11,7 @@ const Sequelize = require('sequelize');
 //     host: process.env.sqlHost,
 //     port: process.env.sqlPort,
 // });
-
+console.log(process.env.CLEARDB_DATABASE_URL);
 const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
 
 const sequelizeBaseError = require('sequelize/lib/errors').BaseError;
@@ -55,7 +55,11 @@ router.get('/', makeApiQuery, function (req, res, next) {
             req.queryOps.where
         ]
     },
-    include: [{model: Categories, required: true}]};
+    include: [{model: Categories, required: true}],
+    order: [
+        ['updatedAt', 'DESC']
+    ]
+    };
 
     queryObj = Object.assign(req.queryOps.limOps, queryObj);
 
@@ -63,7 +67,7 @@ router.get('/', makeApiQuery, function (req, res, next) {
     .then(result => {
         let arr = [];
         result.forEach(item => {
-            console.log('Test 2', item.get('category_id'), item.get('file'));
+            console.log('Test', item.get('category_id'), item.get('file'));
         arr.push({
                 id: item.get('id'),
                 url: `${pathToStatics}${item.get('file')}`,

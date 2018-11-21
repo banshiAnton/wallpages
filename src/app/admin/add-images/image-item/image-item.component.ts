@@ -42,6 +42,6 @@ export class ImageItemComponent implements OnInit, OnChanges {
 
   onTagChange() {
     console.log('test tags input', {file: this.file.fileName, tags: this.tags.filter(tag => !tag.readonly)});
-    this.selected.emit({file: this.file.fileName, tags: this.tags.filter(tag => !tag.readonly)});
+    this.selected.emit({file: this.file.fileName, tags: this.tags.filter(tag => !tag.readonly).map(tag => tag.value)});
   }
 }

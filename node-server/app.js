@@ -4,8 +4,10 @@ const fileUpload = require('express-fileupload');
 const path = require('path');
 const fs = require('fs');
 
-fs.mkdirSync(path.join(__dirname, './public/images'));
-fs.mkdirSync(path.join(__dirname, './public/images/small'));
+if (!fs.existsSync(path.join(__dirname, './public/images'))){
+    fs.mkdirSync(path.join(__dirname, './public/images'));
+    fs.mkdirSync(path.join(__dirname, './public/images/small'));
+}
 
 const env = require('node-env-file');
 env(__dirname + '/.env');

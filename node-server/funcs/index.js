@@ -23,7 +23,7 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
         })
         .then(() => writeFile(path.join(pathToFolder, '/', image.name), image.data))
         .then(() => sharp(image.data).metadata())
-        .then(metadata => sharp(image.data).resize(Math.round(metadata.width / 4), Math.round(metadata.height / 4)).toFile(path.join(pathToFolder, '/small/', image.name)))
+        .then(metadata => sharp(image.data).resize(Math.round(metadata.width / 8), Math.round(metadata.height / 8)).toFile(path.join(pathToFolder, '/small/', image.name)))
         .then(() => ImagesDb.create({file: image.name, tags: image.tags, category_id: image.category}))
         .then(data => {
             console.log('File: ', image.name, ' saved ', data);

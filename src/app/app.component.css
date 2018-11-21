@@ -1,3 +1,13 @@
+a.nav-item:first-child {
+    font-size: 2.1em;
+    margin-left: 0;
+}
+
 a.nav-item {
-    font-size: 2.5em;
+    font-size: 2.1em;
+    margin-left: 2%;
+}
+
+.topnav {
+    margin-bottom: 3.5%;
 }

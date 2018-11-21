@@ -1,0 +1,38 @@
+.home {
+    width: 100%;
+}
+
+.tags {
+    display: block;
+    background-color: darkgrey;
+    text-align: center;
+}
+
+.categ-list {
+    list-style: none;
+    font-size: 1.5em;
+    padding-left: 10%;
+    color: white;
+}
+
+.categ-list-item {
+    padding-bottom: 20%;
+    transition: 0.3s;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.categ-list-item:last-child {
+    padding-bottom: 0;
+}
+
+.categ-list-item:hover {
+    padding-left: 30%;
+    color: rgb(197, 197, 197);
+}
+
+.img-item {
+    display: inline-block;
+    margin-bottom: 2%;
+    margin-right: 2%;
+}

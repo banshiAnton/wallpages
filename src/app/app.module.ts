@@ -13,6 +13,7 @@ import { AppRoutingModule } from './router/app-routing.module';
 import { ImageItemComponent } from './admin/add-images/image-item/image-item.component';
 import { AddImagesComponent } from './admin/add-images/add-images.component';
 import { AddCategoryComponent } from './admin/add-category/add-category.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { AddCategoryComponent } from './admin/add-category/add-category.componen
     ImageItemComponent,
     AddImagesComponent,
     AddCategoryComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,

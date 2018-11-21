@@ -41,7 +41,7 @@ export class AddImagesComponent implements OnInit {
       console.log(this.oneCategory);
       for(let image in this.imageData) { this.imageData[image]['category'] = this.categories.find(categ => categ.name === this.oneCategory).id }
     };
-    for(let image in this.imageData) { console.log(this.imageData[image]['tags']); this.imageData[image]['tags'] = this.imageData[image]['tags'].map(tag => tag ? tag.value : '') }//this.imageData[image]['tags'] = this.imageData[image]['tags'].length ? this.imageData[image]['tags'].map(tag => tag.value) : [];
+    for(let image in this.imageData) { console.log(this.imageData[image]['tags']);} //this.imageData[image]['tags'] = this.imageData[image]['tags'].map(tag => tag ? tag.value : '') }//this.imageData[image]['tags'] = this.imageData[image]['tags'].length ? this.imageData[image]['tags'].map(tag => tag.value) : [];
     data.append('filesData', JSON.stringify(this.imageData))
     this.service.postImages(data).subscribe((data: any) => {
       console.log(data);

@@ -4,7 +4,7 @@ const sharp = require('sharp');
 
 let folder = 'test';
 
-const dest = path.join(__dirname, `../public/images/${folder}`);
+const dest = path.join(__dirname, `../public/images/`);
 
 fs.readdir(dest, function(err, results) {
     //console.log(arguments);
@@ -13,11 +13,8 @@ fs.readdir(dest, function(err, results) {
             
             fs.readFile(path.join(dest, item), function(err, buffer) {
 
-                sharp(buffer).
-                    resize(600, 340)
-                    .toFile(path.join(dest, '/small/', item), function() {
-                        console.log(arguments);
-                    })
+                sharp(buffer).metadata()
+                .then(metadata => sharp(buffer).resize(Math.round(metadata.width / 8), Math.round(metadata.height / 8)).toFile(path.join(__dirname, `../public/images/`, '/small/', item)))
 
             })
 
