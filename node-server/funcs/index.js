@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path')
+const url = require('url');
 const writeFile = require('util').promisify(fs.writeFile);
 const sharp = require('sharp');
 const fetch = require('node-fetch');
@@ -65,10 +66,22 @@ let postVK = function(images) {
             })
             .then(data => data.json())
             .then(data => {
-                let message = images.map(img => img.tags.map(tag => `%23${tag}`).join('')).join('');
+                let message = images.map(img => img.tags.map(tag => `#${tag}`).join('')).join('');
                 console.log('Message', message, data);
                 let attachments  = data.response.map(photo => `photo${photo.owner_id}_${photo.id}`).join(',');
-                let postUrl = `https://api.vk.com/method/wall.post?&owner_id=${-process.env.vkgid}&message=${message}&attachments=${attachments}&from_group=1&v=5.67&access_token=${process.env.vktoken}`;
+                let postUrl = url.format({
+                    protocol: 'https',
+                    hostname: 'api.vk.com',
+                    pathname: '/method/wall.post',
+                    query: {
+                        message,
+                        attachments,
+                        owner_id: -process.env.vkgid,
+                        access_token: process.env.vktoken,
+                        from_group: 1,
+                        v: 5.67
+                    }
+                })
                 return fetch(postUrl)
             })
             .then(data => data.json())
