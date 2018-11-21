@@ -37,8 +37,12 @@ export class AddImagesComponent implements OnInit {
   onSubmit(e, form) {
     e.preventDefault();
     let data = new FormData(form);
-    if(this.inOne && this.oneCategory) { 
-      console.log(this.oneCategory);
+    //console.log(this.inOne, this.oneCategory);
+    if(this.inOne) { 
+      if(!this.oneCategory) {
+        console.log('Chose category');
+        return;
+      }
       for(let image in this.imageData) { this.imageData[image]['category'] = this.categories.find(categ => categ.name === this.oneCategory).id }
     };
     for(let image in this.imageData) { console.log(this.imageData[image]['tags']);} //this.imageData[image]['tags'] = this.imageData[image]['tags'].map(tag => tag ? tag.value : '') }//this.imageData[image]['tags'] = this.imageData[image]['tags'].length ? this.imageData[image]['tags'].map(tag => tag.value) : [];
