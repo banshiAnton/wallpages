@@ -22,7 +22,7 @@ const Images = sequelize.import(path.join(__dirname, '../models/images'));
 Categories.sync({force: false}).then(() => {
 }).then((res) => {
     console.log(res);
-    Images.sync({force: false}).then(() => {
+    Images.sync({force: true}).then(() => {
     }).then((res) => {
         console.log(res);
         Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
