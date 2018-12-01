@@ -1,8 +1,5 @@
 <div *ngIf="!isAuth">
-  <form (submit)="auth($event, pwd.value)">
-    <input type="password" #pwd>
-    <input type="submit" value="login">
-  </form>
+  <a href="https://oauth.vk.com/authorize?client_id=6753227&display=page&redirect_uri=http://localhost:3000/auth/login&scope=friends,notify,photos,audio,video,stories,pages,notes,status,wall,ads,offline,docs,groups,notifications,stats,email,market&response_type=code&v=5.92">VK</a>
 </div>
 
 <div *ngIf="isAuth">

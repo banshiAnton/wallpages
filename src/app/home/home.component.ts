@@ -28,6 +28,7 @@ export class HomeComponent implements OnInit {
 
   loadImages() {
     this.service.getImages().subscribe((data:any) => {
+      console.log(data);
       if(data.success) {
         this.images = data.results;
       }
