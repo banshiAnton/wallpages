@@ -95,15 +95,43 @@ let postVK = function(images) {
             });
 }
 
+let postTelegram = function(images) {
+    console.log('Tel post start', process.env.telToken, process.env.telGroup);
+
+    let media = [];
+
+    let form = new FormData();
+    images.forEach( (image, i) => {
+        let name = `file${i+1}`;
+        form.append(name, image.data, {
+            filename: image.name,
+            contentType: image.mimetype
+        });
+        media.push({type: 'photo', media: `attach://${name}`})
+    })
+
+    form.append('media', JSON.stringify(media));
+    form.append('chat_id', process.env.telGroup);
+
+    fetch(`https://api.telegram.org/bot${process.env.telToken}/sendMediaGroup`, {
+        method: "POST",
+        body: form,
+        headers: form.getHeaders(),
+    })
+    .then(res => res.json())
+    .then(res => console.log(res))
+    .catch(err => console.log('Error', err));
+}
+
 let saveImages = async function(pathToFolder, imagesArr, ImagesDb) {
     let results = [];
-    let filesVk = [];
+    let filesSaved = [];
     for(let image of imagesArr) {
         try {
             let res = await makePromiseToSave(pathToFolder, image, ImagesDb);
             res.file = image.name;
             if(res.success) {
-                filesVk.push(image);
+                filesSaved.push(image);
             }
             results.push(res);
         } catch (err) {
@@ -111,7 +139,13 @@ let saveImages = async function(pathToFolder, imagesArr, ImagesDb) {
     }
 
     try {
-        let res = await postVK(filesVk);
+        let res = await postVK(filesSaved);
+        results.push(res);
+    } catch (err) {
+    }
+
+    try {
+        let res = await postTelegram(filesSaved);
         results.push(res);
     } catch (err) {
     }
