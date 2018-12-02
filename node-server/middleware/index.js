@@ -1,5 +1,12 @@
 const sequelizeBaseError = require('sequelize/lib/errors').BaseError;
 const util = require('util');
+const Sequelize = require('sequelize');
+const path = require('path');
+const jwt = require('jsonwebtoken');
+
+const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
+
+const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
 
 let makeApiQuery = function(req, res, next) {
     
@@ -83,8 +90,11 @@ let errorHandle = function(err, req, res, next) {
 }
 
 let isAuth = function(req, res, next) {
-    if(req.header('auth') === process.env.token) {
-        next();
+    if(req.cookies.admin_data) {
+        let decoded = jwt.decode(req.cookies.admin_data);
+        Admins.findOne({ where: {email: decoded.email} })
+        .then(result => next())
+        .catch(err => next(err))
     } else {
         res.json({success: false})
     }

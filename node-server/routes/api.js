@@ -16,26 +16,21 @@ const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
 
 const sequelizeBaseError = require('sequelize/lib/errors').BaseError;
 
+const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
+
 const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
 const Images = sequelize.import(path.join(__dirname, '../models/images'));
 
-Categories.sync({force: false}).then(() => {
+Categories.sync({force: false})
+.then((res) => {
+    console.log(res);
+    return Images.sync({force: false});
 }).then((res) => {
     console.log(res);
-    Images.sync({force: true}).then(() => {
-    }).then((res) => {
-        console.log(res);
-        Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
-        Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
-    }).catch(err => {
-        console.error('ERROR in MYSQL',err);
-    });
-}).catch(err => {
-    console.error('ERROR in MYSQL', err);
-});
+    Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
+    Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
+}).catch(err => console.error('ERROR in MYSQL', err));
 
-// Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
-// Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
 
 const router = require('express').Router();
 
@@ -66,7 +61,6 @@ router.get('/', makeApiQuery, function (req, res, next) {
     Images.findAll(queryObj)
     .then(result => {
         let arr = [];
-        console.log('DB images', result.get('id'), result.get('file'), result.get('category_id'));
         result.forEach(item => {
             console.log('Test', item.get('category_id'), item.get('file'));
         arr.push({

@@ -14,6 +14,7 @@ import { ImageItemComponent } from './admin/add-images/image-item/image-item.com
 import { AddImagesComponent } from './admin/add-images/add-images.component';
 import { AddCategoryComponent } from './admin/add-category/add-category.component';
 import { HomeComponent } from './home/home.component';
+import { AddAdminComponent } from './admin/add-admin/add-admin.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { HomeComponent } from './home/home.component';
     AddImagesComponent,
     AddCategoryComponent,
     HomeComponent,
+    AddAdminComponent,
   ],
   imports: [
     BrowserModule,

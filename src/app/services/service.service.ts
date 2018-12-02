@@ -47,16 +47,14 @@ export class ServiceService {
     });
   }
 
-  login(pwd) {
-    return this.http.post(`${this.authUrl}login`, JSON.stringify({pwd}), {
+  addAdmin(email) {
+    return this.http.post(`${this.authUrl}admin`, JSON.stringify({email}), {
       headers: new HttpHeaders({ 'Content-Type': 'application/json'})
     })
   }
 
   getUser() {
-    return this.http.get(`${this.authUrl}user`, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || ''})
-    })
+    return this.http.get(`${this.authUrl}admin`)
   }
 
   getImages(query = {count: 10, offset: 0, category: null}) {

@@ -1,8 +1,3 @@
-// const Sequelize = require('sequelize');
-// const sequelize = new Sequelize( {
-//     dialect: 'mysql'
-// });
-
 module.exports = (sequelize, DataTypes) => {
     const Categories = sequelize.define("categories", {
         id: {

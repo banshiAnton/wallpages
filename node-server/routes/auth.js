@@ -1,35 +1,61 @@
 const router = require('express').Router();
 const fetch = require('node-fetch');
+const jwt = require('jsonwebtoken');
+const Sequelize = require('sequelize');
+const path = require('path');
+
+const { isAuth } = require('../middleware/');
+
+const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
+
+const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
+
+Admins.sync({force: false})
+.then(res => console.log(res))
+.catch(err => console.error('ERROR in MYSQL', err));
 
 router.get('/login', function(req, res, next) {
-    // if(req.body.pwd === process.env.pwd) {
-    //     res.json({success: true, token: process.env.token})
-    // } else {
-    //     res.json({success: false})
-    // }
     console.log(req.query);
-    let url = `https://oauth.vk.com/access_token?client_id=6753227&redirect_uri=http://localhost:3000/auth/login&client_secret=${'EWn0xSb2tHbVKamgESWq'}&code=${req.query.code}&v=5.92`;
+    let url = `https://oauth.vk.com/access_token?client_id=${process.env.vkClientId}&redirect_uri=${process.env.rUrl}&client_secret=${process.env.vkClientSecret}&code=${req.query.code}&v=5.92`;
     fetch(url)
     .then(data => data.json())
     .then(data => {
         console.log(data);
-        let url = `https://api.vk.com/method/users.get?user_id=${data.user_id}&access_token=${data.access_token}&v=5.52`;
-        return fetch(url);
-    }).then(data => data.json())
-    .then(data => {
-        console.log(data);
-        res.json(data)
+        return Admins.findOne({ where: {email: data.email} })
+        .then(result => {
+            if(result) {
+                jwt.sign(data, process.env.secretJWT, {algorithm: 'HS256'}, function(err, token) {
+                    if(!err) {
+                        res.cookie('admin_data', token, {path: '/', httpOnly: false })
+                        res.redirect('/admin/');
+                    }
+                })
+            }
+        })
+        .catch(err => {
+            console.log('Auth err', err);
+            next(err);
+        });
     })
-    .catch(err => console.log('Auth err', err));
-    
+    .catch(err => {
+        console.log('Auth err', err);
+        next(err);
+    });
 })
 
-router.get('/user', function(req, res, next) {
-    if(req.header('auth') === process.env.token) {
-        res.json({success: true})
-    } else {
-        res.json({success: false})
-    }
+//let url = `https://api.vk.com/method/users.get?user_id=${data.user_id}&access_token=${data.access_token}&fields=screen_name&v=5.52`;
+
+router.post('/admin', function(req, res, next) {
+    console.log(req.body);
+    Admins.create({email: req.body.email.trim()})
+    .then((result) => {
+        console.log(result);
+        res.json({success: true});
+    }).catch(err => next(err))
+})
+
+router.get('/admin', isAuth, function(req, res, next) {
+    res.json({success: true})
 });
 
 module.exports = router;

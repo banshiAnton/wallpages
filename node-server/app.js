@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
+const cookieParser = require('cookie-parser')
 const path = require('path');
 const fs = require('fs');
 
@@ -22,6 +23,8 @@ const apiRouter = require('./routes/api');
 const authRouter = require('./routes/auth');
 
 app.use(express.static(__dirname + '/public/'));
+
+app.use(cookieParser());
 
 app.use(bodyParser.urlencoded({extended: false}));
 // parse application/json

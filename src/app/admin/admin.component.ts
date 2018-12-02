@@ -17,17 +17,4 @@ export class AdminComponent implements OnInit {
       this.isAuth = data.success;
     })
   }
-
-  auth(e, pwd) {
-    e.preventDefault();
-    console.log(pwd);
-    this.service.login(pwd).subscribe((data:any) => {
-      if(data.success) {
-        window.localStorage.setItem('token', data.token);
-        console.log(window.localStorage.getItem('token'));
-        this.isAuth = true;
-      }
-    })
-  }
-
 }
