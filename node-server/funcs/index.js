@@ -145,7 +145,7 @@ let postTelegram = function(images) {
             filename: image.name,
             contentType: image.mimetype
         });
-        media.push({type: 'photo', media: `attach://${name}`})
+        media.push({type: 'photo', media: `attach://${name}`, caption: image.tags.map(tag => `#${tag}`).join('')})
     })
 
     form.append('media', JSON.stringify(media));
