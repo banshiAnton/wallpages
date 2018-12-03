@@ -16,7 +16,11 @@ const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
 const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
 const Images = sequelize.import(path.join(__dirname, '../models/images'));
 
-Categories.sync({force: false})
+sequelize.query('DROP TABLE `images`')
+.then(res => {
+    console.log(res);
+    return Categories.sync({force: true})
+})
 .then((res) => {
     console.log(res);
     return Images.sync({force: true});
@@ -26,11 +30,9 @@ Categories.sync({force: false})
     Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
     return getAlbumsVK();
 }).then(data => {
+    console.log(data);
     let bToCreate = data.response.items.map(item => {
-        if(item.thumb_id) { return null }
         return {name: item.title, vkId: item.id, tags: []}
-    }).filter(item => {
-        if(item) return item;
     })
     return Categories.bulkCreate(bToCreate);
 }).then(() => { // Notice: There are no arguments here, as of right now you'll have to...

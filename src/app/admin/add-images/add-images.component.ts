@@ -40,6 +40,7 @@ export class AddImagesComponent implements OnInit {
 
   onSubmit(e, form) {
     this.loading = true;
+    this.success = false;
     e.preventDefault();
     let data = new FormData(form);
     if(this.inOne) { 
