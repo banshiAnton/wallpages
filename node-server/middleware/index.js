@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
 
 const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
+const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
 
 let makeApiQuery = function(req, res, next) {
     
@@ -58,7 +59,7 @@ let parseFilesData = function (req, res, next) {
     next();
 }
 
-let groupFileDataToFiles = function(req, res, next) {
+let groupFileDataToFiles = async function(req, res, next) {
 
     console.log(req.body.filesData, req.files);
 
@@ -69,6 +70,7 @@ let groupFileDataToFiles = function(req, res, next) {
         file.tags = req.body.filesData[file.name].tags;
         file.name = Date.now() + '_' + file.name;
         file.name.trim();
+        file.vkAid = (await Categories.findOne({where: {id: file.category}, attributes: ['vkId']})).dataValues.vkId;
     }
 
     console.log('Transformed', req.files);

@@ -6,6 +6,9 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             allowNull: false
         },
+        vkId: {
+            type: DataTypes.INTEGER,unique: true, allowNull: false
+        },
         name: { type: DataTypes.STRING, unique: true, allowNull: false,
             validate: {
                 notEmpty: {

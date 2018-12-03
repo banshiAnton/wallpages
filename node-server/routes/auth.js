@@ -13,9 +13,9 @@ const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
 Admins.sync({force: false})
 .then(res => {
     console.log(res);
-    return Admins.create({email: 'banshi.anton@gmail.com'})
+    return Admins.findOrCreate({where: {email: 'banshi.anton@gmail.com'}})
 })
-.then(res => console.log(res))
+.then(res => console.log(res[0].get('email')))
 .catch(err => console.error('ERROR in MYSQL', err));
 
 router.get('/login', function(req, res, next) {
@@ -63,7 +63,6 @@ router.get('/admin', isAuth, function(req, res, next) {
 });
 
 router.get('/vkAuthLink', function(req, res, next) {
-    console.log(`https://oauth.vk.com/authorize?client_id=${process.env.vkClientId}&display=page&redirect_uri=${process.env.rUrl}&scope=friends,notify,photos,audio,video,stories,pages,notes,status,wall,ads,offline,docs,groups,notifications,stats,email,market&response_type=code&v=5.92`);
     res.json({link: `https://oauth.vk.com/authorize?client_id=${process.env.vkClientId}&display=page&redirect_uri=${process.env.rUrl}&scope=friends,notify,photos,audio,video,stories,pages,notes,status,wall,ads,offline,docs,groups,notifications,stats,email,market&response_type=code&v=5.92`});
 })
 

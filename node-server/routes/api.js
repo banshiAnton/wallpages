@@ -1,16 +1,11 @@
 const path = require('path');
 const fs = require('fs');
 
-const { categoryGetRes, saveImages } = require('../funcs');
+const { categoryGetRes, saveImages, createAlbumVK, getAlbumsVK } = require('../funcs');
 
 const { parseFilesData, groupFileDataToFiles, makeApiQuery, isAuth } = require('../middleware');
 
 const Sequelize = require('sequelize');
-// const sequelize = new Sequelize(process.env.sqlDb, process.env.sqlUser, process.env.sqlPassword, {
-//     dialect: process.env.sqlDialect,
-//     host: process.env.sqlHost,
-//     port: process.env.sqlPort,
-// });
 console.log(process.env.CLEARDB_DATABASE_URL);
 const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
 
@@ -24,12 +19,28 @@ const Images = sequelize.import(path.join(__dirname, '../models/images'));
 Categories.sync({force: false})
 .then((res) => {
     console.log(res);
-    return Images.sync({force: false});
+    return Images.sync({force: true});
 }).then((res) => {
     console.log(res);
     Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
     Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
-}).catch(err => console.error('ERROR in MYSQL', err));
+    return getAlbumsVK();
+}).then(data => {
+    let bToCreate = data.response.items.map(item => {
+        if(item.thumb_id) { return null }
+        return {name: item.title, vkId: item.id, tags: []}
+    }).filter(item => {
+        if(item) return item;
+    })
+    return Categories.bulkCreate(bToCreate);
+}).then(() => { // Notice: There are no arguments here, as of right now you'll have to...
+    return Categories.findAll();
+}).then(categs => {
+    categs.forEach(item => {
+        console.log(item.get('name'), item.get('tags'), item.get('vkId'));
+    })
+})
+.catch(err => console.error('ERROR in MYSQL', err));
 
 
 const router = require('express').Router();
@@ -119,17 +130,21 @@ router.post('/add/category', isAuth, function(req, res, next) {
     let name = req.body.name;
     let tags = req.body.tags;
     console.log(name, tags);
-    Categories.create({name, tags}).then((result) => {
+
+    createAlbumVK(name)
+    .then(data => Categories.create({name, tags, vkId: data.response.id}))
+    .then(result => {
         console.log(result);
-        res.json({success: true, name: result.get('name'), tags: result.get('tags')});
-    }).catch(err => next(err))
+        res.json({success: true, name: result.get('name')});
+    })
+    .catch(err => next(err))
+    
 });
 
 router.put('/category/:id', isAuth, function(req, res, next) {
     console.log(req.params.id, req.body);
     Categories.findById(req.params.id)
     .then(categ => {
-        //console.log(categ);
         return categ.update({
             name: req.body.name,
             tags: req.body.tags
