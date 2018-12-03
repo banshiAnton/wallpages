@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /node-server/public
+/node-server/.env
 
 
 # dependencies
