@@ -62,4 +62,8 @@ export class ServiceService {
     console.log(`${this.apiImageUrl}?${query.category ? 'category='+query.category : ''}&count=${query.count}&offset=${query.offset}`);
     return this.http.get(`${this.apiImageUrl}?${query.category ? 'category='+query.category : ''}&count=${query.count}&offset=${query.offset}`)
   }
+
+  getVKAuthLink() {
+    return this.http.get(`${this.authUrl}vkAuthLink`)
+  }
 }

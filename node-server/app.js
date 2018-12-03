@@ -10,10 +10,12 @@ if (!fs.existsSync(path.join(__dirname, './public/images'))){
     fs.mkdirSync(path.join(__dirname, './public/images/small'));
 }
 
-// const env = require('node-env-file');
-// env(__dirname + '/.env');
+if(fs.existsSync(__dirname + '/.env')) {
+    const env = require('node-env-file');
+    env(__dirname + '/.env');
+}
 
-//console.log(process.env)
+// console.log(process.env)
 
 const { errorHandle } = require('./middleware');
 
