@@ -10,3 +10,11 @@
 input[type="checkbox"] {
     margin-top: 15px;
 }
+
+button[type="submit"] {
+    margin-bottom: 20px;
+}
+
+div[role="alert"] {
+    margin-bottom: 0;
+}

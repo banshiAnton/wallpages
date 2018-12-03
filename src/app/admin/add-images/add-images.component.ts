@@ -20,6 +20,10 @@ export class AddImagesComponent implements OnInit {
 
   categories;
 
+  loading = false;
+
+  success = false;
+
   constructor(private service: ServiceService) { 
     this.service.getCategories().subscribe((data: any) => {
       if(data.success) {
@@ -35,9 +39,9 @@ export class AddImagesComponent implements OnInit {
   }
 
   onSubmit(e, form) {
+    this.loading = true;
     e.preventDefault();
     let data = new FormData(form);
-    //console.log(this.inOne, this.oneCategory);
     if(this.inOne) { 
       if(!this.oneCategory) {
         console.log('Chose category');
@@ -48,7 +52,11 @@ export class AddImagesComponent implements OnInit {
     for(let image in this.imageData) { console.log(this.imageData[image]['tags']);} //this.imageData[image]['tags'] = this.imageData[image]['tags'].map(tag => tag ? tag.value : '') }//this.imageData[image]['tags'] = this.imageData[image]['tags'].length ? this.imageData[image]['tags'].map(tag => tag.value) : [];
     data.append('filesData', JSON.stringify(this.imageData))
     this.service.postImages(data).subscribe((data: any) => {
+      this.loading = false;
       console.log(data);
+      if(data.results.every(item => item.success)) {
+        this.success = true;
+      }
     });
   }
 

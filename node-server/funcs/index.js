@@ -113,14 +113,20 @@ let postTelegram = function(images) {
     form.append('media', JSON.stringify(media));
     form.append('chat_id', process.env.telGroup);
 
-    fetch(`https://api.telegram.org/bot${process.env.telToken}/sendMediaGroup`, {
+    return fetch(`https://api.telegram.org/bot${process.env.telToken}/sendMediaGroup`, {
         method: "POST",
         body: form,
         headers: form.getHeaders(),
     })
     .then(res => res.json())
-    .then(res => console.log(res))
-    .catch(err => console.log('Error', err));
+    .then(res => {
+        console.log(res);
+        return {res, success: true, telegram: 'telegram'}
+    })
+    .catch(error => {
+        console.log('Promis error telegram', error);
+        return {error, success: false, telegram: 'telegram'};
+    });
 }
 
 let saveImages = async function(pathToFolder, imagesArr, ImagesDb) {

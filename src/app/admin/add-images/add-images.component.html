@@ -19,6 +19,12 @@
             <input type="file" class="form-control-file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles required>
           </div>
           <button type="submit" class="btn btn-primary">Post</button>
+          <div *ngIf="loading">
+            Загрузка...
+          </div>
+          <div *ngIf="success" class="alert alert-success" role="alert">
+            Загружено
+          </div>
         </form>
       </div>
   </div>

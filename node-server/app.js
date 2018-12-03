@@ -15,8 +15,6 @@ if(fs.existsSync(__dirname + '/.env')) {
     env(__dirname + '/.env');
 }
 
-// console.log(process.env)
-
 const { errorHandle } = require('./middleware');
 
 const app = express();
