@@ -11,6 +11,10 @@ const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
 const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
 
 Admins.sync({force: false})
+.then(res => {
+    console.log(res);
+    return Admins.create({email: 'banshi.anton@gmail.com'})
+})
 .then(res => console.log(res))
 .catch(err => console.error('ERROR in MYSQL', err));
 
