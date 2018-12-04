@@ -1,4 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~bootstrap/dist/css/bootstrap.min.css';
+@import '~open-iconic/font/css/open-iconic-bootstrap.css';
+
 body {
     background-image: linear-gradient(to right, #1D2B64 , #ff80ff);
 }

@@ -91,7 +91,7 @@ let savePhotoVK = function(img) {
             .catch(err => null)
 }
 
-let postVK = async function(images) {
+let postVK = async function(images, ops) {
 
     console.log('VK start', images);
 
@@ -108,6 +108,7 @@ let postVK = async function(images) {
     console.log('Message', message);
     attachments  = attachments.join(',');
     console.log('attachments', attachments);
+    console.log(ops.publish_date);
     let postUrl = url.format({
         protocol: 'https',
         hostname: 'api.vk.com',
@@ -118,6 +119,7 @@ let postVK = async function(images) {
             owner_id: -process.env.vkgid,
             access_token: process.env.vktoken,
             from_group: 1,
+            publish_date: ops.publish_date,
             v: 5.67
         }
     })
@@ -151,11 +153,28 @@ let postTelegram = function(images) {
     form.append('media', JSON.stringify(media));
     form.append('chat_id', process.env.telGroup);
 
-    return fetch(`https://api.telegram.org/bot${process.env.telToken}/sendMediaGroup`, {
-        method: "POST",
-        body: form,
-        headers: form.getHeaders(),
-    })
+    console.log(media.map(m => m.caption).join(''));
+
+    // let msgUrl = url.format({
+    //     protocol: 'https',
+    //     hostname: 'api.telegram.org',
+    //     pathname: `/bot${process.env.telToken}/sendMessage`,
+    //     query: {
+    //         text: media.map(m => m.caption).join(''),
+    //         chat_id: process.env.telGroup
+    //     }
+    // })
+
+    // return fetch(msgUrl)
+    // .then(data => data.json())
+    // .then(data => {
+    //     console.log(data);
+        return fetch(`https://api.telegram.org/bot${process.env.telToken}/sendMediaGroup`, {
+            method: "POST",
+            body: form,
+            headers: form.getHeaders(),
+        })
+    // })
     .then(res => res.json())
     .then(res => {
         console.log(res);
@@ -167,7 +186,7 @@ let postTelegram = function(images) {
     });
 }
 
-let saveImages = async function(pathToFolder, imagesArr, ImagesDb) {
+let saveImages = async function(pathToFolder, imagesArr, ImagesDb, ops) {
     let results = [];
     let filesSaved = [];
     for(let image of imagesArr) {
@@ -183,13 +202,13 @@ let saveImages = async function(pathToFolder, imagesArr, ImagesDb) {
     }
 
     try {
-        let res = await postVK(filesSaved);
+        let res = await postVK(filesSaved, ops);
         results.push(res);
     } catch (err) {
     }
 
     try {
-        let res = await postTelegram(filesSaved);
+        let res = await postTelegram(filesSaved, ops);
         results.push(res);
     } catch (err) {
     }

@@ -23,19 +23,21 @@ let url = 'https://images.pexels.com/photos/46710/pexels-photo-46710.jpeg?auto=c
 
 let form = new FormData();
 
+let t2 = 'EAAflqFgKteIBAAdFgb0BBsGUMDP7sKj6UT8KW2FIErWx4GUH3CY6G0j9MAJerZANATitHNOUXsWedMYibLKHspovlrZBAYBDA2cB3R99ukv9hwbAFiedbpz7iwxAgiHDmFNR186EnBkaQuZBzv2yw7eKTpJJgFL8IwA3gBS0rtqUdejHUmwxJZAZCF3giDYyZBc0qTmlZCPRwZDZD';
+
 FB.setAccessToken(token);
 
 
-let photoBuffer1 = fs.readFileSync(path.join(__dirname, '/../public/images/1542833487658_$RQ3M8LP.jpg'));
-let photoBuffer2 = fs.readFileSync(path.join(__dirname, '/../public/images/1542833414396_$RPQQNGT.jpg'));
-let photoBuffer3 = fs.readFileSync(path.join(__dirname, '/../public/images/1542838905245_$RJ94NZT.jpg'));
+// let photoBuffer1 = fs.readFileSync(path.join(__dirname, '/../public/images/1542833487658_$RQ3M8LP.jpg'));
+// let photoBuffer2 = fs.readFileSync(path.join(__dirname, '/../public/images/1542833414396_$RPQQNGT.jpg'));
+// let photoBuffer3 = fs.readFileSync(path.join(__dirname, '/../public/images/1542838905245_$RJ94NZT.jpg'));
 
-form.append('file3', photoBuffer3, {
-    filepath: path.join(__dirname, '/../public/images/1542833414396_$RPQQNGT.jpg'),
-    contentType: 'image/jpeg'
-});
+// form.append('file3', photoBuffer3, {
+//     filepath: path.join(__dirname, '/../public/images/1542833414396_$RPQQNGT.jpg'),
+//     contentType: 'image/jpeg'
+// });
 
-form.append('message', "test post");
+// form.append('message', "test post");
 
 // fetch(`https://graph.facebook.com/v3.2/${gId}/photos?access_token=${token}`, {
 //     method: 'POST',
@@ -48,15 +50,8 @@ form.append('message', "test post");
 let alId = '289794064986526';
 let pId = '289793524986580';
 
-app.use(express.static(path.join(__dirname, '/public/')));
-
-app.get('/', function(req, res, next) {
-    res.end('Hello');
-});
-
-app.listen(3000);
-// FB.api(`${gId}/feed`, 'post', { message: "test post shedul"}, function(res) {
-//     console.log(res);
-// })
+FB.api(`${gId}/feed`, 'post', { message: "test post shedul"}, function(res) {
+    console.log(res);
+})
 
   //child_attachments: ['https://www.facebook.com/photo.php?fbid=199012910978830','https://www.facebook.com/photo.php?fbid=199012577645530']

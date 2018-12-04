@@ -18,3 +18,8 @@ button[type="submit"] {
 div[role="alert"] {
     margin-bottom: 0;
 }
+
+.date-picker {
+    padding-bottom: 2%;
+    width: 50%;
+}

@@ -24,6 +24,8 @@ export class AddImagesComponent implements OnInit {
 
   success = false;
 
+  selectedDate = null;
+
   constructor(private service: ServiceService) { 
     this.service.getCategories().subscribe((data: any) => {
       if(data.success) {
@@ -39,10 +41,12 @@ export class AddImagesComponent implements OnInit {
   }
 
   onSubmit(e, form) {
+    e.preventDefault();
     this.loading = true;
     this.success = false;
-    e.preventDefault();
+    console.log('Date', this.selectedDate, this.selectedDate.getTime() / 1000);
     let data = new FormData(form);
+    data.append('publish_date', (this.selectedDate.getTime() / 1000) + '')
     if(this.inOne) { 
       if(!this.oneCategory) {
         console.log('Chose category');

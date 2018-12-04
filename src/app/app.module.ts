@@ -5,6 +5,7 @@ import { HttpClientModule }    from '@angular/common/http';
 
 import { TagInputModule } from 'ngx-chips';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // this is needed!
+import { DlDateTimePickerDateModule } from 'angular-bootstrap-datetimepicker';
 
 import { AppComponent } from './app.component';
 import { AdminComponent } from './admin/admin.component';
@@ -34,7 +35,8 @@ import { AddAdminComponent } from './admin/add-admin/add-admin.component';
     TagInputModule, 
     BrowserAnimationsModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DlDateTimePickerDateModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -89,7 +89,7 @@ router.get('/', makeApiQuery, function (req, res, next) {
 });
 
 router.post('/upload', isAuth, parseFilesData, groupFileDataToFiles, function (req, res, next) {
-    saveImages(path.join(__dirname, `../public/images`), req.files.images, Images)
+    saveImages(path.join(__dirname, `../public/images`), req.files.images, Images, { publish_date: req.body.publish_date })
     .then(results => {
         console.log('End', results);
         res.json({success: true, results});
