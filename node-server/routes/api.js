@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const { categoryGetRes, saveImages, createAlbumVK, getAlbumsVK } = require('../funcs');
+const { categoryGetRes, saveImages, createAlbumVK, getAlbumsVK, telPostOnPTime } = require('../funcs');
 
 const { parseFilesData, groupFileDataToFiles, makeApiQuery, isAuth } = require('../middleware');
 
@@ -15,10 +15,12 @@ const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
 
 const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
 const Images = sequelize.import(path.join(__dirname, '../models/images'));
+const Posts = sequelize.import(path.join(__dirname, '../models/posts'));
 
-sequelize.query('DROP TABLE `images`')
+Posts.sync({force: true}).then(() => sequelize.query('DROP TABLE `images`'))
 .then(res => {
     console.log(res);
+    telPostOnPTime(Posts, path.join(__dirname, `../public/images`))
     return Categories.sync({force: true})
 })
 .then((res) => {
@@ -89,7 +91,8 @@ router.get('/', makeApiQuery, function (req, res, next) {
 });
 
 router.post('/upload', isAuth, parseFilesData, groupFileDataToFiles, function (req, res, next) {
-    saveImages(path.join(__dirname, `../public/images`), req.files.images, Images, { publish_date: req.body.publish_date })
+    console.log('Url', req.url, req.host, req.hostname);
+    saveImages(path.join(__dirname, `../public/images`), req.files.images, {Images, Posts}, { publish_date: req.body.publish_date, url: `http://${req.host}:${process.env.PORT}/images` })
     .then(results => {
         console.log('End', results);
         res.json({success: true, results});

@@ -39,14 +39,15 @@ export class AddImagesComponent implements OnInit {
 
   ngOnInit() {
   }
-
+  // ((this.selectedDate.getTime() / 1000) + '')
+  // ( ( (Date.now() / 1000) + 60 ) + '' )
   onSubmit(e, form) {
     e.preventDefault();
     this.loading = true;
     this.success = false;
-    console.log('Date', this.selectedDate, this.selectedDate.getTime() / 1000);
+    // console.log('Date', this.selectedDate, this.selectedDate.getTime() / 1000);
     let data = new FormData(form);
-    data.append('publish_date', (this.selectedDate.getTime() / 1000) + '')
+    data.append('publish_date', this.selectedDate ?  ((this.selectedDate.getTime() / 1000) + '') : ( ( Math.ceil(Date.now() / 1000) + 60 ) + '' )  );
     if(this.inOne) { 
       if(!this.oneCategory) {
         console.log('Chose category');

@@ -11,11 +11,7 @@ const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
 const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
 
 Admins.sync({force: false})
-.then(res => {
-    console.log(res);
-    return Admins.findOrCreate({where: {email: 'banshi.anton@gmail.com'}})
-})
-.then(res => console.log(res[0].get('email')))
+.then(res => console.log(res))
 .catch(err => console.error('ERROR in MYSQL', err));
 
 router.get('/login', function(req, res, next) {
@@ -25,7 +21,7 @@ router.get('/login', function(req, res, next) {
     .then(data => data.json())
     .then(data => {
         console.log(data);
-        return Admins.findOne({ where: {email: data.email} })
+        return Admins.findOne({ where: {vkid: data.user_id} })
         .then(result => {
             if(result) {
                 jwt.sign(data, process.env.secretJWT, {algorithm: 'HS256'}, function(err, token) {
@@ -51,7 +47,7 @@ router.get('/login', function(req, res, next) {
 
 router.post('/admin', function(req, res, next) {
     console.log(req.body);
-    Admins.create({email: req.body.email.trim()})
+    Admins.create({vkid: +req.body.vkid.trim()})
     .then((result) => {
         console.log(result);
         res.json({success: true});

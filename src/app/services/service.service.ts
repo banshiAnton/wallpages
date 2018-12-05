@@ -47,8 +47,8 @@ export class ServiceService {
     });
   }
 
-  addAdmin(email) {
-    return this.http.post(`${this.authUrl}admin`, JSON.stringify({email}), {
+  addAdmin(vkid) {
+    return this.http.post(`${this.authUrl}admin`, JSON.stringify({vkid}), {
       headers: new HttpHeaders({ 'Content-Type': 'application/json'})
     })
   }

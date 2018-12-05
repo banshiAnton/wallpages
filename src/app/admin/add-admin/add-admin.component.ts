@@ -8,7 +8,7 @@ import { ServiceService } from '../../services/service.service';
 })
 export class AddAdminComponent implements OnInit {
 
-  email: string;
+  vkid: string;
 
   constructor(private service: ServiceService) { }
 
@@ -17,8 +17,8 @@ export class AddAdminComponent implements OnInit {
 
   onAdd(e) {
     e.preventDefault();
-    console.log(this.email);
-    this.service.addAdmin(this.email).subscribe(data => {
+    console.log(this.vkid);
+    this.service.addAdmin(this.vkid).subscribe(data => {
       console.log(data);
     })
   }

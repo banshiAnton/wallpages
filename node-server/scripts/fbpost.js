@@ -9,9 +9,10 @@ const app = express();
 
 FB.options({version: 'v3.2'});
 
-let appId = '2228257290791812';
-let appSecret = 'a22108ce3a031aebf852af728dfdf620';
+let appId = '2003681286592482';
+let appSecret = 'a63c25cef4dfe415879c493058fafca5';
 let gId = '289420848357181';
+let rUrl = 'http://localhost:3000/cb';
 
 // let app_fb = FB.extend({appId: appId, appSecret: appSecret});
 
@@ -21,9 +22,7 @@ let token = 'EAAflqFgKteIBAOjSVmZB0HJlBTx3RhXEzWE3zHZC2JptfpNS8AlZC6fXaBnCVubk8J
 let url = 'https://images.pexels.com/photos/46710/pexels-photo-46710.jpeg?auto=compress&cs=tinysrgb&h=650&w=940';
 
 
-let form = new FormData();
-
-let t2 = 'EAAflqFgKteIBAAdFgb0BBsGUMDP7sKj6UT8KW2FIErWx4GUH3CY6G0j9MAJerZANATitHNOUXsWedMYibLKHspovlrZBAYBDA2cB3R99ukv9hwbAFiedbpz7iwxAgiHDmFNR186EnBkaQuZBzv2yw7eKTpJJgFL8IwA3gBS0rtqUdejHUmwxJZAZCF3giDYyZBc0qTmlZCPRwZDZD';
+// let form = new FormData();
 
 FB.setAccessToken(token);
 
@@ -50,8 +49,20 @@ FB.setAccessToken(token);
 let alId = '289794064986526';
 let pId = '289793524986580';
 
-FB.api(`${gId}/feed`, 'post', { message: "test post shedul"}, function(res) {
-    console.log(res);
-})
+// FB.api(`${gId}/feed`, 'post', { message: "test post shedul"}, function(res) {
+//     console.log(res);
+// });
+
+app.get('/', function(req ,res ,next) {
+    res.end(`<a href="https://www.facebook.com/v3.2/dialog/oauth?
+    client_id=${appId}
+    &redirect_uri=${rUrl}">Test</a>`);
+});
+
+app.get('/cb', function(req ,res, next) {
+    res.end('cb');
+});
+
+app.listen(3000);
 
   //child_attachments: ['https://www.facebook.com/photo.php?fbid=199012910978830','https://www.facebook.com/photo.php?fbid=199012577645530']

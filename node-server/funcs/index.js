@@ -2,9 +2,12 @@ const fs = require('fs');
 const path = require('path')
 const url = require('url');
 const writeFile = require('util').promisify(fs.writeFile);
+const readFile = require('util').promisify(fs.readFile);
 const sharp = require('sharp');
 const fetch = require('node-fetch');
 const FormData = require('form-data');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 let categoryGetRes = function(seqRes) {
     let res = {};
@@ -135,47 +138,70 @@ let postVK = async function(images, ops) {
     });
 }
 
-let postTelegram = function(images) {
+let telPostOnPTime = function(Posts, pathToFolder) {
+    setInterval(() => {
+        let time = Math.ceil(Date.now() / 1000);
+        Posts.findAll({
+            where: {
+                pTime: {
+                    [Op.lte]: time
+                }
+            }
+        }).then(data => {
+            console.log('POSTS****', data)
+            if(data.length) {
+                return postTelegram(JSON.parse(data[0].get('jsonData')), pathToFolder)
+            }
+        })
+        .then(res => console.log(res))
+        .catch(error => console.log('Find db error', error))
+    }, 1000 * 15);
+}
+
+let postTelegram = async function(images, pathToFolder) {
+
+    console.log('Pre data', images);
+
+    let media = [];
+    let form = new FormData();
+    let i = 1
+    for(let image of images) {
+
+        let file = await readFile(path.join(pathToFolder, '/', image.file));
+        console.log('File', file);
+
+        let name = `file${i}`;
+        form.append(name, file, {
+            filename: image.file,
+            contentType: image.mimetype
+        });
+        media.push({type: 'photo', media: `attach://${name}`, caption: image.caption})
+        ++i;
+    }
+
+    console.log('End media', media);
+    form.append('media', JSON.stringify(media));
+    form.append('chat_id', process.env.telGroup);
+
+    return fetch(`https://api.telegram.org/bot${process.env.telToken}/sendMediaGroup`, {
+        method: "POST",
+        body: form,
+        headers: form.getHeaders(),
+    })
+    .then(res => res.json())
+}
+
+
+let postTelegramInDB = function(images, Posts, ops) {
     console.log('Tel post start', process.env.telToken, process.env.telGroup);
 
     let media = [];
 
-    let form = new FormData();
-    images.forEach( (image, i) => {
-        let name = `file${i+1}`;
-        form.append(name, image.data, {
-            filename: image.name,
-            contentType: image.mimetype
-        });
-        media.push({type: 'photo', media: `attach://${name}`, caption: image.tags.map(tag => `#${tag}`).join('')})
+    images.forEach((img) => {
+        media.push({file: img.name, mimetype: img.mimetype, caption: img.tags.map(tag => `#${tag}`).join('')})
     })
 
-    form.append('media', JSON.stringify(media));
-    form.append('chat_id', process.env.telGroup);
-
-    console.log(media.map(m => m.caption).join(''));
-
-    // let msgUrl = url.format({
-    //     protocol: 'https',
-    //     hostname: 'api.telegram.org',
-    //     pathname: `/bot${process.env.telToken}/sendMessage`,
-    //     query: {
-    //         text: media.map(m => m.caption).join(''),
-    //         chat_id: process.env.telGroup
-    //     }
-    // })
-
-    // return fetch(msgUrl)
-    // .then(data => data.json())
-    // .then(data => {
-    //     console.log(data);
-        return fetch(`https://api.telegram.org/bot${process.env.telToken}/sendMediaGroup`, {
-            method: "POST",
-            body: form,
-            headers: form.getHeaders(),
-        })
-    // })
-    .then(res => res.json())
+    return Posts.create({pTime: ops.publish_date, jsonData: JSON.stringify(media)})
     .then(res => {
         console.log(res);
         return {res, success: true, telegram: 'telegram'}
@@ -186,12 +212,12 @@ let postTelegram = function(images) {
     });
 }
 
-let saveImages = async function(pathToFolder, imagesArr, ImagesDb, ops) {
+let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     let results = [];
     let filesSaved = [];
     for(let image of imagesArr) {
         try {
-            let res = await makePromiseToSave(pathToFolder, image, ImagesDb);
+            let res = await makePromiseToSave(pathToFolder, image, db.Images);
             res.file = image.name;
             if(res.success) {
                 filesSaved.push(image);
@@ -208,7 +234,12 @@ let saveImages = async function(pathToFolder, imagesArr, ImagesDb, ops) {
     }
 
     try {
-        let res = await postTelegram(filesSaved, ops);
+        console.log('Saved**', filesSaved.map(img => {
+            return {name: img.name, tags: img.tags}
+        }));
+        let res = await postTelegramInDB(filesSaved.map(img => {
+            return {name: img.name, tags: img.tags}
+        }), db.Posts, ops);
         results.push(res);
     } catch (err) {
     }
@@ -220,3 +251,4 @@ exports.categoryGetRes = categoryGetRes;
 exports.saveImages = saveImages;
 exports.createAlbumVK = createAlbumVK;
 exports.getAlbumsVK = getAlbumsVK;
+exports.telPostOnPTime = telPostOnPTime;
