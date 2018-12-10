@@ -20,7 +20,7 @@ const Posts = sequelize.import(path.join(__dirname, '../models/posts'));
 Posts.sync({force: true}).then(() => sequelize.query('DROP TABLE `images`'))
 .then(res => {
     console.log(res);
-    telPostOnPTime(Posts, path.join(__dirname, `../public/images`))
+    // telPostOnPTime(Posts, path.join(__dirname, `../public/images`))
     return Categories.sync({force: true})
 })
 .then((res) => {
