@@ -62,4 +62,13 @@ router.get('/vkAuthLink', function(req, res, next) {
     res.json({link: `https://oauth.vk.com/authorize?client_id=${process.env.vkClientId}&display=page&redirect_uri=${process.env.rUrl}&scope=friends,notify,photos,audio,video,stories,pages,notes,status,wall,ads,offline,docs,groups,notifications,stats,email,market&response_type=code&v=5.92`});
 })
 
+router.get('/fbAuthLink', function(req, res, next) {
+    res.json({link: `https://www.facebook.com/v3.2/dialog/oauth?client_id=${process.env.fbAppId}&redirect_uri=${process.env.fbRUrl}`});
+});
+
+router.get('/fbcb', function(req, res, next) {
+    console.log(req, req.params, req.query);
+    res.json(req);
+})
+
 module.exports = router;

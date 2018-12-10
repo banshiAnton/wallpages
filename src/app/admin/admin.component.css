@@ -1,11 +1,19 @@
 a {
     text-decoration: none;
-    font-size: 2em;
+    /* font-size: 2em; */
     padding: 1%;
     width: max-content;
-    border-right: 5px solid yellowgreen;
+    /* border-right: 5px solid yellowgreen; */
 }
 
 .nav-item {
     display: block;
 }
+
+/* #fbLink {
+    background-image: url('https://en.facebookbrand.com/wp-content/uploads/2016/05/flogo_rgb_hex-brc-site-250.png');
+    background-position: center; 
+    background-repeat: no-repeat; 
+    background-size: cover;
+    padding-left: 1%;
+} */

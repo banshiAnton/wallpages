@@ -10,6 +10,7 @@ export class AdminComponent implements OnInit {
 
   isAuth = false;
   vkAuthLink: string = '';
+  fbAuthLink: string = '';
 
   constructor(private service: ServiceService) { }
 
@@ -20,6 +21,9 @@ export class AdminComponent implements OnInit {
         this.service.getVKAuthLink().subscribe((data:any) => {
             this.vkAuthLink = data.link;
         })
+        this.service.getFBAuthLink().subscribe((data:any) => {
+          this.fbAuthLink = data.link;
+      })
       }
     })
   }

@@ -66,4 +66,8 @@ export class ServiceService {
   getVKAuthLink() {
     return this.http.get(`${this.authUrl}vkAuthLink`)
   }
+
+  getFBAuthLink() {
+    return this.http.get(`${this.authUrl}fbAuthLink`)
+  }
 }
