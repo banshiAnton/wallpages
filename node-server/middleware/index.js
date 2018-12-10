@@ -98,6 +98,7 @@ let isAuth = function(req, res, next) {
     //     .then(result => next())
     //     .catch(err => next(err))
     // } else {
+    
         res.json({success: false})
     // }
 }

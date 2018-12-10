@@ -68,7 +68,7 @@ router.get('/fbAuthLink', function(req, res, next) {
 
 router.get('/fbcb', function(req, res, next) {
     console.log(req, req.params, req.query);
-    res.json(req);
+    res.json({q: req.query, p: req.params});
 })
 
 module.exports = router;
