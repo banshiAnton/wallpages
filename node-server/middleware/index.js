@@ -92,14 +92,14 @@ let errorHandle = function(err, req, res, next) {
 }
 
 let isAuth = function(req, res, next) {
-    if(req.cookies.admin_data) {
-        let decoded = jwt.decode(req.cookies.admin_data);
-        Admins.findOne({ where: {vkid: decoded.user_id} })
-        .then(result => next())
-        .catch(err => next(err))
-    } else {
+    // if(req.cookies.admin_data) {
+    //     let decoded = jwt.decode(req.cookies.admin_data);
+    //     Admins.findOne({ where: {vkid: decoded.user_id} })
+    //     .then(result => next())
+    //     .catch(err => next(err))
+    // } else {
         res.json({success: false})
-    }
+    // }
 }
 
 exports.isAuth = isAuth;
