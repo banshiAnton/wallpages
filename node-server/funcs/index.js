@@ -111,7 +111,8 @@ let postVK = async function(images, ops) {
         console.log('At', attachments);
     }
 
-    let message = tags.map(tag => '#' + tag).join('');
+    console.log('Tags************\n\n', tags);
+    let message = tags.map(tag => tag.length ? '#' + tag : '').join('');
     console.log('Message', message);
     attachments  = attachments.join(',');
     console.log('attachments', attachments);
