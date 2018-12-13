@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        jsonData: { type: DataTypes.JSON, allowNull: false,
+        jsonData: { type: DataTypes.TEXT, allowNull: false,
             validate: {
                 notEmpty: {
                     msg: "Name must be not empty"
