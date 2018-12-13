@@ -62,16 +62,18 @@ let createAlbumVK = function(title) {
     return fetch(urlCA).then(data => data.json());;
 }
 
-let savePhotoVK = function(img) {
+let savePhotoVK = function(imgGroup) {
 
     let form = new FormData();
 
-    form.append(`file1`, img.data, {
-        filename: img.name,
-        contentType: img.mimetype
-    });
+    imgGroup.files.forEach((img, i) => {
+        form.append(`file${i+1}`, img.data, {
+            filename: img.name,
+            contentType: img.mimetype
+        });
+    }) 
 
-    let getServer = `https://api.vk.com/method/photos.getUploadServer?&album_id=${img.vkAid}&group_id=${process.env.vkgid}&access_token=${process.env.vktoken}&v=5.62`;
+    let getServer = `https://api.vk.com/method/photos.getUploadServer?&album_id=${imgGroup.vkAid}&group_id=${process.env.vkgid}&access_token=${process.env.vktoken}&v=5.62`;
     return fetch(getServer)
             .then(data => data.json())
             .then(data => data.response.upload_url)
@@ -89,7 +91,7 @@ let savePhotoVK = function(img) {
             .then(data => data.json())
             .then(data => {
                 console.log(data);
-                return data.response.map(photo => `photo${photo.owner_id}_${photo.id}`).join('');
+                return data.response.map(photo => `photo${photo.owner_id}_${photo.id}`).join(',');
             })
             .catch(err => null)
 }
@@ -99,15 +101,17 @@ let postVK = async function(images, ops) {
     console.log('VK start', images);
 
     let attachments = [];
+    let tags = [];
 
-    for(let image of images) {
-
-        let at = await savePhotoVK(image);
+    for(let img in images) {
+        let at = await savePhotoVK(images[img]);
         if(at) attachments.push(at);
+        tags.push(images[img].tags);
+        images[img].files.map(img => img.tags).forEach(tags_ => tags_.forEach(tag => tags.push(tag)));
         console.log('At', attachments);
     }
 
-    let message = images.map(img => img.tags.map(tag => `#${tag}`).join('')).join('');
+    let message = tags.map(tag => '#' + tag).join('');
     console.log('Message', message);
     attachments  = attachments.join(',');
     console.log('attachments', attachments);
@@ -153,7 +157,16 @@ let telPostOnPTime = function(Posts, pathToFolder) {
                 return postTelegram(JSON.parse(data[0].get('jsonData')), pathToFolder)
             }
         })
-        .then(res => console.log(res))
+        .then(res => {
+            console.log(res);
+            return Posts.destroy({
+                where: {
+                    pTime: {
+                        [Op.lte]: time
+                    }
+                }
+            })
+        }).then(res => console.log(res))
         .catch(error => console.log('Find db error', error))
     }, 1000 * 15);
 }
@@ -197,9 +210,13 @@ let postTelegramInDB = function(images, Posts, ops) {
 
     let media = [];
 
-    images.forEach((img) => {
-        media.push({file: img.name, mimetype: img.mimetype, caption: img.tags.map(tag => `#${tag}`).join('')})
-    })
+    for(let categ in images) {
+        images[categ].files.forEach((img) => {
+            media.push({file: img.name, mimetype: img.mimetype, caption: img.tags.map(tag => `#${tag}`).join('') + images[categ].tags.map(tag => `#${tag}`).join('') })
+        })
+    }
+
+    console.log('\n\n****Media********\n\n', media, JSON.stringify(media));
 
     return Posts.create({pTime: ops.publish_date, jsonData: JSON.stringify(media)})
     .then(res => {
@@ -214,6 +231,8 @@ let postTelegramInDB = function(images, Posts, ops) {
 
 let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     let results = [];
+
+    console.log(imagesArr);
     let filesSaved = [];
     for(let image of imagesArr) {
         try {
@@ -224,24 +243,40 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
             }
             results.push(res);
         } catch (err) {
+            console.log('Error Save Db (catch(err))', err);
         }
     }
 
+    console.log(filesSaved);
+    let categGroup = {};
+    filesSaved.forEach(img => {
+        if(!categGroup[img.category]) {
+            categGroup[img.category] = {
+                files: [img],
+            }
+            categGroup[img.category] = Object.assign(categGroup[img.category], ops.categOps[img.category])
+        } else {
+            categGroup[img.category].files.push(img);
+        }
+    });
+
+    console.log('*********\nCateg Ops', categGroup, '\n********');
+
     try {
-        let res = await postVK(filesSaved, ops);
+        let res = await postVK(categGroup, ops);
         results.push(res);
     } catch (err) {
+        console.log('Error post VK (catch(err))', err);
     }
 
     try {
-        console.log('Saved**', filesSaved.map(img => {
-            return {name: img.name, tags: img.tags}
-        }));
-        let res = await postTelegramInDB(filesSaved.map(img => {
-            return {name: img.name, tags: img.tags}
-        }), db.Posts, ops);
+        // console.log('Saved**', filesSaved.map(img => {
+        //     return {name: img.name, tags: img.tags}
+        // }));
+        let res = await postTelegramInDB(categGroup, db.Posts, ops);
         results.push(res);
     } catch (err) {
+        console.log('Error post Telegram (catch(err))', err);
     }
 
     return results;

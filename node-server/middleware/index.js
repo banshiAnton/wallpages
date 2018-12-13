@@ -63,6 +63,8 @@ let groupFileDataToFiles = async function(req, res, next) {
 
     console.log(req.body.filesData, req.files);
 
+    let categOps = {};
+
     if(!Array.isArray(req.files.images)) req.files.images = [req.files.images];
 
     for(let file of req.files.images) {
@@ -70,10 +72,18 @@ let groupFileDataToFiles = async function(req, res, next) {
         file.tags = req.body.filesData[file.name].tags;
         file.name = Date.now() + '_' + file.name;
         file.name.trim();
-        file.vkAid = (await Categories.findOne({where: {id: file.category}, attributes: ['vkId']})).dataValues.vkId;
+
+        if(!categOps[file.category]) {
+            categOps[file.category] = {
+                tags: (await Categories.findOne({where: {id: file.category}})).get('tags'),
+                vkAid: (await Categories.findOne({where: {id: file.category}})).get('vkId')
+            }
+        }
     }
 
-    console.log('Transformed', req.files);
+    req.categOps = categOps;
+
+    console.log('Transformed', req.files.images, '\n\nFiles **', categOps);
     next()
 }
 
@@ -92,15 +102,14 @@ let errorHandle = function(err, req, res, next) {
 }
 
 let isAuth = function(req, res, next) {
-    // if(req.cookies.admin_data) {
-    //     let decoded = jwt.decode(req.cookies.admin_data);
-    //     Admins.findOne({ where: {vkid: decoded.user_id} })
-    //     .then(result => next())
-    //     .catch(err => next(err))
-    // } else {
-    
+    if(req.cookies.admin_data) {
+        let decoded = jwt.decode(req.cookies.admin_data);
+        Admins.findOne({ where: {vkid: decoded.user_id} })
+        .then(result => next())
+        .catch(err => next(err))
+    } else {
         res.json({success: false})
-    // }
+    }
 }
 
 exports.isAuth = isAuth;
