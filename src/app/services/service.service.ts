@@ -70,4 +70,8 @@ export class ServiceService {
   getFBAuthLink() {
     return this.http.get(`${this.authUrl}fbAuthLink`)
   }
+
+  getOKAuthLink() {
+    return this.http.get(`${this.authUrl}okAuthLink`)
+  }
 }

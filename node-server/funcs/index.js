@@ -7,7 +7,31 @@ const sharp = require('sharp');
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 const Sequelize = require('sequelize');
+const ok = require('ok.ru');
+const md5 = require('md5');
+const okGet = require('util').promisify(ok.get);
+const okRefresh = require('util').promisify(ok.refresh);
 const Op = Sequelize.Op;
+
+let getSigOk = function(obj, token) {
+    let sec = md5(token + process.env.okprKey);
+    let baseStr = '';
+    for(let param of Object.keys(obj).sort()) {
+        baseStr += `${param}=${obj[param]}`;
+    }
+
+    baseStr += sec;
+
+    return md5(baseStr);
+}
+
+let okAppOprions = {
+    applicationSecretKey: process.env.okprKey,
+    applicationKey: process.env.okpbKey,
+    applicationId: process.env.okAppId,
+};
+
+ok.setOptions(okAppOprions);
 
 let categoryGetRes = function(seqRes) {
     let res = {};
@@ -40,10 +64,59 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
         })
 }
 
+let getAlbumsOK = function() {
+    console.log(process.env.okRToken);
+    return okRefresh(process.env.okRToken)
+    .then(data => {
+        ok.setAccessToken(data.access_token);
+        return okGet({ method: 'photos.getAlbums', format: 'json', gid: process.env.okGid }).catch(err => err);
+    })
+}
+
 let getAlbumsVK = function() {
     let url = `https://api.vk.com/method/photos.getAlbums?&owner_id=${-process.env.vkgid}&access_token=${process.env.vktoken}&v=5.92`;
-    return fetch(url).then(data => data.json());
+    return fetch(url).then(data => data.json()).catch(err => err);
 }
+
+let getAlbums = async function() {
+
+    let tmp = {};
+
+    let vkAlbums = await getAlbumsVK();
+
+    vkAlbums.response.items.forEach(album => {
+        tmp[album.title.toLowerCase()] = {
+            tags: [],
+            vkId: album.id
+        }
+    });
+
+    console.log(tmp);
+
+    let okAlbums = await getAlbumsOK();
+
+    okAlbums.albums.forEach(album => {
+        if(album.title.toLowerCase() == 'разное') {
+            console.log('In IF');
+            tmp['основной'].okId = album.aid;
+        } else {
+            console.log('Ok test', album.title.toLowerCase(), tmp[album.title.toLowerCase()]);
+            tmp[album.title.toLowerCase()].okId = album.aid;
+        }
+    });
+
+    console.log(tmp);
+
+    let toSave = [];
+    for(let name in tmp) {
+        toSave.push(Object.assign({name}, tmp[name]))
+    }
+
+    console.log(toSave);
+
+    return toSave;
+
+};
 
 let createAlbumVK = function(title) {
     let urlCA = url.format({
@@ -96,6 +169,97 @@ let savePhotoVK = function(imgGroup) {
             .catch(err => null)
 }
 
+let postOK = async function(images, ops) {
+    console.log('OK start', images);
+
+    let allImages = [];
+    let tags = [];
+
+    for(let img in images) {
+        images[img].files.forEach(img => allImages.push(img));
+        tags.push(images[img].tags);
+        images[img].files.map(img => img.tags).forEach(tags_ => tags_.forEach(tag => tags.push(tag)));
+    }
+
+    let text = tags.map(tag => tag.length ? '#' + tag : '').join(' ');
+
+    okRefresh(process.env.okRToken)
+    .then(data => {
+        console.log('Refresh', data);
+        ok.setAccessToken(data.access_token);
+    })
+    .then(() => okGet({method: 'photosV2.getUploadUrl', count: allImages.length, gid: process.env.okGid}))
+    .then(data => {
+        console.log(data);
+
+        let form = new FormData();
+
+        allImages.forEach((img, i) => {
+            form.append(`pic${i+1}`, img.data, {
+                filename: img.name,
+                contentType: img.mimetype
+            });
+        })
+
+        return fetch(data.upload_url, {
+                     method: 'post',
+                     body: form,
+                     headers: form.getHeaders()
+                })
+    })
+    .then(data => data.json())
+    .then(async data => {
+        console.log('\n\n****Uploaded****\n\n', data.photos);
+
+        let at = {
+            "media": [
+              {
+                "type": "photo",
+                "list": []
+              },
+              {
+                  "type": "text",
+                  "text": text
+              }
+            ],
+            "publishAtMs": (+ops.publish_date * 1000) + ''
+        };
+
+        for(let id in data.photos) {
+            console.log('\n\nID:', id,  '\nToken:', data.photos[id].token);
+            at.media[0].list.push({id: data.photos[id].token});
+        }
+
+
+        let urlPost = url.format({
+            protocol: 'https',
+            hostname: 'api.ok.ru',
+            pathname: 'fb.do',
+            query: {
+                application_key: process.env.okpbKey,
+                format: 'json',
+                method: 'mediatopic.post',
+                type: 'GROUP_THEME',
+                gid: process.env.okGid,
+                attachment: JSON.stringify(at),
+                sig: getSigOk({application_key: process.env.okpbKey, format: 'json', method: 'mediatopic.post', type: 'GROUP_THEME', gid: process.env.okGid, attachment: JSON.stringify(at)}, ok.getAccessToken().trim()),
+                access_token: ok.getAccessToken().trim()
+            }
+        });
+
+        return fetch(urlPost)
+
+    }).then(data => data.json())
+    .then(post => {
+        console.log('End post OK', post);
+        return {res: post, success: true, ok: 'OK'};
+    })
+    .catch(error => {
+        console.log('Promis error OK', error);
+        return {error, success: false, ok: 'OK'};
+    });
+}
+
 let postVK = async function(images, ops) {
 
     console.log('VK start', images);
@@ -134,7 +298,7 @@ let postVK = async function(images, ops) {
     return fetch(postUrl)
     .then(data => data.json())
     .then(post => {
-        console.log('End post', post);
+        console.log('End post VK', post);
         return {res: post, success: true, vk: 'VK'};
     })
     .catch(error => {
@@ -271,9 +435,13 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     }
 
     try {
-        // console.log('Saved**', filesSaved.map(img => {
-        //     return {name: img.name, tags: img.tags}
-        // }));
+        let res = await postOK(categGroup, ops);
+        results.push(res);
+    } catch (err) {
+        console.log('Error post OK (catch(err))', err);
+    }
+
+    try {
         let res = await postTelegramInDB(categGroup, db.Posts, ops);
         results.push(res);
     } catch (err) {
@@ -288,3 +456,5 @@ exports.saveImages = saveImages;
 exports.createAlbumVK = createAlbumVK;
 exports.getAlbumsVK = getAlbumsVK;
 exports.telPostOnPTime = telPostOnPTime;
+exports.getAlbumsOK = getAlbumsOK;
+exports.getAlbums = getAlbums;

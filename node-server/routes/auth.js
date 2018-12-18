@@ -60,7 +60,28 @@ router.get('/admin', isAuth, function(req, res, next) {
 
 router.get('/vkAuthLink', function(req, res, next) {
     res.json({link: `https://oauth.vk.com/authorize?client_id=${process.env.vkClientId}&display=page&redirect_uri=${process.env.rUrl}&scope=friends,notify,photos,audio,video,stories,pages,notes,status,wall,ads,offline,docs,groups,notifications,stats,email,market&response_type=code&v=5.92`});
-})
+});
+
+router.get('/okAuthLink', function(req, res, next) {
+    let scope = 'LONG_ACCESS_TOKEN,VALUABLE_ACCESS,PHOTO_CONTENT,GROUP_CONTENT';
+    res.json({link: `https://connect.ok.ru/oauth/authorize?client_id=${process.env.okAppId}&scope=${scope}&response_type=code&redirect_uri=${process.env.okrUrl}`});
+});
+
+router.get('/okcb', function(req, res, next) {
+    console.log(req.query);
+    let url = `https://api.ok.ru/oauth/token.do?code=${req.query.code}&client_id=${process.env.okAppId}&client_secret=${process.env.okprKey}&redirect_uri=${process.env.okrUrl}&grant_type=authorization_code`
+    fetch(url, { method: 'post' })
+    .then(data => data.json())
+    .then(data => {
+        console.log('\n\n***Access***\n\n',data);
+        process.env.okRToken = data.refresh_token;
+        res.redirect('/admin/');
+    })
+    .catch(err => {
+        console.log(err);
+        res.json(err);
+    })
+});
 
 router.get('/fbAuthLink', function(req, res, next) {
     res.json({link: `https://www.facebook.com/v3.2/dialog/oauth?client_id=${process.env.fbAppId}&redirect_uri=${process.env.fbRUrl}`});

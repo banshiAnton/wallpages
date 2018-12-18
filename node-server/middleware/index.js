@@ -74,9 +74,11 @@ let groupFileDataToFiles = async function(req, res, next) {
         file.name.trim();
 
         if(!categOps[file.category]) {
+            let categData = await Categories.findOne({where: {id: file.category}});
             categOps[file.category] = {
-                tags: (await Categories.findOne({where: {id: file.category}})).get('tags'),
-                vkAid: (await Categories.findOne({where: {id: file.category}})).get('vkId')
+                tags: categData.get('tags'),
+                vkAid: categData.get('vkId'),
+                okAid: categData.get('okId')
             }
         }
     }

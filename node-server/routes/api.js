@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const { categoryGetRes, saveImages, createAlbumVK, getAlbumsVK, telPostOnPTime } = require('../funcs');
+const { categoryGetRes, saveImages, createAlbumVK, getAlbumsVK, telPostOnPTime, getAlbumsOK, getAlbums } = require('../funcs');
 
 const { parseFilesData, groupFileDataToFiles, makeApiQuery, isAuth } = require('../middleware');
 
@@ -17,35 +17,36 @@ const Categories = sequelize.import(path.join(__dirname, '../models/categories')
 const Images = sequelize.import(path.join(__dirname, '../models/images'));
 const Posts = sequelize.import(path.join(__dirname, '../models/posts'));
 
-Posts.sync({force: true}).then(() => sequelize.query('DROP TABLE `images`'))
-.then(res => {
-    console.log(res);
-    telPostOnPTime(Posts, path.join(__dirname, `../public/images`))
-    return Categories.sync({force: true})
-})
-.then((res) => {
-    console.log(res);
-    return Images.sync({force: true});
-}).then((res) => {
-    console.log(res);
-    Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
-    Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
-    return getAlbumsVK();
-}).then(data => {
-    console.log(data);
-    let bToCreate = data.response.items.map(item => {
-        return {name: item.title, vkId: item.id, tags: []}
-    })
-    return Categories.bulkCreate(bToCreate);
-}).then(() => { // Notice: There are no arguments here, as of right now you'll have to...
-    return Categories.findAll();
-}).then(categs => {
-    categs.forEach(item => {
-        console.log(item.get('name'), item.get('tags'), item.get('vkId'));
-    })
-})
-.catch(err => console.error('ERROR in MYSQL', err));
+(function() {
 
+    let bToCreate = [];
+
+    Posts.sync({force: true}).then(() => sequelize.query('DROP TABLE `images`'))
+    .then(res => {
+        console.log(res);
+        telPostOnPTime(Posts, path.join(__dirname, `../public/images`))
+        return Categories.sync({force: true})
+    })
+    .then((res) => {
+        console.log(res);
+        return Images.sync({force: true});
+    }).then((res) => {
+        console.log(res);
+        Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
+        Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
+        return getAlbums();
+    }).then(bToCreate => {
+        console.log(bToCreate);
+        return Categories.bulkCreate(bToCreate);
+    }).then(() => { 
+        return Categories.findAll();
+    }).then(data => {
+        data.forEach(item => {
+            console.log(item.get('name'),item.get('vkId'),item.get('okId'), item.get('tags'));
+        })
+    })
+    .catch(err => console.error('ERROR in MYSQL', err));
+}())
 
 const router = require('express').Router();
 
@@ -160,5 +161,9 @@ router.put('/category/:id', isAuth, function(req, res, next) {
     })
     .catch(error => next(error))
 });
+
+// router.get('/test', function(req, res, next) {
+//     res.json(arr);
+// });
 
 module.exports = router;

@@ -7,7 +7,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         vkId: {
-            type: DataTypes.INTEGER,unique: true, allowNull: false
+            type: DataTypes.STRING,unique: true, allowNull: false
+        },
+        okId: {
+            type: DataTypes.STRING,unique: true, allowNull: false
         },
         name: { type: DataTypes.STRING, unique: true, allowNull: false,
             validate: {

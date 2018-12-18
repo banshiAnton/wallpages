@@ -47,7 +47,7 @@ export class AddImagesComponent implements OnInit {
     this.success = false;
     // console.log('Date', this.selectedDate, this.selectedDate.getTime() / 1000);
     let data = new FormData(form);
-    data.append('publish_date', this.selectedDate ?  ((this.selectedDate.getTime() / 1000) + '') : ( ( Math.ceil(Date.now() / 1000) + 60 ) + '' )  );
+    data.append('publish_date', this.selectedDate ?  ((this.selectedDate.getTime() / 1000) + '') : ( ( Math.ceil(Date.now() / 1000) + 60 * 2 ) + '' )  );
     if(this.inOne) { 
       if(!this.oneCategory) {
         console.log('Chose category');
