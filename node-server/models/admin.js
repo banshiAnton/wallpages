@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             allowNull: false
         },
-        vkid: { type: DataTypes.INTEGER, unique: true, allowNull: false,
+        vkid: { type: DataTypes.STRING, unique: true, allowNull: false,
             validate: {
                 notEmpty: {
                     msg: "Name must be not empty"

@@ -10,8 +10,10 @@ const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
 
 const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
 
-Admins.sync({force: false})
+Admins.sync({force: true})
 .then(res => console.log(res))
+.then(() => Admins.create({vkid: process.env.vkGodAdminId}))
+.then(data => console.log(data.get('vkid')))
 .catch(err => console.error('ERROR in MYSQL', err));
 
 router.get('/login', function(req, res, next) {
