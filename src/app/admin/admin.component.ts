@@ -23,6 +23,9 @@ export class AdminComponent implements OnInit {
             this.vkAuthLink = data.link;
         })
       } else {
+        this.service.getFBAuthLink().subscribe((data:any) => {
+          this.okAuthLink = data.link;
+        })
         this.service.getOKAuthLink().subscribe((data:any) => {
           this.okAuthLink = data.link;
         })
