@@ -91,17 +91,11 @@ router.get('/fbAuthLink', function(req, res, next) {
 
 router.get('/fbcb', function(req, res, next) {
     console.log(req, req.params, req.query);//req.query.code
-    fetch(`https://graph.facebook.com/v3.2/oauth/access_token?
-    client_id=${process.env.fbAppId}
-    &redirect_uri=${process.env.fbRUrl}
-    &client_secret=${process.env.fbAppSec}
-    &code=${req.query.code}`)
+    fetch(`https://graph.facebook.com/v3.2/oauth/access_token?client_id=${process.env.fbAppId}&redirect_uri=${process.env.fbRUrl}&client_secret=${process.env.fbAppSec}&code=${req.query.code}`)
     .then(data => data.json())
     .then(data => {
         console.log('GET token', data);
-        return fetch(`https://graph.facebook.com/me
-        ?fields=id,name
-        &access_token=${data.access_token}`)
+        return fetch(`https://graph.facebook.com/me?fields=id,name&access_token=${data.access_token}`)
     }).then(data => data.json())
     .then(data => {
         console.log('Get user data', data);
