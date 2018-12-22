@@ -98,7 +98,7 @@ router.get('/fbcb', function(req, res, next) {
     &code=${req.query.code}`)
     .then(data => data.json())
     .then(data => {
-        console.log('GET token', ata);
+        console.log('GET token', data);
         return fetch(`https://graph.facebook.com/me
         ?fields=id,name
         &access_token=${data.access_token}`)
