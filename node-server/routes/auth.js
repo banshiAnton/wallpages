@@ -90,8 +90,29 @@ router.get('/fbAuthLink', function(req, res, next) {
 });
 
 router.get('/fbcb', function(req, res, next) {
-    console.log(req, req.params, req.query);
-    res.json({q: req.query, p: req.params});
+    console.log(req, req.params, req.query);//req.query.code
+    fetch(`https://graph.facebook.com/v3.2/oauth/access_token?
+    client_id=${process.env.fbAppId}
+    &redirect_uri=${process.env.fbRUrl}
+    &client_secret=${process.env.fbAppSec}
+    &code=${req.query.code}`)
+    .then(data => data.json())
+    .then(data => {
+        console.log(data);
+        return fetch(`https://graph.facebook.com/me
+        ?fields=id,name
+        &access_token=${data.access_token}`)
+    }).then(data => data.json())
+    .then(data => {
+        console.log(data);
+        res.cookie('fb_data', data.name, {path: '/', httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000 });
+        res.redirect('/admin/');
+    })
+    .catch(err => {
+        console.log(err);
+        res.json(err);
+    })
+    //res.json({q: req.query, p: req.params});
 })
 
 module.exports = router;

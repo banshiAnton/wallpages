@@ -308,31 +308,45 @@ let postVK = async function(images, ops) {
 }
 
 let telPostOnPTime = function(Posts, pathToFolder) {
+    
+    let flag = true;
+
     setInterval(() => {
-        let time = Math.ceil(Date.now() / 1000);
-        Posts.findAll({
-            where: {
-                pTime: {
-                    [Op.lte]: time
-                }
-            }
-        }).then(data => {
-            console.log('POSTS****', data)
-            if(data.length) {
-                return postTelegram(JSON.parse(data[0].get('jsonData')), pathToFolder)
-            }
-        })
-        .then(res => {
-            console.log(res);
-            return Posts.destroy({
+
+        if(flag) {
+
+            let time = Math.ceil(Date.now() / 1000);
+            Posts.findAll({
                 where: {
                     pTime: {
                         [Op.lte]: time
                     }
                 }
+            }).then(data => {
+                console.log('POSTS****', data);
+                if(data.length) {
+                    flag = false;
+                    return postTelegram(JSON.parse(data[0].get('jsonData')), pathToFolder)
+                }
             })
-        }).then(res => console.log(res))
-        .catch(error => console.log('Find db error', error))
+            .then(res => {
+                console.log(res);
+                flag = true;
+                return Posts.destroy({
+                    where: {
+                        pTime: {
+                            [Op.lte]: time
+                        }
+                    }
+                })
+            }).then(res => console.log(res))
+            .catch(error => {
+                flag = true;
+                console.log('Find db error', error);
+            })
+
+        }
+
     }, 1000 * 15);
 }
 
@@ -415,6 +429,7 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     console.log(filesSaved);
     let categGroup = {};
     filesSaved.forEach(img => {
+        //img toJSON()
         if(!categGroup[img.category]) {
             categGroup[img.category] = {
                 files: [img],

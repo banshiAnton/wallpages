@@ -13,6 +13,8 @@ export class AdminComponent implements OnInit {
   fbAuthLink: string = '';
   okAuthLink: string = '';
 
+  fbData: string = '';
+
   constructor(private service: ServiceService) { }
 
   ngOnInit() {
@@ -20,7 +22,7 @@ export class AdminComponent implements OnInit {
       this.isAuth = data.success;
       if(!this.isAuth) {
         this.service.getVKAuthLink().subscribe((data:any) => {
-            this.vkAuthLink = data.link;
+          this.vkAuthLink = data.link;
         })
       } else {
         this.service.getFBAuthLink().subscribe((data:any) => {
@@ -29,6 +31,9 @@ export class AdminComponent implements OnInit {
         this.service.getOKAuthLink().subscribe((data:any) => {
           this.okAuthLink = data.link;
         })
+
+        this.fbData = document.cookie;
+        console.log('FB data', this.fbData);
       }
     })
   }
