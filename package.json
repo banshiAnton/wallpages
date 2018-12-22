@@ -44,6 +44,7 @@
     "mysql2": "^1.6.4",
     "ng4-tag-input": "^1.0.5",
     "ngx-chips": "^2.0.0-beta.0",
+    "ngx-cookie-service": "^2.1.0",
     "node-env-file": "^0.1.8",
     "node-fetch": "^2.3.0",
     "node-fetch-extra": "0.0.3",

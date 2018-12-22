@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ServiceService } from '../services/service.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-admin',
@@ -15,7 +16,7 @@ export class AdminComponent implements OnInit {
 
   fbData: string = '';
 
-  constructor(private service: ServiceService) { }
+  constructor(private service: ServiceService, private cookieService: CookieService) { }
 
   ngOnInit() {
     this.service.getUser().subscribe((data:any) => {
@@ -32,7 +33,7 @@ export class AdminComponent implements OnInit {
           this.okAuthLink = data.link;
         })
 
-        this.fbData = document.cookie;
+        this.fbData = this.cookieService.get('fb_data');
         console.log('FB data', this.fbData);
       }
     })
