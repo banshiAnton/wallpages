@@ -98,13 +98,13 @@ router.get('/fbcb', function(req, res, next) {
     &code=${req.query.code}`)
     .then(data => data.json())
     .then(data => {
-        console.log(data);
+        console.log('GET token', ata);
         return fetch(`https://graph.facebook.com/me
         ?fields=id,name
         &access_token=${data.access_token}`)
     }).then(data => data.json())
     .then(data => {
-        console.log(data);
+        console.log('Get user data', data);
         res.cookie('fb_data', data.name, {path: '/', httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000 });
         res.redirect('/admin/');
     })
