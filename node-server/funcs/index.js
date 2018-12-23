@@ -326,7 +326,7 @@ let telPostOnPTime = function(Posts, pathToFolder) {
                 console.log('POSTS****', data);
                 if(data.length) {
                     flag = false;
-                    return postTelegram(JSON.parse(data[0].get('jsonData')), pathToFolder)
+                    return postTelegram(data, pathToFolder)
                 }
             })
             .then(res => {
@@ -350,25 +350,36 @@ let telPostOnPTime = function(Posts, pathToFolder) {
     }, 1000 * 15);
 }
 
-let postTelegram = async function(images, pathToFolder) {
+let postTelegram = async function(records, pathToFolder) {
 
-    console.log('Pre data', images);
+    console.log('Pre data', records);
 
     let media = [];
     let form = new FormData();
     let i = 1
-    for(let image of images) {
+    for(let rec of records) {
+        rec = rec.get('jsonData')
+        for(let categ in rec) {
+            for(let img of rec[categ].files) {
 
-        let file = await readFile(path.join(pathToFolder, '/', image.file));
-        console.log('File', file);
+                let file = null
+                try {
+                    file = await readFile(path.join(pathToFolder, '/', img.name));
+                    console.log('File', file);
+                } catch (err) {
+                    console.log(err);
+                    continue;
+                }
+    
+                let fName = `file${i++}`
+                form.append(fName, file, {
+                    filename: img.name,
+                    contentType: img.mimetype
+                });
+                media.push({type: 'photo', media: `attach://${fName}`, caption: '#' + rec[categ].tags.join('# ') + ' #' + img.tags.join('# ')})
 
-        let name = `file${i}`;
-        form.append(name, file, {
-            filename: image.file,
-            contentType: image.mimetype
-        });
-        media.push({type: 'photo', media: `attach://${name}`, caption: image.caption})
-        ++i;
+            }
+        }
     }
 
     console.log('End media', media);
@@ -408,6 +419,21 @@ let postTelegramInDB = function(images, Posts, ops) {
     });
 }
 
+let postToDB = function(images, Post, ops) {
+    console.log(images);
+    return Post.create({pTime: ops.publish_date, jsonData: images})
+    .then(res => {
+        console.log(res);
+        return {res, success: true, OK: 'OK'}
+    })
+    .then(() => Post.findAll())
+    .then(data => data[0].get('jsonData'))
+    .catch(error => {
+        console.log('Promis error OK', error);
+        return {error, success: false, OK: 'OK'};
+    });
+}
+
 let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     let results = [];
 
@@ -430,6 +456,15 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     let categGroup = {};
     filesSaved.forEach(img => {
         //img toJSON()
+
+        img.toJSON = function() {
+            return {
+                name: this.name,
+                mimetype: this.mimetype,
+                tags: this.tags
+            }
+        }
+
         if(!categGroup[img.category]) {
             categGroup[img.category] = {
                 files: [img],
@@ -443,22 +478,29 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     console.log('*********\nCateg Ops', categGroup, '\n********');
 
     try {
-        let res = await postVK(categGroup, ops);
-        results.push(res);
+        let res = await postToDB(categGroup, db.Posts, ops);
+        console.log(res);
+    } catch (err) {
+        console.log('Error post OK In DB (catch(err))', err);
+    }
+
+    try {
+        // let res = await postVK(categGroup, ops);
+        // results.push(res);
     } catch (err) {
         console.log('Error post VK (catch(err))', err);
     }
 
     try {
-        let res = await postOK(categGroup, ops);
-        results.push(res);
+        // let res = await postOK(categGroup, ops);
+        // results.push(res);
     } catch (err) {
         console.log('Error post OK (catch(err))', err);
     }
 
     try {
-        let res = await postTelegramInDB(categGroup, db.Posts, ops);
-        results.push(res);
+        //let res = await postTelegramInDB(categGroup, db.Posts, ops);
+        // results.push(res);
     } catch (err) {
         console.log('Error post Telegram (catch(err))', err);
     }
