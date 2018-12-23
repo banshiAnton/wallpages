@@ -25,16 +25,24 @@ export class AdminComponent implements OnInit {
         this.service.getVKAuthLink().subscribe((data:any) => {
           this.vkAuthLink = data.link;
         })
-      } else {
+
         this.service.getFBAuthLink().subscribe((data:any) => {
           this.fbAuthLink = data.link;
-        })
-        this.service.getOKAuthLink().subscribe((data:any) => {
-          this.okAuthLink = data.link;
         })
 
         this.fbData = this.cookieService.get('fb_data');
         console.log('FB data', this.fbData);
+
+      } else {
+        // this.service.getFBAuthLink().subscribe((data:any) => {
+        //   this.fbAuthLink = data.link;
+        // })
+        this.service.getOKAuthLink().subscribe((data:any) => {
+          this.okAuthLink = data.link;
+        })
+
+        // this.fbData = this.cookieService.get('fb_data');
+        // console.log('FB data', this.fbData);
       }
     })
   }
