@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const { categoryGetRes, saveImages, createAlbumVK, getAlbumsVK, telPostOnPTime, getAlbumsOK, getAlbums } = require('../funcs');
+const { categoryGetRes, saveImages, createAlbumVK, getAlbumsVK, postOnTime, getAlbumsOK, getAlbums } = require('../funcs');
 
 const { parseFilesData, groupFileDataToFiles, makeApiQuery, isAuth } = require('../middleware');
 
@@ -24,7 +24,7 @@ const Posts = sequelize.import(path.join(__dirname, '../models/posts'));
     Posts.sync({force: true}).then(() => sequelize.query('DROP TABLE `images`'))
     .then(res => {
         console.log(res);
-        telPostOnPTime(Posts, path.join(__dirname, `../public/images`))
+        postOnTime(Posts, path.join(__dirname, `../public/images`));
         return Categories.sync({force: true})
     })
     .then((res) => {

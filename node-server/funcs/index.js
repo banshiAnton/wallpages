@@ -73,6 +73,8 @@ let getAlbumsOK = function() {
     })
 }
 
+
+
 let getAlbumsVK = function() {
     let url = `https://api.vk.com/method/photos.getAlbums?&owner_id=${-process.env.vkgid}&access_token=${process.env.vktoken}&v=5.92`;
     return fetch(url).then(data => data.json()).catch(err => err);
@@ -133,40 +135,6 @@ let createAlbumVK = function(title) {
     })
 
     return fetch(urlCA).then(data => data.json());;
-}
-
-let savePhotoVK = function(imgGroup) {
-
-    let form = new FormData();
-
-    imgGroup.files.forEach((img, i) => {
-        form.append(`file${i+1}`, img.data, {
-            filename: img.name,
-            contentType: img.mimetype
-        });
-    }) 
-
-    let getServer = `https://api.vk.com/method/photos.getUploadServer?&album_id=${imgGroup.vkAid}&group_id=${process.env.vkgid}&access_token=${process.env.vktoken}&v=5.62`;
-    return fetch(getServer)
-            .then(data => data.json())
-            .then(data => data.response.upload_url)
-            .then(url => fetch(url, {
-                method: 'POST',
-                body:    form,
-                headers: form.getHeaders(),
-            }))
-            .then(data => data.json())
-            .then(data => {
-                console.log('Photos list', data);
-                let url = `https://api.vk.com/method/photos.save?album_id=${data.aid}&group_id=${data.gid}&server=${data.server}&hash=${data.hash}&photos_list=${data.photos_list}&access_token=${process.env.vktoken}&v=5.62`
-                return fetch(url);
-            })
-            .then(data => data.json())
-            .then(data => {
-                console.log(data);
-                return data.response.map(photo => `photo${photo.owner_id}_${photo.id}`).join(',');
-            })
-            .catch(err => null)
 }
 
 let postOK = async function(images, ops) {
@@ -260,6 +228,41 @@ let postOK = async function(images, ops) {
     });
 }
 
+let savePhotoVK = function(imgGroup) {
+
+    let form = new FormData();
+
+    imgGroup.files.forEach((img, i) => {
+        form.append(`file${i+1}`, img.data, {
+            filename: img.name,
+            contentType: img.mimetype
+        });
+    }) 
+
+    let getServer = `https://api.vk.com/method/photos.getUploadServer?&album_id=${imgGroup.vkAid}&group_id=${process.env.vkgid}&access_token=${process.env.vktoken}&v=5.62`;
+    return fetch(getServer)
+            .then(data => data.json())
+            .then(data => data.response.upload_url)
+            .then(url => fetch(url, {
+                method: 'POST',
+                body:    form,
+                headers: form.getHeaders(),
+            }))
+            .then(data => data.json())
+            .then(data => {
+                console.log('Photos list', data);
+                let url = `https://api.vk.com/method/photos.save?album_id=${data.aid}&group_id=${data.gid}&server=${data.server}&hash=${data.hash}&photos_list=${data.photos_list}&access_token=${process.env.vktoken}&v=5.62`
+                return fetch(url);
+            })
+            .then(data => data.json())
+            .then(data => {
+                console.log(data);
+                return data.response.map(photo => `photo${photo.owner_id}_${photo.id}`).join(',');
+            })
+            .catch(err => null)
+}
+
+
 let postVK = async function(images, ops) {
 
     console.log('VK start', images);
@@ -307,44 +310,55 @@ let postVK = async function(images, ops) {
     });
 }
 
-let telPostOnPTime = function(Posts, pathToFolder) {
+let postOnTime = function(Posts, pathToFolder) {
     
     let flag = true;
 
-    setInterval(() => {
+    setInterval(async () => {
 
         if(flag) {
 
             let time = Math.ceil(Date.now() / 1000);
-            Posts.findAll({
+
+            let data = await Posts.findAll({
                 where: {
                     pTime: {
                         [Op.lte]: time
                     }
                 }
-            }).then(data => {
-                console.log('POSTS****', data);
-                if(data.length) {
-                    flag = false;
-                    return postTelegram(data, pathToFolder)
-                }
-            })
-            .then(res => {
-                console.log(res);
+            }).catch(err => {
                 flag = true;
-                return Posts.destroy({
-                    where: {
-                        pTime: {
-                            [Op.lte]: time
-                        }
-                    }
-                })
-            }).then(res => console.log(res))
-            .catch(error => {
-                flag = true;
-                console.log('Find db error', error);
+                console.log(err);
             })
 
+            if(data && data.length) {
+                flag = true;
+
+                try {
+                    let resTeleg = await postTelegram(data, pathToFolder);
+                    console.log('Post to teleg data', resTeleg);
+                } catch(err) {
+                    console.log('Post to teleg error', err);
+                }
+
+                try {
+                    let resOK = await postOKAlbum(data, pathToFolder);
+                    console.log('Post to OK data', resOK);
+                } catch(err) {
+                    console.log('Post to OK error', err);
+                }
+            }
+            flag = true;
+            let resDel = await Posts.destroy({
+                where: {
+                    pTime: {
+                        [Op.lte]: time
+                    }
+                }
+            })
+            .catch(err => err);
+
+            console.log(resDel);
         }
 
     }, 1000 * 15);
@@ -356,7 +370,7 @@ let postTelegram = async function(records, pathToFolder) {
 
     let media = [];
     let form = new FormData();
-    let i = 1
+    let i = 1;
     for(let rec of records) {
         rec = rec.get('jsonData')
         for(let categ in rec) {
@@ -394,30 +408,113 @@ let postTelegram = async function(records, pathToFolder) {
     .then(res => res.json())
 }
 
+let postOKAlbum = async function(records, pathToFolder) {
+    console.log('Data OK Albums', records);
 
-let postTelegramInDB = function(images, Posts, ops) {
-    console.log('Tel post start', process.env.telToken, process.env.telGroup);
+    for(let rec of records) {
+        rec = rec.get('jsonData')
+        for(let categ in rec) {
 
-    let media = [];
+            await okRefresh(process.env.okRToken)
+            .then(data => {
+                console.log('Refresh', data);
+                ok.setAccessToken(data.access_token);
+            }).then(() => okGet({method: 'photosV2.getUploadUrl', count: rec[categ].files.length, gid: process.env.okGid, aid: rec[categ].okAid }))
+            .then(async data => {
+                console.log(data);
 
-    for(let categ in images) {
-        images[categ].files.forEach((img) => {
-            media.push({file: img.name, mimetype: img.mimetype, caption: img.tags.map(tag => `#${tag}`).join('') + images[categ].tags.map(tag => `#${tag}`).join('') })
-        })
+                let form = new FormData();
+                let i = 1;
+
+                for(let img of rec[categ].files) {
+
+                    let file = null
+                    try {
+                        file = await readFile(path.join(pathToFolder, '/', img.name));
+                        console.log('File', file);
+                    } catch (err) {
+                        console.log(err);
+                        continue;
+                    }
+        
+                    let fName = `file${i++}`
+                    form.append(fName, file, {
+                        filename: img.name,
+                        contentType: img.mimetype
+                    });
+                }
+
+                return fetch(data.upload_url, {
+                    method: 'post',
+                    body: form,
+                    headers: form.getHeaders()
+               });
+            }).then(data => data.json())
+            .then(async data => {
+                
+                let arrRes = [];
+
+                for(let id in data.photos) {
+                    console.log('\n\nID:', id,  '\nToken:', data.photos[id].token)
+                    let urlSave = url.format({
+                        protocol: 'https',
+                        hostname: 'api.ok.ru',
+                        pathname: 'fb.do',
+                        query: {
+                            application_key: process.env.okpbKey,
+                            format: 'json',
+                            method: 'photosV2.commit',
+                            photo_id: id,
+                            token: data.photos[id].token,
+                            sig: getSigOk({application_key: process.env.okpbKey, format: 'json', method: 'photosV2.commit', photo_id: id, token: data.photos[id].token}, ok.getAccessToken().trim()),
+                            access_token: ok.getAccessToken().trim()
+                        }
+                    });
+        
+                    console.log(urlSave);
+        
+                    let reult = await fetch(urlSave)
+                    .then(data => data.json())
+                    .catch(err => err);
+        
+                    console.log(reult, typeof reult);
+        
+                    arrRes.push(reult);
+        
+                }
+        
+                return arrRes;
+            })
+            .catch(err => err);
+
+        }
     }
-
-    console.log('\n\n****Media********\n\n', media, JSON.stringify(media));
-
-    return Posts.create({pTime: ops.publish_date, jsonData: JSON.stringify(media)})
-    .then(res => {
-        console.log(res);
-        return {res, success: true, telegram: 'telegram'}
-    })
-    .catch(error => {
-        console.log('Promis error telegram', error);
-        return {error, success: false, telegram: 'telegram'};
-    });
 }
+
+
+// let postTelegramInDB = function(images, Posts, ops) {
+//     console.log('Tel post start', process.env.telToken, process.env.telGroup);
+
+//     let media = [];
+
+//     for(let categ in images) {
+//         images[categ].files.forEach((img) => {
+//             media.push({file: img.name, mimetype: img.mimetype, caption: img.tags.map(tag => `#${tag}`).join('') + images[categ].tags.map(tag => `#${tag}`).join('') })
+//         })
+//     }
+
+//     console.log('\n\n****Media********\n\n', media, JSON.stringify(media));
+
+//     return Posts.create({pTime: ops.publish_date, jsonData: JSON.stringify(media)})
+//     .then(res => {
+//         console.log(res);
+//         return {res, success: true, telegram: 'telegram'}
+//     })
+//     .catch(error => {
+//         console.log('Promis error telegram', error);
+//         return {error, success: false, telegram: 'telegram'};
+//     });
+// }
 
 let postToDB = function(images, Post, ops) {
     console.log(images);
@@ -455,7 +552,6 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     console.log(filesSaved);
     let categGroup = {};
     filesSaved.forEach(img => {
-        //img toJSON()
 
         img.toJSON = function() {
             return {
@@ -485,25 +581,25 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     }
 
     try {
-        // let res = await postVK(categGroup, ops);
-        // results.push(res);
+        let res = await postVK(categGroup, ops);
+        results.push(res);
     } catch (err) {
         console.log('Error post VK (catch(err))', err);
     }
 
     try {
-        // let res = await postOK(categGroup, ops);
-        // results.push(res);
+        let res = await postOK(categGroup, ops);
+        results.push(res);
     } catch (err) {
         console.log('Error post OK (catch(err))', err);
     }
 
-    try {
-        //let res = await postTelegramInDB(categGroup, db.Posts, ops);
-        // results.push(res);
-    } catch (err) {
-        console.log('Error post Telegram (catch(err))', err);
-    }
+    // try {
+    //     let res = await postTelegramInDB(categGroup, db.Posts, ops);
+    //     results.push(res);
+    // } catch (err) {
+    //     console.log('Error post Telegram (catch(err))', err);
+    // }
 
     return results;
 }
@@ -512,6 +608,6 @@ exports.categoryGetRes = categoryGetRes;
 exports.saveImages = saveImages;
 exports.createAlbumVK = createAlbumVK;
 exports.getAlbumsVK = getAlbumsVK;
-exports.telPostOnPTime = telPostOnPTime;
+exports.postOnTime = postOnTime;
 exports.getAlbumsOK = getAlbumsOK;
 exports.getAlbums = getAlbums;
