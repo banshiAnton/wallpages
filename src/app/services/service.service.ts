@@ -63,15 +63,8 @@ export class ServiceService {
     return this.http.get(`${this.apiImageUrl}?${query.category ? 'category='+query.category : ''}&count=${query.count}&offset=${query.offset}`)
   }
 
-  getVKAuthLink() {
-    return this.http.get(`${this.authUrl}vkAuthLink`)
+  getAuthLinks() {
+    return this.http.get(`${this.authUrl}authLinks`)
   }
 
-  getFBAuthLink() {
-    return this.http.get(`${this.authUrl}fbAuthLink`)
-  }
-
-  getOKAuthLink() {
-    return this.http.get(`${this.authUrl}okAuthLink`)
-  }
 }

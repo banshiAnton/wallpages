@@ -1,17 +1,10 @@
 <div *ngIf="!isAuth">
-  <!-- <a href="{{vkAuthLink}}">VK</a> -->
-  <!-- <a id="fbLink"href="{{fbAuthLink}}">
-    <img width="50" src="https://en.facebookbrand.com/wp-content/uploads/2016/05/flogo_rgb_hex-brc-site-250.png" alt="" srcset="">
-  </a> -->
-  <a href="{{fbAuthLink}}">FaceBook</a>
-  <p class="test-data">{{fbData}}</p>
+  <a href="{{vkAuthLink}}">VK</a>
 </div>
 
 <div *ngIf="isAuth">
-  <a href="{{okAuthLink}}">OK</a>
-  <!-- <a href="{{fbAuthLink}}">FaceBook</a>
-  <p class="test-data">{{fbData}}</p> -->
   <nav class="nav nav-pills">
+    <a class="nav-item" routerLink="setup">Init Setup</a>
     <a class="nav-item" routerLink="addAdmin">Add Admin</a>
     <a class="nav-item" routerLink="addCategoty">Add Category</a>
     <a class="nav-item" routerLink="addImages">Add Images</a>

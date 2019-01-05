@@ -5,6 +5,7 @@ import { AdminComponent } from '../admin/admin.component';
 import { AddImagesComponent } from '../admin/add-images/add-images.component';
 import { AddCategoryComponent } from '../admin/add-category/add-category.component';
 import { AddAdminComponent } from '../admin/add-admin/add-admin.component';
+import { SetupComponent } from '../admin/setup/setup.component';
 import { HomeComponent } from '../home/home.component';
 
 const routes: Routes = [
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'admin/addImages', component: AddImagesComponent },
   { path: 'admin/addCategoty', component: AddCategoryComponent },
   { path: 'admin/addAdmin', component: AddAdminComponent },
+  { path: 'admin/setup', component: SetupComponent },
   { path: 'home', component: HomeComponent }
   
 ];

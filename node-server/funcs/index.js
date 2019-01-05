@@ -259,7 +259,7 @@ let savePhotoVK = function(imgGroup) {
                 console.log(data);
                 return data.response.map(photo => `photo${photo.owner_id}_${photo.id}`).join(',');
             })
-            .catch(err => null)
+            .catch(err => err)
 }
 
 
@@ -491,30 +491,6 @@ let postOKAlbum = async function(records, pathToFolder) {
     }
 }
 
-
-// let postTelegramInDB = function(images, Posts, ops) {
-//     console.log('Tel post start', process.env.telToken, process.env.telGroup);
-
-//     let media = [];
-
-//     for(let categ in images) {
-//         images[categ].files.forEach((img) => {
-//             media.push({file: img.name, mimetype: img.mimetype, caption: img.tags.map(tag => `#${tag}`).join('') + images[categ].tags.map(tag => `#${tag}`).join('') })
-//         })
-//     }
-
-//     console.log('\n\n****Media********\n\n', media, JSON.stringify(media));
-
-//     return Posts.create({pTime: ops.publish_date, jsonData: JSON.stringify(media)})
-//     .then(res => {
-//         console.log(res);
-//         return {res, success: true, telegram: 'telegram'}
-//     })
-//     .catch(error => {
-//         console.log('Promis error telegram', error);
-//         return {error, success: false, telegram: 'telegram'};
-//     });
-// }
 
 let postToDB = function(images, Post, ops) {
     console.log(images);

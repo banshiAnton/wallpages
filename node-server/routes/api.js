@@ -1,52 +1,13 @@
 const path = require('path');
 const fs = require('fs');
 
-const { categoryGetRes, saveImages, createAlbumVK, getAlbumsVK, postOnTime, getAlbumsOK, getAlbums } = require('../funcs');
+const Sequelize = require('sequelize');
+
+const { categoryGetRes, saveImages, createAlbumVK } = require('../funcs');
 
 const { parseFilesData, groupFileDataToFiles, makeApiQuery, isAuth } = require('../middleware');
 
-const Sequelize = require('sequelize');
-console.log(process.env.CLEARDB_DATABASE_URL);
-const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
-
-const sequelizeBaseError = require('sequelize/lib/errors').BaseError;
-
-const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
-
-const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
-const Images = sequelize.import(path.join(__dirname, '../models/images'));
-const Posts = sequelize.import(path.join(__dirname, '../models/posts'));
-
-(function() {
-
-    let bToCreate = [];
-
-    Posts.sync({force: true}).then(() => sequelize.query('DROP TABLE `images`'))
-    .then(res => {
-        console.log(res);
-        postOnTime(Posts, path.join(__dirname, `../public/images`));
-        return Categories.sync({force: true})
-    })
-    .then((res) => {
-        console.log(res);
-        return Images.sync({force: true});
-    }).then((res) => {
-        console.log(res);
-        Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
-        Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
-        return getAlbums();
-    }).then(bToCreate => {
-        console.log(bToCreate);
-        return Categories.bulkCreate(bToCreate);
-    }).then(() => { 
-        return Categories.findAll();
-    }).then(data => {
-        data.forEach(item => {
-            console.log(item.get('name'),item.get('vkId'),item.get('okId'), item.get('tags'));
-        })
-    })
-    .catch(err => console.error('ERROR in MYSQL', err));
-}())
+const { Posts, Images, Categories } = require('../mysqllib');
 
 const router = require('express').Router();
 
@@ -161,9 +122,5 @@ router.put('/category/:id', isAuth, function(req, res, next) {
     })
     .catch(error => next(error))
 });
-
-// router.get('/test', function(req, res, next) {
-//     res.json(arr);
-// });
 
 module.exports = router;

@@ -95,7 +95,6 @@ let errorHandle = function(err, req, res, next) {
         for(let error of err.errors) {
             obj.errors.push({message: error.message, key: error.path, value: error.value})
         }
-
         res.json(obj);
         return true;
     } else {

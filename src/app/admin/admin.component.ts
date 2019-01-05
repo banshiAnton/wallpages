@@ -11,10 +11,6 @@ export class AdminComponent implements OnInit {
 
   isAuth = false;
   vkAuthLink: string = '';
-  fbAuthLink: string = '';
-  okAuthLink: string = '';
-
-  fbData: string = '';
 
   constructor(private service: ServiceService, private cookieService: CookieService) { }
 
@@ -22,27 +18,9 @@ export class AdminComponent implements OnInit {
     this.service.getUser().subscribe((data:any) => {
       this.isAuth = data.success;
       if(!this.isAuth) {
-        this.service.getVKAuthLink().subscribe((data:any) => {
-          this.vkAuthLink = data.link;
+        this.service.getAuthLinks().subscribe((data:any) => {
+          this.vkAuthLink = data.vk;
         })
-
-        this.service.getFBAuthLink().subscribe((data:any) => {
-          this.fbAuthLink = data.link;
-        })
-
-        this.fbData = this.cookieService.get('fb_data');
-        console.log('FB data', this.fbData);
-
-      } else {
-        // this.service.getFBAuthLink().subscribe((data:any) => {
-        //   this.fbAuthLink = data.link;
-        // })
-        this.service.getOKAuthLink().subscribe((data:any) => {
-          this.okAuthLink = data.link;
-        })
-
-        // this.fbData = this.cookieService.get('fb_data');
-        // console.log('FB data', this.fbData);
       }
     })
   }
