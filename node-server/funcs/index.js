@@ -368,21 +368,23 @@ let postFBAlbum = async function(images, ops) {
 
 let postFBWall = async function(records) {
 
-    let attached_media = [];
-    let message = '';
+    let body = {};
+    body.message = '';
+
+    let i = 0;
 
     for(let rec of records) {
         rec = rec.get('jsonData')
         for(let categ in rec) {
-            message += ' #' + rec[categ].tags.join(' #');
+            body.message += ' #' + rec[categ].tags.join(' #');
             for(let img of rec[categ].files) {
-                message += ' #' + img.tags.join(' #');
-                attached_media.push({"media_fbid": img.fbPostId});
+                body.message += ' #' + img.tags.join(' #');
+                body[`attached_media[${i++}]`] = {"media_fbid": img.fbPostId};
             }
         }
     }
 
-    return graphPost(`/${process.env.fbGid}/feed`, {message, attached_media})
+    return graphPost(`/${process.env.fbGid}/feed`, body)
     .catch(err => err);
 }
 
