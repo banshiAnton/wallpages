@@ -14,9 +14,9 @@ let force = !!process.env.forceTables;
 
 Posts.sync({force})
 .then(() => sequelize.query('DROP TABLE `images`'))
-.then(res => Categories.sync({force}))
-.then(res => Images.sync({force}))
-.then(res => {
+.then(() => Categories.sync({force}))
+.then(() => Images.sync({force}))
+.then(() => {
     Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
     Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
     postOnTime(Posts, path.join(__dirname, `../public/images`));

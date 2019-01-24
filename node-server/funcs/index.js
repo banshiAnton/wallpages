@@ -1,16 +1,28 @@
 const fs = require('fs');
 const path = require('path')
 const url = require('url');
-const writeFile = require('util').promisify(fs.writeFile);
-const readFile = require('util').promisify(fs.readFile);
+
+const util = require('util');
+
+const writeFile = util.promisify(fs.writeFile);
+const readFile = util.promisify(fs.readFile);
+
 const sharp = require('sharp');
 const fetch = require('node-fetch');
+
 const FormData = require('form-data');
 const Sequelize = require('sequelize');
+
 const ok = require('ok.ru');
+const graph = require('fbgraph');
 const md5 = require('md5');
-const okGet = require('util').promisify(ok.get);
-const okRefresh = require('util').promisify(ok.refresh);
+
+const okGet = util.promisify(ok.get);
+const okRefresh = util.promisify(ok.refresh);
+
+const graphGet = util.promisify(graph.get);
+const graphPost = util.promisify(graph.post);
+
 const Op = Sequelize.Op;
 
 let getSigOk = function(obj, token) {
@@ -73,6 +85,11 @@ let getAlbumsOK = function() {
     })
 }
 
+let getAlbumsFB = function() {
+    console.log(process.env.fbToken);
+    graph.setAccessToken(process.env.fbToken);
+    return graphGet(`/${process.env.fbGid}/albums`).catch(err => err);
+}
 
 
 let getAlbumsVK = function() {
@@ -96,6 +113,9 @@ let getAlbums = async function() {
     console.log(tmp);
 
     let okAlbums = await getAlbumsOK();
+    let fbAlbums = await getAlbumsFB();
+
+    console.log('albums fb', fbAlbums.data);
 
     okAlbums.albums.forEach(album => {
         if(album.title.toLowerCase() == 'разное') {
@@ -106,6 +126,13 @@ let getAlbums = async function() {
             tmp[album.title.toLowerCase()].okId = album.aid;
         }
     });
+
+    fbAlbums.data.forEach(album => {
+        console.log('FB test', album.name.toLowerCase(), tmp[album.name.toLowerCase()]);
+        tmp[album.name.toLowerCase()].fbId = album.id;
+    });
+
+    tmp['основной'].fbId = process.env.fbGid;
 
     console.log(tmp);
 

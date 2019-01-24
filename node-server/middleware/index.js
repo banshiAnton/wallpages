@@ -78,7 +78,8 @@ let groupFileDataToFiles = async function(req, res, next) {
             categOps[file.category] = {
                 tags: categData.get('tags'),
                 vkAid: categData.get('vkId'),
-                okAid: categData.get('okId')
+                okAid: categData.get('okId'),
+                fbAid: categData.get('fbId')
             }
         }
     }
@@ -106,7 +107,7 @@ let isAuth = function(req, res, next) {
     if(req.cookies.admin_data) {
         let decoded = jwt.decode(req.cookies.admin_data);
         Admins.findOne({ where: {vkid: decoded.user_id} })
-        .then(result => next())
+        .then(() => next())
         .catch(err => next(err))
     } else {
         res.json({success: false})

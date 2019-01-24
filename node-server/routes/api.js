@@ -11,11 +11,11 @@ const { Posts, Images, Categories } = require('../mysqllib');
 
 const router = require('express').Router();
 
+const pathToStatics = `/images/`;
+
 // api.images?category=test&count=10&offset=0&tags[]=test&tags[]=pest
 
 router.get('/', makeApiQuery, function (req, res, next) {
-
-    const pathToStatics = `/images/`;
     let reg = req.query.tags ? req.query.tags.join('|') : '.'; 
 
     let queryObj = {attributes: ['category_id', 'file', [Sequelize.fn('CONCAT', Sequelize.col('`images`.`tags`'), ' ', Sequelize.col('`category`.`tags`')), 'tags']],

@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
         okId: {
             type: DataTypes.STRING,unique: true, allowNull: false
         },
+        fbId: {
+            type: DataTypes.STRING,unique: true, allowNull: false
+        },
         name: { type: DataTypes.STRING, unique: true, allowNull: false,
             validate: {
                 notEmpty: {

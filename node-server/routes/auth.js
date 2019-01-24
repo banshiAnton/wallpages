@@ -22,10 +22,10 @@ Admins.sync({force: true})
 .catch(err => console.error('ERROR in MYSQL', err));
 
 router.post('/admin', function(req, res, next) {
-    console.log(req.body);
+    console.log('Post Admin Data', req.body);
     Admins.create({vkid: +req.body.vkid.trim()})
-    .then((result) => {
-        console.log(result);
+    .then(result => {
+        console.log('Admin Saved', result);
         res.json({success: true});
     }).catch(err => next(err))
 })
@@ -35,11 +35,12 @@ router.get('/admin', isAuth, function(req, res, next) {
 });
 
 router.get('/authLinks', function(req, res, next) {
-    let scopeOK = 'LONG_ACCESS_TOKEN,VALUABLE_ACCESS,PHOTO_CONTENT,GROUP_CONTENT';
+    let OKScope = 'LONG_ACCESS_TOKEN,VALUABLE_ACCESS,PHOTO_CONTENT,GROUP_CONTENT';
+    let FBScope = 'groups_access_member_info,publish_to_groups';
     res.json({
         vk: `https://oauth.vk.com/authorize?client_id=${process.env.vkClientId}&display=page&redirect_uri=${process.env.rUrl}&scope=friends,notify,photos,audio,video,stories,pages,notes,status,wall,ads,offline,docs,groups,notifications,stats,email,market&response_type=code&v=5.92`,
-        ok: `https://connect.ok.ru/oauth/authorize?client_id=${process.env.okAppId}&scope=${scopeOK}&response_type=code&redirect_uri=${process.env.okrUrl}`,
-        fb: `https://www.facebook.com/v3.2/dialog/oauth?client_id=${process.env.fbAppId}&redirect_uri=${process.env.fbRUrl}`
+        ok: `https://connect.ok.ru/oauth/authorize?client_id=${process.env.okAppId}&scope=${OKScope}&response_type=code&redirect_uri=${process.env.okrUrl}`,
+        fb: `https://www.facebook.com/v3.2/dialog/oauth?client_id=${process.env.fbAppId}&redirect_uri=${process.env.fbRUrl}&scope=${FBScope}`
     })
 });
 
@@ -49,7 +50,7 @@ router.get('/vkcb', function(req, res, next) {
     fetch(url)
     .then(data => data.json())
     .then(data => {
-        console.log(data);
+        console.log('VK TOKEN', data);
         return Admins.findOne({ where: {vkid: data.user_id} })
         .then(result => {
             if(result) {
@@ -62,10 +63,6 @@ router.get('/vkcb', function(req, res, next) {
                 })
             }
         })
-        .catch(err => {
-            console.log('Auth err', err);
-            next(err);
-        });
     })
     .catch(err => {
         console.log('Auth err', err);
@@ -80,7 +77,7 @@ router.get('/okcb', function(req, res, next) {
     fetch(url, { method: 'post' })
     .then(data => data.json())
     .then(data => {
-        console.log('\n\n***Access***\n\n',data);
+        console.log('OK TOKEN', data);
         process.env.okRToken = data.refresh_token;
         res.redirect('/admin/setup/');
     })
@@ -91,16 +88,17 @@ router.get('/okcb', function(req, res, next) {
 });
 
 router.get('/fbcb', function(req, res, next) {
-    console.log(req, req.params, req.query);//req.query.code
+    console.log(req.query);
     fetch(`https://graph.facebook.com/v3.2/oauth/access_token?client_id=${process.env.fbAppId}&redirect_uri=${process.env.fbRUrl}&client_secret=${process.env.fbAppSec}&code=${req.query.code}`)
     .then(data => data.json())
     .then(data => {
-        console.log('GET token', data);
-        return fetch(`https://graph.facebook.com/me?fields=id,name&access_token=${data.access_token}`)
+        console.log('FB TOKEN', data);
+        return fetch(`https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.fbAppId}&client_secret=${process.env.fbAppSec}&fb_exchange_token=${data.access_token}`)
     }).then(data => data.json())
     .then(data => {
-        console.log('Get user data', data);
-        res.cookie('fb_data', data.name, {path: '/', httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000 });
+        console.log('FB long-live-TOKEN', data);
+        process.env.fbToken = data.access_token;
+        res.cookie('fb_data', data.access_token, { path: '/', httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000 });
         res.redirect('/admin/setup/');
     })
     .catch(err => {
@@ -113,9 +111,9 @@ router.get('/makeSetup', isAuth, function(req, res, next) {
     makeSetup()
     .then(data => {
         data.forEach(item => {
-            console.log(item.get('name'),item.get('vkId'),item.get('okId'), item.get('tags'));
-            res.redirect('/admin/');
-        })
+            console.log(item.get('name'), item.get('vkId'), item.get('okId'), item.get('fbId'), item.get('tags'));
+        });
+        res.redirect('/admin/');
     })
     .catch(err => {
         console.error('ERROR in MYSQL', err);
