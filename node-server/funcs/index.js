@@ -366,6 +366,26 @@ let postFBAlbum = async function(images, ops) {
 
 }
 
+let postFBWall = async function(records) {
+
+    let attached_media = [];
+    let message = '';
+
+    for(let rec of records) {
+        rec = rec.get('jsonData')
+        for(let categ in rec) {
+            message += ' #' + categ.tags.join(' #');
+            for(let img of rec[categ].files) {
+                message += ' #' + img.tags.join(' #');
+                attached_media.push({"media_fbid": img.fbPostId});
+            }
+        }
+    }
+
+    return graphPost(`/${process.env.fbGid}/feed`, {message, attached_media})
+    .catch(err => err);
+}
+
 let postOnTime = function(Posts, pathToFolder) {
     
     let flag = true;
@@ -391,6 +411,14 @@ let postOnTime = function(Posts, pathToFolder) {
                 flag = true;
 
                 try {
+                    let resFB = await postFBWall(data);
+                    console.log('Post to FB data', resFB);
+                } catch(err) {
+                    console.log('Post to FB error', err);
+                }
+
+
+                try {
                     let resTeleg = await postTelegram(data, pathToFolder);
                     console.log('Post to teleg data', resTeleg);
                 } catch(err) {
@@ -404,6 +432,7 @@ let postOnTime = function(Posts, pathToFolder) {
                     console.log('Post to OK error', err);
                 }
             }
+
             flag = true;
             let resDel = await Posts.destroy({
                 where: {
@@ -427,6 +456,7 @@ let postTelegram = async function(records, pathToFolder) {
     let media = [];
     let form = new FormData();
     let i = 1;
+
     for(let rec of records) {
         rec = rec.get('jsonData')
         for(let categ in rec) {
