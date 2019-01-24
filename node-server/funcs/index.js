@@ -384,6 +384,8 @@ let postFBWall = async function(records) {
         }
     }
 
+    console.log('FB Post BODY', body);
+
     return graphPost(`/${process.env.fbGid}/feed`, body)
     .catch(err => err);
 }
