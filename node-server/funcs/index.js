@@ -582,7 +582,7 @@ let postOKAlbum = async function(records, pathToFolder) {
 }
 
 let postToDB = function(images, Post, ops) {
-    console.log(images);
+    console.log('\n\n*****POST TO DB *****\n\n', images);
     return Post.create({pTime: ops.publish_date, jsonData: images})
     .then(res => {
         console.log(res);
