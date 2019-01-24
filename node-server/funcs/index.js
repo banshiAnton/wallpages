@@ -337,6 +337,35 @@ let postVK = async function(images, ops) {
     });
 }
 
+let postFBAlbum = async function(images, ops) {
+
+    let results = [];
+
+    graph.setAccessToken(process.env.fbToken);
+    console.log('FB start', images);
+
+    for(let categ in images) {
+
+        let groupTags = '#' + images[categ].tags.join(' #');
+
+        images[categ].files.forEach(async (img, i) => {
+            
+            let wall = await graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name}`, caption: groupTags + ' #' +img.tags.join(' #'), published: false}).catch(err => err);
+            let album = await graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name}`, caption: groupTags + ' #' +img.tags.join(' #')}).catch(err => err);
+
+            img.fbPostId = wall.id;
+
+            console.log(wall, album);
+
+            results.push({wall, album})
+
+        })
+    }
+
+    return resultsSave;
+
+}
+
 let postOnTime = function(Posts, pathToFolder) {
     
     let flag = true;
@@ -518,7 +547,6 @@ let postOKAlbum = async function(records, pathToFolder) {
     }
 }
 
-
 let postToDB = function(images, Post, ops) {
     console.log(images);
     return Post.create({pTime: ops.publish_date, jsonData: images})
@@ -566,7 +594,7 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
 
         if(!categGroup[img.category]) {
             categGroup[img.category] = {
-                files: [img],
+                files: [img]
             }
             categGroup[img.category] = Object.assign(categGroup[img.category], ops.categOps[img.category])
         } else {
@@ -575,13 +603,6 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     });
 
     console.log('*********\nCateg Ops', categGroup, '\n********');
-
-    try {
-        let res = await postToDB(categGroup, db.Posts, ops);
-        console.log(res);
-    } catch (err) {
-        console.log('Error post OK In DB (catch(err))', err);
-    }
 
     try {
         let res = await postVK(categGroup, ops);
@@ -597,12 +618,20 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
         console.log('Error post OK (catch(err))', err);
     }
 
-    // try {
-    //     let res = await postTelegramInDB(categGroup, db.Posts, ops);
-    //     results.push(res);
-    // } catch (err) {
-    //     console.log('Error post Telegram (catch(err))', err);
-    // }
+    try {
+        let res = await postToDB(categGroup, db.Posts, ops);
+        console.log(res);
+    } catch (err) {
+        console.log('Error post OK In DB (catch(err))', err);
+    }
+
+    try {
+        let res = await postFBAlbum(categGroup, ops);
+        console.log(res);
+        results.push(res);
+    } catch (err) {
+        console.log('Error post FB (catch(err))', err);
+    }
 
     return results;
 }
