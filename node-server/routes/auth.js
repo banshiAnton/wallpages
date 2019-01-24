@@ -37,8 +37,9 @@ router.get('/admin', isAuth, function(req, res, next) {
 router.get('/authLinks', function(req, res, next) {
     let OKScope = 'LONG_ACCESS_TOKEN,VALUABLE_ACCESS,PHOTO_CONTENT,GROUP_CONTENT';
     let FBScope = 'groups_access_member_info,publish_to_groups';
+    let VKScope = 'friends,notify,photos,audio,video,stories,pages,notes,status,wall,ads,offline,docs,groups,notifications,stats,email,market';
     res.json({
-        vk: `https://oauth.vk.com/authorize?client_id=${process.env.vkClientId}&display=page&redirect_uri=${process.env.rUrl}&scope=friends,notify,photos,audio,video,stories,pages,notes,status,wall,ads,offline,docs,groups,notifications,stats,email,market&response_type=code&v=5.92`,
+        vk: `https://oauth.vk.com/authorize?client_id=${process.env.vkClientId}&display=page&redirect_uri=${process.env.rUrl}&scope=${VKScope}&response_type=code&v=5.92`,
         ok: `https://connect.ok.ru/oauth/authorize?client_id=${process.env.okAppId}&scope=${OKScope}&response_type=code&redirect_uri=${process.env.okrUrl}`,
         fb: `https://www.facebook.com/v3.2/dialog/oauth?client_id=${process.env.fbAppId}&redirect_uri=${process.env.fbRUrl}&scope=${FBScope}`
     })
@@ -54,7 +55,8 @@ router.get('/vkcb', function(req, res, next) {
         return Admins.findOne({ where: {vkid: data.user_id} })
         .then(result => {
             if(result) {
-                process.env.vktoken = data.access_token;
+                // process.env.vktoken = data.access_token;
+                console.log('SET NEW VK TOKEN', process.env.vktoken);
                 jwt.sign(data, process.env.secretJWT, {algorithm: 'HS256'}, function(err, token) {
                     if(!err) {
                         res.cookie('admin_data', token, {path: '/', httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000 })

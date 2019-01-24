@@ -311,6 +311,7 @@ let postVK = async function(images, ops) {
     attachments  = attachments.join(',');
     console.log('attachments', attachments);
     console.log(ops.publish_date);
+    console.log('VK TOKEN', process.env.vktoken);
     let postUrl = url.format({
         protocol: 'https',
         hostname: 'api.vk.com',
@@ -349,9 +350,10 @@ let postFBAlbum = async function(images, ops) {
         let groupTags = '#' + images[categ].tags.join(' #');
 
         for(let img of images[categ].files) {
+            //https://www.psychologistworld.com/images/articles/a/575x360-v-dpc-71331987.jpg
             //url: `${ops.url}${img.name}`
-            let wall = await graphPost(`/${process.env.fbGid}/photos`, {url: 'https://www.psychologistworld.com/images/articles/a/575x360-v-dpc-71331987.jpg', caption: groupTags + ' #' +img.tags.join(' #'), published: false}).catch(err => err);
-            let album = await graphPost(`/${images[categ].fbAid}/photos`, {url: `https://www.psychologistworld.com/images/articles/a/575x360-v-dpc-71331987.jpg`, caption: groupTags + ' #' +img.tags.join(' #')}).catch(err => err);
+            let wall = await graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name}`, caption: groupTags + ' #' +img.tags.join(' #'), published: false}).catch(err => err);
+            let album = await graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name}`, caption: groupTags + ' #' +img.tags.join(' #')}).catch(err => err);
 
             img.fbPostId = wall.id;
 
