@@ -348,10 +348,10 @@ let postFBAlbum = async function(images, ops) {
 
         let groupTags = '#' + images[categ].tags.join(' #');
 
-        images[categ].files.forEach(async (img, i) => {
-            
-            let wall = await graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name}`, caption: groupTags + ' #' +img.tags.join(' #'), published: false}).catch(err => err);
-            let album = await graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name}`, caption: groupTags + ' #' +img.tags.join(' #')}).catch(err => err);
+        for(let img of images[categ].files) {
+            //url: `${ops.url}${img.name}`
+            let wall = await graphPost(`/${process.env.fbGid}/photos`, {url: 'https://www.psychologistworld.com/images/articles/a/575x360-v-dpc-71331987.jpg', caption: groupTags + ' #' +img.tags.join(' #'), published: false}).catch(err => err);
+            let album = await graphPost(`/${images[categ].fbAid}/photos`, {url: `https://www.psychologistworld.com/images/articles/a/575x360-v-dpc-71331987.jpg`, caption: groupTags + ' #' +img.tags.join(' #')}).catch(err => err);
 
             img.fbPostId = wall.id;
 
@@ -359,10 +359,10 @@ let postFBAlbum = async function(images, ops) {
 
             results.push({wall, album})
 
-        })
+        }
     }
 
-    return resultsSave;
+    return results;
 
 }
 
@@ -589,7 +589,6 @@ let postToDB = function(images, Post, ops) {
         return {res, success: true, OK: 'OK'}
     })
     .then(() => Post.findAll())
-    .then(data => data[0].get('jsonData'))
     .catch(error => {
         console.log('Promis error OK', error);
         return {error, success: false, OK: 'OK'};
@@ -655,8 +654,9 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
 
     try {
         let res = await postFBAlbum(categGroup, ops);
-        console.log(res);
+        console.log('FB RES', res);
         results.push(res);
+        console.log('\n\n\n\n**** DATA AFTER FB ***** \n\n\n', categGroup, JSON.stringify(categGroup))
     } catch (err) {
         console.log('Error post FB (catch(err))', err);
     }
