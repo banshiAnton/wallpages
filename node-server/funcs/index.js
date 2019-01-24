@@ -653,18 +653,18 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     }
 
     try {
-        let res = await postToDB(categGroup, db.Posts, ops);
-        console.log(res);
-    } catch (err) {
-        console.log('Error post OK In DB (catch(err))', err);
-    }
-
-    try {
         let res = await postFBAlbum(categGroup, ops);
         console.log(res);
         results.push(res);
     } catch (err) {
         console.log('Error post FB (catch(err))', err);
+    }
+
+    try {
+        let res = await postToDB(categGroup, db.Posts, ops);
+        console.log(res);
+    } catch (err) {
+        console.log('Error post OK In DB (catch(err))', err);
     }
 
     return results;
