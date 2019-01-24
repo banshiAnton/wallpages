@@ -622,7 +622,8 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
             return {
                 name: this.name,
                 mimetype: this.mimetype,
-                tags: this.tags
+                tags: this.tags,
+                fbPostId: this.fbPostId
             }
         }
 
