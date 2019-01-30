@@ -41,7 +41,7 @@ router.get('/authLinks', function(req, res, next) {
     let OKScope = 'LONG_ACCESS_TOKEN,VALUABLE_ACCESS,PHOTO_CONTENT,GROUP_CONTENT';
     let FBScope = 'groups_access_member_info,publish_to_groups';
     let VKScope = 'friends,notify,photos,audio,video,stories,pages,notes,status,wall,ads,offline,docs,groups,notifications,stats,email,market';
-    let INSTScope = 'basic, public_content';
+    let INSTScope = 'basic,public_content,likes';
 
     res.json({
         vk: `https://oauth.vk.com/authorize?client_id=${process.env.vkClientId}&display=page&redirect_uri=${process.env.rUrl}&scope=${VKScope}&response_type=code&v=5.92`,
