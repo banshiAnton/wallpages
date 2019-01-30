@@ -116,11 +116,11 @@ router.get('/fbcb', function(req, res, next) {
 router.get('/instcb', function(req, res, next) {
     console.log('Insta code', req.query);
     fetch(`https://api.instagram.com/oauth/access_token?client_id=${process.env.instAppId}&grant_type=authorization_code&redirect_uri=${process.env.instRUrl}&client_secret=${process.env.instAppSec}&code=${req.query.code}`)
-    .then(data => res.end(data))
-    // .then(data => {
-    //     console.log('Insta data', data);
-    //     res.json(data);
-    // })
+    .then(data => data.text())
+    .then(data => {
+        console.log('Insta data', data);
+        res.end(data);
+    })
     .catch(err => {
         console.log(err);
         res.json(err);
