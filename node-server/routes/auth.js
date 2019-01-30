@@ -126,13 +126,10 @@ router.get('/instcb', function(req, res, next) {
     body.append('code', req.query.code);
 
     fetch(`https://api.instagram.com/oauth/access_token`, {method: 'post', body})
+    .then(data => data.json())
     .then(data => {
-        console.log(data);
-        return data.json();
-    })
-    .then(data => {
-        console.log('Insta data', data);
-        res.json(data);
+        console.log('Insta data', data, data.access_token);
+        res.redirect('/admin/setup/');
     })
     .catch(err => {
         console.log(err);
