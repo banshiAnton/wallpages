@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const Sequelize = require('sequelize');
 const path = require('path');
 
+const FormData = require('form-data');
+
 const { isAuth } = require('../middleware/');
 
 const { getAlbums } = require('../funcs');
@@ -115,7 +117,15 @@ router.get('/fbcb', function(req, res, next) {
 
 router.get('/instcb', function(req, res, next) {
     console.log('Insta code', req.query);
-    fetch(`https://api.instagram.com/oauth/access_token`, {method: 'post', body: `client_id=${process.env.instAppId}&grant_type=authorization_code&redirect_uri=${process.env.instRUrl}&client_secret=${process.env.instAppSec}&code=${req.query.code}`})
+
+    let  body = new FormData();
+    body.append('client_id', process.env.instAppId);
+    body.append('grant_type', 'authorization_code');
+    body.append('redirect_uri', process.env.instRUrl);
+    body.append('client_secret', process.env.instAppSec);
+    body.append('code', req.query.code);
+
+    fetch(`https://api.instagram.com/oauth/access_token`, {method: 'post', body})
     .then(data => {
         console.log(data);
         return data.json();
