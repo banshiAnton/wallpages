@@ -47,7 +47,8 @@ router.get('/authLinks', function(req, res, next) {
         vk: `https://oauth.vk.com/authorize?client_id=${process.env.vkClientId}&display=page&redirect_uri=${process.env.rUrl}&scope=${VKScope}&response_type=code&v=5.92`,
         ok: `https://connect.ok.ru/oauth/authorize?client_id=${process.env.okAppId}&scope=${OKScope}&response_type=code&redirect_uri=${process.env.okrUrl}`,
         fb: `https://www.facebook.com/v3.2/dialog/oauth?client_id=${process.env.fbAppId}&redirect_uri=${process.env.fbRUrl}&scope=${FBScope}`,
-        inst: `https://api.instagram.com/oauth/authorize/?client_id=${process.env.instAppId}&redirect_uri=${process.env.instRUrl}&response_type=code&scope=${INSTScope}`
+        //inst: `https://api.instagram.com/oauth/authorize/?client_id=${process.env.instAppId}&redirect_uri=${process.env.instRUrl}&response_type=code&scope=${INSTScope}`
+        inst: `https://concretesocial.io/1.0/authorize?client_id=${process.env.conId}&redirect_url=${process.env.instRUrl}`
     })
 });
 
@@ -118,7 +119,7 @@ router.get('/fbcb', function(req, res, next) {
 router.get('/instcb', function(req, res, next) {
     console.log('Insta code', req.query);
 
-    let  body = new FormData();
+    /*let  body = new FormData();
     body.append('client_id', process.env.instAppId);
     body.append('grant_type', 'authorization_code');
     body.append('redirect_uri', process.env.instRUrl);
@@ -134,7 +135,10 @@ router.get('/instcb', function(req, res, next) {
     .catch(err => {
         console.log(err);
         res.json(err);
-    })
+    })*/
+
+
+
 });
 
 router.get('/makeSetup', isAuth, function(req, res, next) {
