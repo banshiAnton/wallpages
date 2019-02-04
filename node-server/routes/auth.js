@@ -137,6 +137,16 @@ router.get('/instcb', function(req, res, next) {
         res.json(err);
     })*/
 
+    fetch(`https://concretesocial.io/1.0/code?client_id=${process.env.conId}&client_secret=${process.env.conSec}&code=${req.query.code}`)
+    .then(data => data.json())
+    .then(data => {
+        console.log('Insta data', data, data.access_token);
+        res.redirect('/admin/setup/');
+    })
+    .catch(err => {
+        console.log(err);
+        res.json(err);
+    })
 
 
 });
