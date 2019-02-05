@@ -302,13 +302,14 @@ let postVK = async function(images, ops) {
     for(let img in images) {
         let at = await savePhotoVK(images[img]);
         if(at) attachments.push(at);
-        tags.push(images[img].tags);
-        images[img].files.map(img => img.tags).forEach(tags_ => tags_.forEach(tag => tags.push(tag)));
+        // tags.push(images[img].tags);
+        tags = tags.concat(images[img].tags);
+        images[img].files.forEach(img => tags = tags.concat(img.tags));
         console.log('At', attachments);
     }
 
     console.log('Tags************\n\n', tags);
-    let message = tags.map(tag => tag.length ? '#' + tag : '').join('');
+    let message = tags.map(tag => '#' + tag).join('');
     console.log('Message', message);
     attachments  = attachments.join(',');
     console.log('attachments', attachments);
