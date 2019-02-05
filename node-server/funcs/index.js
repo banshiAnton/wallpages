@@ -360,7 +360,7 @@ let postFBAlbum = async function(images, ops) {
 
             img.fbPostId = wall.id;
 
-            console.log(wall, album);
+            console.log('FB data post album', wall, album);
 
             results.push({wall, album})
 
