@@ -68,10 +68,9 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
         .then(metadata => sharp(image.data).resize(Math.round(metadata.width / 8), Math.round(metadata.height / 8)).toFile(path.join(pathToFolder, '/small/', image.name)))
         .then(() => ImagesDb.create({file: image.name, tags: image.tags, category_id: image.category}))
         .then(data => {
-            console.log('File: ', image.name, ' saved ', data);
+            // console.log('File: ', image.name, ' saved ', data);
             return {res: data.dataValues, success: true};
         })
-        .then()
         .catch(error => {
             console.log('Error cahtch VK', error)
             return {error: error.message, success: false}
@@ -79,7 +78,7 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
 }
 
 let getAlbumsOK = function() {
-    console.log(process.env.okRToken);
+    // console.log(process.env.okRToken);
     return okRefresh(process.env.okRToken)
     .then(data => {
         ok.setAccessToken(data.access_token);
@@ -88,7 +87,7 @@ let getAlbumsOK = function() {
 }
 
 let getAlbumsFB = function() {
-    console.log(process.env.fbToken);
+    // console.log(process.env.fbToken);
     graph.setAccessToken(process.env.fbToken);
     return graphGet(`/${process.env.fbGid}/albums`).catch(err => err);
 }
@@ -112,38 +111,38 @@ let getAlbums = async function() {
         }
     });
 
-    console.log(tmp);
+    // console.log(tmp);
 
     let okAlbums = await getAlbumsOK();
     let fbAlbums = await getAlbumsFB();
 
-    console.log('albums fb', fbAlbums.data);
+    // console.log('albums fb', fbAlbums.data);
 
     okAlbums.albums.forEach(album => {
         if(album.title.toLowerCase() == 'разное') {
-            console.log('In IF');
+            // console.log('In IF');
             tmp['основной'].okId = album.aid;
         } else {
-            console.log('Ok test', album.title.toLowerCase(), tmp[album.title.toLowerCase()]);
+            // console.log('Ok test', album.title.toLowerCase(), tmp[album.title.toLowerCase()]);
             tmp[album.title.toLowerCase()].okId = album.aid;
         }
     });
 
     fbAlbums.data.forEach(album => {
-        console.log('FB test', album.name.toLowerCase(), tmp[album.name.toLowerCase()]);
+        // console.log('FB test', album.name.toLowerCase(), tmp[album.name.toLowerCase()]);
         tmp[album.name.toLowerCase()].fbId = album.id;
     });
 
     tmp['основной'].fbId = process.env.fbGid;
 
-    console.log(tmp);
+    // console.log(tmp);
 
     let toSave = [];
     for(let name in tmp) {
         toSave.push(Object.assign({name}, tmp[name]))
     }
 
-    console.log(toSave);
+    // console.log(toSave);
 
     return toSave;
 
@@ -214,10 +213,10 @@ let postOK = async function(images, ops) {
                 "type": "photo",
                 "list": []
               },
-              {
-                  "type": "text",
-                  "text": text
-              }
+            //   {
+            //       "type": "text",
+            //       "text": text
+            //   }
             ],
             "publishAtMs": (+ops.publish_date * 1000) + ''
         };
@@ -685,7 +684,7 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
         ], {failFast: false});
 
         // console.log('Paraller res', resultsPr);
-        results.push(resultsPr);
+        results.push({soc: true, resultsPr});
     } catch(err) {
         // console.log('Paraller (catch(err))', err);
     }
@@ -693,7 +692,7 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
 
     try {
         let res = await postToDB(categGroup, db.Posts, ops);
-        console.log(res);
+        console.log('Post ind DB res', res);
     } catch (err) {
         console.log('Error post OK Teleg FB In DB (catch(err))', err);
     }

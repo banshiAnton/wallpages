@@ -56,7 +56,7 @@ router.post('/upload', isAuth, parseFilesData, groupFileDataToFiles, function (r
     console.log('Url', req.url, req.host, req.hostname);
     saveImages(path.join(__dirname, `../public/images`), req.files.images, {Images, Posts, Categories}, { categOps: req.categOps, publish_date: req.body.publish_date, url: `${req.protocol}://${req.host}/images/` })
     .then(results => {
-        console.log('End', results);
+        console.log('End response END', results);
         res.json({success: true, results});
     })
     .catch(err => next(err))
