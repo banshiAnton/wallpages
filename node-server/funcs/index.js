@@ -167,7 +167,7 @@ let createAlbumVK = function(title) {
 }
 
 let postOK = async function(images, ops) {
-    console.log('OK start', images);
+    // console.log('OK start', images);
 
     let allImages = [];
     let tags = [];
@@ -182,12 +182,12 @@ let postOK = async function(images, ops) {
 
     okRefresh(process.env.okRToken)
     .then(data => {
-        console.log('Refresh', data);
+        // console.log('Refresh', data);
         ok.setAccessToken(data.access_token);
     })
     .then(() => okGet({method: 'photosV2.getUploadUrl', count: allImages.length, gid: process.env.okGid}))
     .then(data => {
-        console.log(data);
+        // console.log(data);
 
         let form = new FormData();
 
@@ -206,7 +206,7 @@ let postOK = async function(images, ops) {
     })
     .then(data => data.json())
     .then(async data => {
-        console.log('\n\n****Uploaded****\n\n', data.photos);
+        // console.log('\n\n****Uploaded****\n\n', data.photos);
 
         let at = {
             "media": [
@@ -223,7 +223,7 @@ let postOK = async function(images, ops) {
         };
 
         for(let id in data.photos) {
-            console.log('\n\nID:', id,  '\nToken:', data.photos[id].token);
+            // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token);
             at.media[0].list.push({id: data.photos[id].token});
         }
 
@@ -279,13 +279,13 @@ let savePhotoVK = function(imgGroup) {
             }))
             .then(data => data.json())
             .then(data => {
-                console.log('Photos list', data);
+                // console.log('Photos list', data);
                 let url = `https://api.vk.com/method/photos.save?album_id=${data.aid}&group_id=${data.gid}&server=${data.server}&hash=${data.hash}&photos_list=${data.photos_list}&access_token=${process.env.vktoken}&v=5.62`
                 return fetch(url);
             })
             .then(data => data.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 return data.response.map(photo => `photo${photo.owner_id}_${photo.id}`).join(',');
             })
             .catch(err => err)
@@ -294,7 +294,7 @@ let savePhotoVK = function(imgGroup) {
 
 let postVK = async function(images, ops) {
 
-    console.log('VK start', images);
+    // console.log('VK start', images);
 
     let attachments = [];
     let tags = [];
@@ -305,16 +305,16 @@ let postVK = async function(images, ops) {
         // tags.push(images[img].tags);
         tags = tags.concat(images[img].tags);
         images[img].files.forEach(img => tags = tags.concat(img.tags));
-        console.log('At', attachments);
+        // console.log('At', attachments);
     }
 
-    console.log('Tags************\n\n', tags);
+    // console.log('Tags************\n\n', tags);
     let message = tags.map(tag => '#' + tag).join('');
-    console.log('Message', message);
+    // console.log('Message', message);
     attachments  = attachments.join(',');
-    console.log('attachments', attachments);
-    console.log(ops.publish_date);
-    console.log('VK TOKEN', process.env.vktoken);
+    // console.log('attachments', attachments);
+    // console.log(ops.publish_date);
+    // console.log('VK TOKEN', process.env.vktoken);
     let postUrl = url.format({
         protocol: 'https',
         hostname: 'api.vk.com',
@@ -471,7 +471,7 @@ let postOnTime = function(Posts, pathToFolder) {
 
 let postTelegram = async function(records, pathToFolder) {
 
-    console.log('Pre data', records);
+    // console.log('Pre data', records);
 
     let media = [];
     let form = new FormData();
@@ -485,9 +485,9 @@ let postTelegram = async function(records, pathToFolder) {
                 let file = null
                 try {
                     file = await readFile(path.join(pathToFolder, '/', img.name));
-                    console.log('File', file);
+                    // console.log('File', file);
                 } catch (err) {
-                    console.log(err);
+                    // console.log(err);
                     continue;
                 }
     
@@ -502,7 +502,7 @@ let postTelegram = async function(records, pathToFolder) {
         }
     }
 
-    console.log('End media', media);
+    // console.log('End media', media);
     form.append('media', JSON.stringify(media));
     form.append('chat_id', process.env.telGroup);
 
@@ -515,7 +515,7 @@ let postTelegram = async function(records, pathToFolder) {
 }
 
 let postOKAlbum = async function(records, pathToFolder) {
-    console.log('Data OK Albums', records);
+    // console.log('Data OK Albums', records);
 
     for(let rec of records) {
         rec = rec.get('jsonData')
@@ -523,11 +523,11 @@ let postOKAlbum = async function(records, pathToFolder) {
 
             await okRefresh(process.env.okRToken)
             .then(data => {
-                console.log('Refresh', data);
+                // console.log('Refresh', data);
                 ok.setAccessToken(data.access_token);
             }).then(() => okGet({method: 'photosV2.getUploadUrl', count: rec[categ].files.length, gid: process.env.okGid, aid: rec[categ].okAid }))
             .then(async data => {
-                console.log(data);
+                // console.log(data);
 
                 let form = new FormData();
                 let i = 1;
@@ -537,9 +537,9 @@ let postOKAlbum = async function(records, pathToFolder) {
                     let file = null
                     try {
                         file = await readFile(path.join(pathToFolder, '/', img.name));
-                        console.log('File', file);
+                        // console.log('File', file);
                     } catch (err) {
-                        console.log(err);
+                        // console.log(err);
                         continue;
                     }
         
@@ -561,7 +561,7 @@ let postOKAlbum = async function(records, pathToFolder) {
                 let arrRes = [];
 
                 for(let id in data.photos) {
-                    console.log('\n\nID:', id,  '\nToken:', data.photos[id].token)
+                    // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token)
                     let urlSave = url.format({
                         protocol: 'https',
                         hostname: 'api.ok.ru',
@@ -577,13 +577,13 @@ let postOKAlbum = async function(records, pathToFolder) {
                         }
                     });
         
-                    console.log(urlSave);
+                    // console.log(urlSave);
         
                     let reult = await fetch(urlSave)
                     .then(data => data.json())
                     .catch(err => err);
         
-                    console.log(reult, typeof reult);
+                    // console.log(reult, typeof reult);
         
                     arrRes.push(reult);
         
@@ -614,7 +614,7 @@ let postToDB = function(images, Post, ops) {
 let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     let results = [];
 
-    console.log(imagesArr);
+    // console.log(imagesArr);
     let filesSaved = [];
     for(let image of imagesArr) {
         try {
@@ -629,7 +629,7 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
         }
     }
 
-    console.log(filesSaved);
+    // console.log(filesSaved);
     let categGroup = {};
     filesSaved.forEach(img => {
 
@@ -684,10 +684,10 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
             postFBAlbum(categGroup, ops)
         ], {failFast: false});
 
-        console.log('Paraller res', resultsPr);
+        // console.log('Paraller res', resultsPr);
         results.push(resultsPr);
     } catch(err) {
-        console.log('Paraller (catch(err))', err);
+        // console.log('Paraller (catch(err))', err);
     }
 
 
