@@ -41,13 +41,13 @@ router.get('/authLinks', function(req, res, next) {
     let OKScope = 'LONG_ACCESS_TOKEN,VALUABLE_ACCESS,PHOTO_CONTENT,GROUP_CONTENT';
     let FBScope = 'groups_access_member_info,publish_to_groups';
     let VKScope = 'friends,notify,photos,audio,video,stories,pages,notes,status,wall,ads,offline,docs,groups,notifications,stats,email,market';
-    let INSTScope = 'basic+likes+public_content';
+    // let INSTScope = 'basic+likes+public_content';
 
     res.json({
         vk: `https://oauth.vk.com/authorize?client_id=${process.env.vkClientId}&display=page&redirect_uri=${process.env.rUrl}&scope=${VKScope}&response_type=code&v=5.92`,
         ok: `https://connect.ok.ru/oauth/authorize?client_id=${process.env.okAppId}&scope=${OKScope}&response_type=code&redirect_uri=${process.env.okrUrl}`,
         fb: `https://www.facebook.com/v3.2/dialog/oauth?client_id=${process.env.fbAppId}&redirect_uri=${process.env.fbRUrl}&scope=${FBScope}`,
-        inst: `https://api.instagram.com/oauth/authorize/?client_id=${process.env.instAppId}&redirect_uri=${process.env.instRUrl}&response_type=code&scope=${INSTScope}`
+        // inst: `https://api.instagram.com/oauth/authorize/?client_id=${process.env.instAppId}&redirect_uri=${process.env.instRUrl}&response_type=code&scope=${INSTScope}`
     })
 });
 
@@ -115,27 +115,27 @@ router.get('/fbcb', function(req, res, next) {
     })
 });
 
-router.get('/instcb', function(req, res, next) {
-    console.log('Insta code', req.query);
+// router.get('/instcb', function(req, res, next) {
+//     console.log('Insta code', req.query);
 
-    let  body = new FormData();
-    body.append('client_id', process.env.instAppId);
-    body.append('grant_type', 'authorization_code');
-    body.append('redirect_uri', process.env.instRUrl);
-    body.append('client_secret', process.env.instAppSec);
-    body.append('code', req.query.code);
+//     let  body = new FormData();
+//     body.append('client_id', process.env.instAppId);
+//     body.append('grant_type', 'authorization_code');
+//     body.append('redirect_uri', process.env.instRUrl);
+//     body.append('client_secret', process.env.instAppSec);
+//     body.append('code', req.query.code);
 
-    fetch(`https://api.instagram.com/oauth/access_token`, {method: 'post', body})
-    .then(data => data.json())
-    .then(data => {
-        console.log('Insta data', data, data.access_token);
-        res.redirect('/admin/setup/');
-    })
-    .catch(err => {
-        console.log(err);
-        res.json(err);
-    })
-});
+//     fetch(`https://api.instagram.com/oauth/access_token`, {method: 'post', body})
+//     .then(data => data.json())
+//     .then(data => {
+//         console.log('Insta data', data, data.access_token);
+//         res.redirect('/admin/setup/');
+//     })
+//     .catch(err => {
+//         console.log(err);
+//         res.json(err);
+//     })
+// });
 
 router.get('/makeSetup', isAuth, function(req, res, next) {
     makeSetup()

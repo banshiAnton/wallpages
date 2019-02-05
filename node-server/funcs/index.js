@@ -25,6 +25,8 @@ const graphPost = util.promisify(graph.post);
 
 const Op = Sequelize.Op;
 
+const Throttle = require('promise-parallel-throttle');
+
 let getSigOk = function(obj, token) {
     let sec = md5(token + process.env.okprKey);
     let baseStr = '';
@@ -416,26 +418,37 @@ let postOnTime = function(Posts, pathToFolder) {
             if(data && data.length) {
                 flag = true;
 
-                try {
-                    let resFB = await postFBWall(data);
-                    console.log('Post to FB data', resFB);
-                } catch(err) {
-                    console.log('Post to FB error', err);
-                }
+                // try {
+                //     let resFB = await postFBWall(data);
+                //     console.log('Post to FB data', resFB);
+                // } catch(err) {
+                //     console.log('Post to FB error', err);
+                // }
 
 
-                try {
-                    let resTeleg = await postTelegram(data, pathToFolder);
-                    console.log('Post to teleg data', resTeleg);
-                } catch(err) {
-                    console.log('Post to teleg error', err);
-                }
+                // try {
+                //     let resTeleg = await postTelegram(data, pathToFolder);
+                //     console.log('Post to teleg data', resTeleg);
+                // } catch(err) {
+                //     console.log('Post to teleg error', err);
+                // }
+
+                // try {
+                //     let resOK = await postOKAlbum(data, pathToFolder);
+                //     console.log('Post to OK data', resOK);
+                // } catch(err) {
+                //     console.log('Post to OK error', err);
+                // }
 
                 try {
-                    let resOK = await postOKAlbum(data, pathToFolder);
-                    console.log('Post to OK data', resOK);
+                    let results = await Throttle.all([
+                        postFBWall(data), 
+                        postTelegram(data, pathToFolder), 
+                        postOKAlbum(data, pathToFolder)
+                    ], {failFast: false});
+                    console.log(results);
                 } catch(err) {
-                    console.log('Post to OK error', err);
+                    console.log('Post on time error', err);
                 }
             }
 
@@ -640,34 +653,48 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
 
     console.log('*********\nCateg Ops', categGroup, '\n********');
 
-    try {
-        let res = await postVK(categGroup, ops);
-        results.push(res);
-    } catch (err) {
-        console.log('Error post VK (catch(err))', err);
-    }
+    // try {
+    //     let res = await postVK(categGroup, ops);
+    //     results.push(res);
+    // } catch (err) {
+    //     console.log('Error post VK (catch(err))', err);
+    // }
+
+    // try {
+    //     let res = await postOK(categGroup, ops);
+    //     results.push(res);
+    // } catch (err) {
+    //     console.log('Error post OK (catch(err))', err);
+    // }
+
+    // try {
+    //     let res = await postFBAlbum(categGroup, ops);
+    //     console.log('FB RES', res);
+    //     results.push(res);
+    // } catch (err) {
+    //     console.log('Error post FB (catch(err))', err);
+    // }
 
     try {
-        let res = await postOK(categGroup, ops);
-        results.push(res);
-    } catch (err) {
-        console.log('Error post OK (catch(err))', err);
+
+        let resultsPr = await Throttle.all([
+            postVK(categGroup, ops), 
+            postOK(categGroup, ops), 
+            postFBAlbum(categGroup, ops)
+        ], {failFast: false});
+
+        console.log('Paraller res', resultsPr);
+        results.push(resultsPr);
+    } catch(err) {
+        console.log('Paraller (catch(err))', err);
     }
 
-    try {
-        let res = await postFBAlbum(categGroup, ops);
-        console.log('FB RES', res);
-        results.push(res);
-        console.log('\n\n\n\n**** DATA AFTER FB ***** \n\n\n', categGroup, JSON.stringify(categGroup))
-    } catch (err) {
-        console.log('Error post FB (catch(err))', err);
-    }
 
     try {
         let res = await postToDB(categGroup, db.Posts, ops);
         console.log(res);
     } catch (err) {
-        console.log('Error post OK In DB (catch(err))', err);
+        console.log('Error post OK Teleg FB In DB (catch(err))', err);
     }
 
     return results;

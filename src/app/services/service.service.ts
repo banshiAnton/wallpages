@@ -19,20 +19,20 @@ export class ServiceService {
     console.log('service', data);
     return this.http.post(`${this.apiImageUrl}/upload`, data, {
       headers: new HttpHeaders({'auth': window.localStorage.getItem('token') || ''})
-    })
+    });
   }
 
   addCategory(name, tags) {
     console.log('Service', name, tags);
     return this.http.post(`${this.apiImageUrl}/add/category`, JSON.stringify({name, tags}), {
       headers: new HttpHeaders({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || ''})
-    })
+    });
   }
 
   getCategories() {
     return this.http.get(`${this.apiImageUrl}/categories`).pipe(
       tap(item => console.log('Resp', item))
-    )
+    );
   }
 
   updateCategory(category) {
@@ -59,12 +59,12 @@ export class ServiceService {
 
   getImages(query = {count: 10, offset: 0, category: null}) {
     console.log(query);
-    console.log(`${this.apiImageUrl}?${query.category ? 'category='+query.category : ''}&count=${query.count}&offset=${query.offset}`);
+    console.log(`${this.apiImageUrl}?${query.category ? 'category=' + query.category : ''}&count=${query.count}&offset=${query.offset}`);
     return this.http.get(`${this.apiImageUrl}?${query.category ? 'category='+query.category : ''}&count=${query.count}&offset=${query.offset}`)
   }
 
   getAuthLinks() {
-    return this.http.get(`${this.authUrl}authLinks`)
+    return this.http.get(`${this.authUrl}authLinks`);
   }
 
 }

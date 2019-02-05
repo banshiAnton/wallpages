@@ -55,14 +55,14 @@ export class AddImagesComponent implements OnInit {
       }
       for(let image in this.imageData) { this.imageData[image]['category'] = this.categories.find(categ => categ.name === this.oneCategory).id }
     };
-    for(let image in this.imageData) { console.log(this.imageData[image]['tags']);} //this.imageData[image]['tags'] = this.imageData[image]['tags'].map(tag => tag ? tag.value : '') }//this.imageData[image]['tags'] = this.imageData[image]['tags'].length ? this.imageData[image]['tags'].map(tag => tag.value) : [];
+    for(let image in this.imageData) { console.log(this.imageData[image]['tags'])} //this.imageData[image]['tags'] = this.imageData[image]['tags'].map(tag => tag ? tag.value : '') }//this.imageData[image]['tags'] = this.imageData[image]['tags'].length ? this.imageData[image]['tags'].map(tag => tag.value) : [];
     data.append('filesData', JSON.stringify(this.imageData))
     this.service.postImages(data).subscribe((data: any) => {
       this.loading = false;
-      console.log(data);
-      if(data.results.every(item => item.success)) {
-        this.success = true;
-      }
+      console.log('Response data', data);
+      // if(data.results.every(item => item.success)) {
+      //   this.success = true;
+      // }
     });
   }
 
@@ -88,7 +88,6 @@ export class AddImagesComponent implements OnInit {
   onImgSelect(e) {
     if(e.file && !this.imageData[e.file]) this.imageData[e.file] = Object.assign(this.imageData[e.file] || {});
     if(e.tags) this.imageData[e.file]['tags'] = e.tags;
-    console.log()
     if(e.category) this.imageData[e.file]['category'] = e.category;
   }
 
