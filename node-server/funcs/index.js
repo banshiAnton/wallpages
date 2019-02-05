@@ -597,7 +597,7 @@ let postOKAlbum = async function(records, pathToFolder) {
     }
 }
 
-let postToDB = function(images, Post, ops) {
+let postToDB = async function(images, Post, ops) {
     console.log('\n\n*****POST TO DB *****\n\n', images, JSON.stringify(images));
     return Post.create({pTime: ops.publish_date, jsonData: images})
     .then(res => {
@@ -679,9 +679,9 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     try {
 
         let resultsPr = await Throttle.all([
+            postFBAlbum(categGroup, ops),
             postVK(categGroup, ops), 
-            postOK(categGroup, ops), 
-            postFBAlbum(categGroup, ops)
+            postOK(categGroup, ops)
         ], {failFast: false});
 
         // console.log('Paraller res', resultsPr);
