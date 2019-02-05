@@ -26,6 +26,8 @@ const graphPost = util.promisify(graph.post);
 const Op = Sequelize.Op;
 
 const Throttle = require('promise-parallel-throttle');
+let parallel = require('promise-parallel');
+
 
 let getSigOk = function(obj, token) {
     let sec = md5(token + process.env.okprKey);
@@ -441,11 +443,11 @@ let postOnTime = function(Posts, pathToFolder) {
                 // }
 
                 try {
-                    let results = await Throttle.all([
+                    let results = await parallel([
                         postFBWall(data), 
                         postTelegram(data, pathToFolder), 
                         postOKAlbum(data, pathToFolder)
-                    ], {failFast: false});
+                    ]);
                     console.log(results);
                 } catch(err) {
                     console.log('Post on time error', err);
@@ -600,7 +602,7 @@ let postToDB = async function(images, Post, ops) {
     console.log('\n\n*****POST TO DB *****\n\n', images, JSON.stringify(images));
     return Post.create({pTime: ops.publish_date, jsonData: images})
     .then(res => {
-        console.log(res);
+        console.log(res.get('jsonData'));
         return {res, success: true, OK: 'OK'}
     })
     .then(() => Post.findAll())
@@ -677,11 +679,11 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
 
     try {
 
-        let resultsPr = await Throttle.all([
+        let resultsPr = await parallel([
             postFBAlbum(categGroup, ops),
             postVK(categGroup, ops), 
             postOK(categGroup, ops)
-        ], {failFast: false});
+        ]);
 
         // console.log('Paraller res', resultsPr);
         results.push({soc: true, resultsPr});
