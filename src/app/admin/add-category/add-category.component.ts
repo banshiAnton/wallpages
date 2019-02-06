@@ -59,13 +59,13 @@ export class AddCategoryComponent implements OnInit {
     })
   }
 
-  onDelete() {
-    console.log('On delete', this.selected);
-    this.service.deleteCategory(this.selected.id).subscribe((data:any) => {
-      if(data.success) {
-        console.log(data);
-      }
-    })
-  }
+  // onDelete() {
+  //   console.log('On delete', this.selected);
+  //   this.service.deleteCategory(this.selected.id).subscribe((data:any) => {
+  //     if(data.success) {
+  //       console.log(data);
+  //     }
+  //   })
+  // }
 
 }

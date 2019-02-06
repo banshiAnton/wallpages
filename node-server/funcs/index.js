@@ -25,9 +25,19 @@ const graphPost = util.promisify(graph.post);
 
 const Op = Sequelize.Op;
 
-const Throttle = require('promise-parallel-throttle');
 let parallel = require('promise-parallel');
 
+let getTagsStr = function (images, sep = '') {
+
+    let tags = [];
+
+    for(let img in images) {
+        tags = tags.concat(images[img].tags);
+        images[img].files.forEach(img => tags = tags.concat(img.tags));
+    }
+
+    return tags.map(tag => '#' + tag).join(sep);
+}
 
 let getSigOk = function(obj, token) {
     let sec = md5(token + process.env.okprKey);
@@ -171,21 +181,15 @@ let postOK = async function(images, ops) {
     // console.log('OK start', images);
 
     let allImages = [];
-    let tags = [];
 
     for(let img in images) {
         images[img].files.forEach(img => allImages.push(img));
-        tags.push(images[img].tags);
-        images[img].files.map(img => img.tags).forEach(tags_ => tags_.forEach(tag => tags.push(tag)));
     }
 
-    let text = tags.map(tag => tag.length ? '#' + tag : '').join(' ');
+    let text = getTagsStr(images, ' ');
 
-    okRefresh(process.env.okRToken)
-    .then(data => {
-        // console.log('Refresh', data);
-        ok.setAccessToken(data.access_token);
-    })
+    return okRefresh(process.env.okRToken)
+    .then(data => ok.setAccessToken(data.access_token))
     .then(() => okGet({method: 'photosV2.getUploadUrl', count: allImages.length, gid: process.env.okGid}))
     .then(data => {
         // console.log(data);
@@ -214,14 +218,17 @@ let postOK = async function(images, ops) {
               {
                 "type": "photo",
                 "list": []
-              },
-            //   {
-            //       "type": "text",
-            //       "text": text
-            //   }
+              }
             ],
             "publishAtMs": (+ops.publish_date * 1000) + ''
         };
+
+        if((text.length > 1) && text) {
+            at.media.push({
+                "type": "text",
+                "text": text
+            })
+        }
 
         for(let id in data.photos) {
             // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token);
@@ -247,7 +254,8 @@ let postOK = async function(images, ops) {
 
         return fetch(urlPost)
 
-    }).then(data => data.json())
+    })
+    .then(data => data.json())
     .then(post => {
         console.log('End post OK', post);
         return {res: post, success: true, ok: 'OK'};
@@ -297,22 +305,20 @@ let postVK = async function(images, ops) {
 
     // console.log('VK start', images);
 
-    let attachments = [];
-    let tags = [];
+    let prPhotos = [];
 
     for(let img in images) {
-        let at = await savePhotoVK(images[img]);
-        if(at) attachments.push(at);
-        // tags.push(images[img].tags);
-        tags = tags.concat(images[img].tags);
-        images[img].files.forEach(img => tags = tags.concat(img.tags));
-        // console.log('At', attachments);
+        prPhotos.push(savePhotoVK(images[img]));
     }
 
-    // console.log('Tags************\n\n', tags);
-    let message = tags.map(tag => '#' + tag).join('');
-    // console.log('Message', message);
+    let attachments = await parallel(prPhotos);
+    console.log('VK attachments', attachments);
     attachments  = attachments.join(',');
+
+
+    // console.log('Tags************\n\n', tags);
+    let message = getTagsStr(images);
+    // console.log('Message', message);
     // console.log('attachments', attachments);
     // console.log(ops.publish_date);
     // console.log('VK TOKEN', process.env.vktoken);
@@ -351,13 +357,14 @@ let postFBAlbum = async function(images, ops) {
 
     for(let categ in images) {
 
-        let groupTags = '#' + images[categ].tags.join(' #');
-
         for(let img of images[categ].files) {
             //https://www.psychologistworld.com/images/articles/a/575x360-v-dpc-71331987.jpg
             //url: `${ops.url}${img.name}`
-            let wall = await graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name}`, caption: groupTags + ' #' +img.tags.join(' #'), published: false}).catch(err => err);
-            let album = await graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name}`, caption: groupTags + ' #' +img.tags.join(' #')}).catch(err => err);
+            let caption = images[categ].tags.concat(img.tags).map(tag => '#' + tag).join(' ');
+            let [wall, album] = await parallel([
+                graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name}`, caption, published: false}).catch(err => err),
+                graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name}`, caption}).catch(err => err)
+            ]);
 
             img.fbPostId = wall.id;
 
@@ -382,9 +389,8 @@ let postFBWall = async function(records) {
     for(let rec of records) {
         rec = rec.get('jsonData')
         for(let categ in rec) {
-            body.message += ' #' + rec[categ].tags.join(' #');
+            body.message += getTagsStr(rec, ' ');
             for(let img of rec[categ].files) {
-                body.message += ' #' + img.tags.join(' #');
                 body[`attached_media[${i++}]`] = {"media_fbid": img.fbPostId};
             }
         }
@@ -497,7 +503,10 @@ let postTelegram = async function(records, pathToFolder) {
                     filename: img.name,
                     contentType: img.mimetype
                 });
-                media.push({type: 'photo', media: `attach://${fName}`, caption: '#' + rec[categ].tags.join('# ') + ' #' + img.tags.join('# ')})
+
+                let caption = rec[categ].tags.concat(img.tags).map(tag => '#' + tag).join(' ');
+
+                media.push({type: 'photo', media: `attach://${fName}`, caption})
 
             }
         }
@@ -603,12 +612,11 @@ let postToDB = async function(images, Post, ops) {
     return Post.create({pTime: ops.publish_date, jsonData: images})
     .then(res => {
         console.log(res.get('jsonData'));
-        return {res, success: true, OK: 'OK'}
+        return {res, success: true}
     })
-    .then(() => Post.findAll())
     .catch(error => {
         console.log('Promis error OK', error);
-        return {error, success: false, OK: 'OK'};
+        return {error, success: false};
     });
 }
 
@@ -653,7 +661,7 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
         }
     });
 
-    console.log('*********\nCateg Ops', categGroup, '\n********');
+    // console.log('*********\nCateg Ops', categGroup, '\n********');
 
     // try {
     //     let res = await postVK(categGroup, ops);
@@ -688,13 +696,13 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
         // console.log('Paraller res', resultsPr);
         results.push({soc: true, resultsPr});
     } catch(err) {
-        // console.log('Paraller (catch(err))', err);
+        console.log('Paraller (catch(err))', err);
     }
 
 
     try {
         let res = await postToDB(categGroup, db.Posts, ops);
-        console.log('Post ind DB res', res);
+        // console.log('Post ind DB res', res);
     } catch (err) {
         console.log('Error post OK Teleg FB In DB (catch(err))', err);
     }
