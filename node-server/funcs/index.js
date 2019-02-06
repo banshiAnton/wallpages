@@ -388,8 +388,8 @@ let postFBWall = async function(records) {
 
     for(let rec of records) {
         rec = rec.get('jsonData')
+        body.message += getTagsStr(rec, ' ') + ' ';
         for(let categ in rec) {
-            body.message += getTagsStr(rec, ' ') + ' ';
             for(let img of rec[categ].files) {
                 body[`attached_media[${i++}]`] = {"media_fbid": img.fbPostId};
             }
