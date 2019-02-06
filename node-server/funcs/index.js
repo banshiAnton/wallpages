@@ -387,7 +387,7 @@ let postFBWall = async function(records) {
     let i = 0;
 
     for(let rec of records) {
-        rec = rec.get('jsonData')
+        rec = rec.get('jsonData');
         body.message += getTagsStr(rec, ' ') + ' ';
         for(let categ in rec) {
             for(let img of rec[categ].files) {
