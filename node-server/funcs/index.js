@@ -365,7 +365,7 @@ let postFBAlbum = async function(images, ops) {
             let pr = parallel([
                 graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name}`, caption, published: false}).catch(err => err),
                 graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name}`, caption}).catch(err => err)
-            ]).then((wall, album) => {
+            ]).then(([wall, album]) => {
                 img.fbPostId = wall.id;
                 console.log('FB data post album', wall, album);
                 return {wall, album};
@@ -382,9 +382,7 @@ let postFBAlbum = async function(images, ops) {
         }
     }
 
-    let results = await parallel(pr);
-
-    return results;
+    return parallel(prArr);
 
 }
 
