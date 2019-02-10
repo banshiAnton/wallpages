@@ -318,10 +318,7 @@ let postVK = async function(images, ops) {
 
     // console.log('Tags************\n\n', tags);
     let message = getTagsStr(images);
-    // console.log('Message', message);
-    // console.log('attachments', attachments);
-    // console.log(ops.publish_date);
-    // console.log('VK TOKEN', process.env.vktoken);
+
     let postUrl = url.format({
         protocol: 'https',
         hostname: 'api.vk.com',
@@ -350,30 +347,42 @@ let postVK = async function(images, ops) {
 
 let postFBAlbum = async function(images, ops) {
 
-    let results = [];
+    let prArr = [];
 
     graph.setAccessToken(process.env.fbToken);
+
     console.log('FB start', images);
 
     for(let categ in images) {
 
         for(let img of images[categ].files) {
+
             //https://www.psychologistworld.com/images/articles/a/575x360-v-dpc-71331987.jpg
             //url: `${ops.url}${img.name}`
+
             let caption = images[categ].tags.concat(img.tags).map(tag => '#' + tag).join(' ');
-            let [wall, album] = await parallel([
+            
+            let pr = parallel([
                 graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name}`, caption, published: false}).catch(err => err),
                 graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name}`, caption}).catch(err => err)
-            ]);
+            ]).then((wall, album) => {
+                img.fbPostId = wall.id;
+                console.log('FB data post album', wall, album);
+                return {wall, album};
+            }).catch((errWall, errAlbum) => console.log('FB promise save error', errWall, errAlbum));
 
-            img.fbPostId = wall.id;
+            prArr.push(pr);
 
-            console.log('FB data post album', wall, album);
+            // img.fbPostId = wall.id;
 
-            results.push({wall, album})
+            // console.log('FB data post album', wall, album);
+
+            //results.push({wall, album})
 
         }
     }
+
+    let results = await parallel(pr);
 
     return results;
 
@@ -425,28 +434,6 @@ let postOnTime = function(Posts, pathToFolder) {
 
             if(data && data.length) {
                 flag = true;
-
-                // try {
-                //     let resFB = await postFBWall(data);
-                //     console.log('Post to FB data', resFB);
-                // } catch(err) {
-                //     console.log('Post to FB error', err);
-                // }
-
-
-                // try {
-                //     let resTeleg = await postTelegram(data, pathToFolder);
-                //     console.log('Post to teleg data', resTeleg);
-                // } catch(err) {
-                //     console.log('Post to teleg error', err);
-                // }
-
-                // try {
-                //     let resOK = await postOKAlbum(data, pathToFolder);
-                //     console.log('Post to OK data', resOK);
-                // } catch(err) {
-                //     console.log('Post to OK error', err);
-                // }
 
                 try {
                     let results = await parallel([
@@ -587,16 +574,10 @@ let postOKAlbum = async function(records, pathToFolder) {
                         }
                     });
         
-                    // console.log(urlSave);
         
-                    let reult = await fetch(urlSave)
-                    .then(data => data.json())
-                    .catch(err => err);
-        
-                    // console.log(reult, typeof reult);
+                    let reult = await fetch(urlSave).then(data => data.json()).catch(err => err);
         
                     arrRes.push(reult);
-        
                 }
         
                 return arrRes;
@@ -662,28 +643,6 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     });
 
     // console.log('*********\nCateg Ops', categGroup, '\n********');
-
-    // try {
-    //     let res = await postVK(categGroup, ops);
-    //     results.push(res);
-    // } catch (err) {
-    //     console.log('Error post VK (catch(err))', err);
-    // }
-
-    // try {
-    //     let res = await postOK(categGroup, ops);
-    //     results.push(res);
-    // } catch (err) {
-    //     console.log('Error post OK (catch(err))', err);
-    // }
-
-    // try {
-    //     let res = await postFBAlbum(categGroup, ops);
-    //     console.log('FB RES', res);
-    //     results.push(res);
-    // } catch (err) {
-    //     console.log('Error post FB (catch(err))', err);
-    // }
 
     try {
 
