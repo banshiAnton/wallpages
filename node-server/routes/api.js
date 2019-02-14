@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const Sequelize = require('sequelize');
 
-const { categoryGetRes, saveImages, createAlbumVK } = require('../funcs');
+const { categoryGetRes, saveImages, createAlbum } = require('../funcs');
 
 const { parseFilesData, groupFileDataToFiles, makeApiQuery, isAuth } = require('../middleware');
 
@@ -94,12 +94,12 @@ router.get('/categories', function(req, res, next) {
 // });
 
 router.post('/add/category', isAuth, function(req, res, next) {
+
     let name = req.body.name;
     let tags = req.body.tags;
     console.log(name, tags);
 
-    createAlbumVK(name)
-    .then(data => Categories.create({name, tags, vkId: data.response.id}))
+    createAlbum(name, tags)
     .then(result => {
         console.log(result);
         res.json({success: true, name: result.get('name')});

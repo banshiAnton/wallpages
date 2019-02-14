@@ -161,6 +161,7 @@ let getAlbums = async function() {
 };
 
 let createAlbumVK = function(title) {
+
     let urlCA = url.format({
         protocol: 'https',
         hostname: 'api.vk.com',
@@ -172,9 +173,55 @@ let createAlbumVK = function(title) {
             access_token: process.env.vktoken,
             v: 5.92
         }
-    })
+    });
 
-    return fetch(urlCA).then(data => data.json());;
+    return fetch(urlCA).then(data => data.json());
+}
+
+let createAlbumFB = function(name) {
+
+    graph.setAccessToken(process.env.fbToken);
+
+    return graphPost(`/${process.env.fbGid}/albums`, {name}).catch(err => err);
+}
+
+let createAlbumOK = function(title) {
+
+    return okRefresh(process.env.okRToken)
+    .then(data => ok.setAccessToken(data.access_token))
+    .then(() => {
+
+        let urlPost = url.format({
+            protocol: 'https',
+            hostname: 'api.ok.ru',
+            pathname: 'fb.do',
+            query: {
+                application_key: process.env.okpbKey,
+                format: 'json',
+                method: 'photos.createAlbum',
+                gid: process.env.okGid,
+                title,
+                sig: getSigOk({application_key: process.env.okpbKey, format: 'json', method: 'photos.createAlbum', gid: process.env.okGid, title}, ok.getAccessToken().trim()),
+                access_token: ok.getAccessToken().trim()
+            }
+        });
+
+        return fetch(urlPost)
+    })
+}
+
+let createAlbum = async function(name, tags) {
+
+    let [vk, fb, ok ] = await parallel([createAlbumVK(name),
+                                        createAlbumFB(name),
+                                        createAlbumOK(name)
+                                       ]);
+
+    return Categories.create({name, tags, vkId: vk.response.id,
+                                          fbId: fb.id,
+                                          okId: ok
+                                        });
+
 }
 
 let postOK = async function(images, ops) {
@@ -669,7 +716,7 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
 
 exports.categoryGetRes = categoryGetRes;
 exports.saveImages = saveImages;
-exports.createAlbumVK = createAlbumVK;
+exports.createAlbum = createAlbum;
 exports.getAlbumsVK = getAlbumsVK;
 exports.postOnTime = postOnTime;
 exports.getAlbumsOK = getAlbumsOK;
