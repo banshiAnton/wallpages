@@ -84,8 +84,8 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
             return {res: data.dataValues, success: true};
         })
         .catch(error => {
-            console.log('Error cahtch VK', error)
-            return {error: error.message, success: false}
+            console.log('Error save photo', error);
+            return {error, success: false}
         })
 }
 
@@ -259,7 +259,7 @@ let postOK = async function(images, ops) {
                 })
     })
     .then(data => data.json())
-    .then(async data => {
+    .then(data => {
         // console.log('\n\n****Uploaded****\n\n', data.photos);
 
         let at = {
@@ -307,11 +307,11 @@ let postOK = async function(images, ops) {
     .then(data => data.json())
     .then(post => {
         console.log('End post OK', post);
-        return {res: post, success: true, ok: 'OK'};
+        return {res: post, success: true};
     })
     .catch(error => {
         console.log('Promis error OK', error);
-        return {error, success: false, ok: 'OK'};
+        return {error, success: false};
     });
 }
 
@@ -415,24 +415,33 @@ let postFBAlbum = async function(images, ops) {
                 graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name}`, caption, published: false}).catch(err => err),
                 graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name}`, caption}).catch(err => err)
             ]).then(([wall, album]) => {
+
+                if(!wall.id) {
+                    throw {wall, album};
+                }
+
                 img.fbPostId = wall.id;
                 console.log('FB data post album', wall, album);
-                return {wall, album};
-            }).catch((errWall, errAlbum) => console.log('FB promise save error', errWall, errAlbum));
+                return {wall, album, success: true};
+
+            }).catch(error => {
+                console.log('FB promise save error', error);
+                return {error, success: false};
+            });
 
             prArr.push(pr);
-
-            // img.fbPostId = wall.id;
-
-            // console.log('FB data post album', wall, album);
-
-            //results.push({wall, album})
 
         }
     }
 
-    return parallel(prArr);
+    return parallel(prArr)
+           .then(results => {
+                if(results.every(res => res.success)) {
+                    return {results, success: true};
+                }
 
+                return {results, success: false};
+           })     
 }
 
 let postFBWall = async function(records) {
@@ -649,20 +658,25 @@ let postToDB = async function(images, Post, ops) {
 }
 
 let saveImages = async function(pathToFolder, imagesArr, db, ops) {
-    let results = [];
+
+    let results = Object.create(null);
 
     // console.log(imagesArr);
     let filesSaved = [];
     for(let image of imagesArr) {
         try {
             let res = await makePromiseToSave(pathToFolder, image, db.Images);
-            res.file = image.name;
             if(res.success) {
+                res.file = image.name;
                 filesSaved.push(image);
+                results.save = res;
+            } else {
+                res.message = 'Проблема сохранении изображения'
+                throw res;
             }
-            results.push(res);
         } catch (err) {
             console.log('Error Save Db (catch(err))', err);
+            throw err;
         }
     }
 
@@ -699,18 +713,28 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
             postOK(categGroup, ops)
         ]);
 
-        // console.log('Paraller res', resultsPr);
-        results.push({soc: true, resultsPr});
+        console.log('Paraller results', resultsPr);
+
+        results.fb = resultsPr[0];
+        results.vk = resultsPr[1];
+        results.ok = resultsPr[2];
+
+        results.social = resultsPr.every(res => res.success);
+
     } catch(err) {
         console.log('Paraller (catch(err))', err);
+        throw err;
     }
 
 
     try {
-        let res = await postToDB(categGroup, db.Posts, ops);
-        // console.log('Post ind DB res', res);
+
+        results.db = await postToDB(categGroup, db.Posts, ops);
+        console.log('Post ind DB res', results.toDB);
+
     } catch (err) {
         console.log('Error post OK Teleg FB In DB (catch(err))', err);
+        throw err;
     }
 
     return results;
