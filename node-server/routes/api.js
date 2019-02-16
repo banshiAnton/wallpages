@@ -102,7 +102,7 @@ router.post('/add/category', isAuth, function(req, res, next) {
     createAlbum(name, tags)
     .then(result => {
         console.log(result);
-        res.json({success: true, name: result.get('name')});
+        res.json({success: true, data: result.get('clientData')});
     })
     .catch(err => next(err))
     
