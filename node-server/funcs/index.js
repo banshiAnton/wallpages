@@ -210,7 +210,7 @@ let createAlbumOK = function(title) {
     })
 }
 
-let createAlbum = async function(name, tags) {
+let createAlbum = async function(name, tags, Categories) {
 
     let [vk, fb, ok] = await parallel([createAlbumVK(name),
                                         createAlbumFB(name),
