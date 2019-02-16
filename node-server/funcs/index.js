@@ -206,7 +206,7 @@ let createAlbumOK = function(title) {
             }
         });
 
-        return fetch(urlPost)
+        return fetch(urlPost).then(data => data.json()).catch(err => err);
     })
 }
 
