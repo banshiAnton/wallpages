@@ -213,9 +213,9 @@ let createAlbumOK = function(title) {
 let createAlbum = async function(name, tags, Categories) {
 
     let [vk, fb, ok] = await parallel([createAlbumVK(name),
-                                        createAlbumFB(name),
-                                        createAlbumOK(name)
-                                       ]);
+                                       createAlbumFB(name),
+                                       createAlbumOK(name)
+                                     ]);
 
     console.log('Data create social', vk, fb, ok);
 
