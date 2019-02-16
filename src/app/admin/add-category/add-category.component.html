@@ -10,11 +10,14 @@
         </div>
         <button type="submit" (click)="onAdd()" class="btn btn-primary">Добавить Категорию</button>
         <div class="alerts">
-            <div *ngIf="loadingAdd">
+            <div *ngIf="addState==1">
                 Загрузка...
               </div>
-              <div *ngIf="successAdd" class="alert alert-success" role="alert">
+              <div *ngIf="addState==2" class="alert alert-success" role="alert">
                 Загружено
+              </div>
+              <div *ngIf="addState==3" class="alert alert-danger" role="alert">
+                Ошибка
               </div>
         </div>
     </div>
@@ -40,11 +43,14 @@
         <button type="button" (click)="onUpdata()" class="btn btn-primary">Обновить категорию</button>
         <!-- <button type="button" (click)="onDelete()" class="btn btn-danger">Удалить категорию</button> -->
         <div class="alerts">
-            <div *ngIf="loadingUpd">
+            <div *ngIf="updState==1">
                 Загрузка...
               </div>
-              <div *ngIf="successUpd" class="alert alert-success" role="alert">
+              <div *ngIf="updState==2" class="alert alert-success" role="alert">
                 Загружено
+              </div>
+              <div *ngIf="updState==3" class="alert alert-danger" role="alert">
+                Ошибка
               </div>
         </div>
     </div>

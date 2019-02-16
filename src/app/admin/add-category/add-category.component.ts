@@ -15,11 +15,8 @@ export class AddCategoryComponent implements OnInit {
   selected = {name: null, tags: [], id: null};
   addName: string;
 
-  loadingUpd = false;
-  successUpd = false;
-
-  loadingAdd = false;
-  successAdd = false;
+  addState = 0;
+  updState = 0;
 
   constructor(private service: ServiceService) {
   }
@@ -43,8 +40,7 @@ export class AddCategoryComponent implements OnInit {
 
   onAdd() {
 
-    this.loadingAdd = true;
-    this.successAdd = false;
+    this.addState = 1;
 
     console.log(this.tags, this.addName);
     this.service.addCategory(this.addName, this.tags.map((item: any) => {
@@ -52,9 +48,10 @@ export class AddCategoryComponent implements OnInit {
     })).subscribe((data: any) => {
       console.log(data);
       if (data.success) {
-        this.loadingAdd = false;
-        this.successAdd = true;
-        //location.reload();
+        this.addState = 2;
+        location.reload();
+      } else {
+        this.addState = 3;
       }
     });
   }
@@ -67,16 +64,16 @@ export class AddCategoryComponent implements OnInit {
 
   onUpdata() {
 
-    this.loadingUpd = true;
-    this.successUpd = false;
+    this.updState = 1;
 
     console.log('On updata', this.selected);
     this.service.updateCategory(this.selected).subscribe((data: any) => {
       console.log(data);
       if (data.success) {
-        this.loadingUpd = false;
-        this.successUpd = true;
-        // location.reload();
+        this.updState = 2;
+        location.reload();
+      } else {
+        this.updState = 3;
       }
     });
   }
