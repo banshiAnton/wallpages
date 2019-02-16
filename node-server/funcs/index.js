@@ -719,7 +719,5 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
 exports.categoryGetRes = categoryGetRes;
 exports.saveImages = saveImages;
 exports.createAlbum = createAlbum;
-exports.getAlbumsVK = getAlbumsVK;
 exports.postOnTime = postOnTime;
-exports.getAlbumsOK = getAlbumsOK;
 exports.getAlbums = getAlbums;

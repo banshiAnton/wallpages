@@ -40,13 +40,13 @@ app.use('/*', function(req, res, next) {
   res.sendFile(path.join(__dirname, '/public/index.html'));
 })
 
-app.use(function(err, req, res, next) {
-    console.log('Error last', err);
-    if(errorHandle(err, req, res, next)) {
+app.use(function(error, req, res, next) {
+    console.log('Error last', error);
+    if(errorHandle(error, req, res, next)) {
         return;
     }
-    res.status(err.status || 500);
-    res.json({message: err.message || 'error', success: false});
+    res.status(error.status || 500);
+    res.json({message: error.message || 'error', success: false, error});
 });
 
 app.listen(process.env.PORT);

@@ -15,6 +15,12 @@ export class AddCategoryComponent implements OnInit {
   selected = {name: null, tags: [], id: null};
   addName: string;
 
+  loadingUpd = false;
+  successUpd = false;
+
+  loadingAdd = false;
+  successAdd = false;
+
   constructor(private service: ServiceService) {
   }
 
@@ -24,7 +30,7 @@ export class AddCategoryComponent implements OnInit {
 
   getCaterories() {
     this.service.getCategories().subscribe((data: any) => {
-      if(data.success) {
+      if (data.success) {
         this.categories = data.categories.map(categ => {
           categ.tags = categ.tags.map(tag => {
             return new Tag(tag, false);
@@ -32,17 +38,25 @@ export class AddCategoryComponent implements OnInit {
           return categ;
         });
       }
-    })
+    });
   }
 
   onAdd() {
+
+    this.loadingAdd = true;
+    this.successAdd = false;
+
     console.log(this.tags, this.addName);
     this.service.addCategory(this.addName, this.tags.map((item: any) => {
-      return item.value
+      return item.value;
     })).subscribe((data: any) => {
       console.log(data);
-      if(data.success) location.reload();
-    })
+      if (data.success) {
+        this.loadingAdd = false;
+        this.successAdd = true;
+        //location.reload();
+      }
+    });
   }
 
   onSelect(category) {
@@ -52,11 +66,19 @@ export class AddCategoryComponent implements OnInit {
   }
 
   onUpdata() {
+
+    this.loadingUpd = true;
+    this.successUpd = false;
+
     console.log('On updata', this.selected);
     this.service.updateCategory(this.selected).subscribe((data: any) => {
       console.log(data);
-      if(data.success) {}//location.reload();
-    })
+      if (data.success) {
+        this.loadingUpd = false;
+        this.successUpd = true;
+        // location.reload();
+      }
+    });
   }
 
   // onDelete() {

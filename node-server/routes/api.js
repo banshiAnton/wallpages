@@ -100,9 +100,9 @@ router.post('/add/category', isAuth, function(req, res, next) {
     console.log(name, tags);
 
     createAlbum(name, tags, Categories)
-    .then(result => {
-        console.log(result);
-        res.json({success: true, data: result.get('clientData')});
+    .then(data => {
+        console.log(data);
+        res.json({success: true, result: data.get('clientData')});
     })
     .catch(err => next(err))
     

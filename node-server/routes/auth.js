@@ -1,8 +1,6 @@
 const router = require('express').Router();
 const fetch = require('node-fetch');
 const jwt = require('jsonwebtoken');
-const Sequelize = require('sequelize');
-const path = require('path');
 
 const FormData = require('form-data');
 
@@ -10,7 +8,7 @@ const { isAuth } = require('../middleware/');
 
 const { getAlbums } = require('../funcs');
 
-const { Posts, Images, Categories, Admins } = require('../mysqllib');
+const { Categories, Admins } = require('../mysqllib');
 
 let makeSetup = () => getAlbums()
                      .then(bToCreate => Categories.bulkCreate(bToCreate))
