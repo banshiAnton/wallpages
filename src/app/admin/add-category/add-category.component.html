@@ -9,14 +9,14 @@
             <tag-input [(ngModel)]="tags" [separatorKeys]="[' ']"></tag-input>
         </div>
         <button type="submit" (click)="onAdd()" class="btn btn-primary">Добавить Категорию</button>
-    </div>
-    <div>
-        <div *ngIf="loadingAdd">
-            Загрузка...
-          </div>
-          <div *ngIf="successAdd" class="alert alert-success" role="alert">
-            Загружено
-          </div>
+        <div class="alerts">
+            <div *ngIf="loadingAdd">
+                Загрузка...
+              </div>
+              <div *ngIf="successAdd" class="alert alert-success" role="alert">
+                Загружено
+              </div>
+        </div>
     </div>
 </div>
 
@@ -39,13 +39,13 @@
         </div>
         <button type="button" (click)="onUpdata()" class="btn btn-primary">Обновить категорию</button>
         <!-- <button type="button" (click)="onDelete()" class="btn btn-danger">Удалить категорию</button> -->
-    </div>
-    <div>
-        <div *ngIf="loadingUpd">
-            Загрузка...
-          </div>
-          <div *ngIf="successUpd" class="alert alert-success" role="alert">
-            Загружено
-          </div>
+        <div class="alerts">
+            <div *ngIf="loadingUpd">
+                Загрузка...
+              </div>
+              <div *ngIf="successUpd" class="alert alert-success" role="alert">
+                Загружено
+              </div>
+        </div>
     </div>
 </div>

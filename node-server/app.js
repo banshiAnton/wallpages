@@ -45,7 +45,7 @@ app.use(function(error, req, res, next) {
     if(errorHandle(error, req, res, next)) {
         return;
     }
-    res.status(error.status || 500);
+    res.status(error.status || 200);
     res.json({message: error.message || 'error', success: false, error});
 });
 
