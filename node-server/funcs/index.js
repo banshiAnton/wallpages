@@ -730,7 +730,7 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     try {
 
         results.db = await postToDB(categGroup, db.Posts, ops);
-        console.log('Post ind DB res', results.toDB);
+        console.log('Post ind DB res', results.db);
 
     } catch (err) {
         console.log('Error post OK Teleg FB In DB (catch(err))', err);
