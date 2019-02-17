@@ -231,7 +231,7 @@ let createAlbumOK = function(title) {
 let createAlbum = async function(name, tags, Categories) {
 
     let check = await Categories.findAll({where: {name}}).then(data => {
-        return {success: !data.length};
+        return {success: !!data};
     }).catch(err => {
         console.log('Error add album in db', err);
         return {success: false, err};
