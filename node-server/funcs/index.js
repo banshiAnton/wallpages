@@ -237,7 +237,7 @@ let createAlbum = async function(name, tags, Categories) {
         return {success: false, err};
     });
 
-    if(check.success) {
+    if(!check.success) {
         if(!check.err) {
             check.message = 'Такая категория уже существует';
         }
