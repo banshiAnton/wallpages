@@ -175,14 +175,26 @@ let createAlbumVK = function(title) {
         }
     });
 
-    return fetch(urlCA).then(data => data.json());
+    return fetch(urlCA)
+            .then(data => data.json())
+            .then(data => {
+                return {success: true, data}
+            }).catch(err => {
+                return {success: false, err}
+            });
 }
 
 let createAlbumFB = function(name) {
 
     graph.setAccessToken(process.env.fbToken);
 
-    return graphPost(`/${process.env.fbGid}/albums`, {name}).catch(err => err);
+    return graphPost(`/${process.env.fbGid}/albums`, {name})
+           .then(data => {
+            return {success: true, data};
+           })
+           .catch(err => {
+                return {success: false, err};
+           });
 }
 
 let createAlbumOK = function(title) {
@@ -206,11 +218,31 @@ let createAlbumOK = function(title) {
             }
         });
 
-        return fetch(urlPost).then(data => data.json()).catch(err => err);
+        return fetch(urlPost)
+                .then(data => data.json())
+                .then(data => {
+                    return {success: true, data}
+                }).catch(err => {
+                    return {success: false, err}
+                });
     })
 }
 
 let createAlbum = async function(name, tags, Categories) {
+
+    let check = await Categories.findAll({where: {name}}).then(data => {
+        return {success: !data.length};
+    }).catch(err => {
+        console.log('Error add album in db', err);
+        return {success: false, err};
+    });
+
+    if(check.success) {
+        if(!check.err) {
+            check.message = 'Такая категория уже существует';
+        }
+        throw check;
+    };
 
     let [vk, fb, ok] = await parallel([createAlbumVK(name),
                                        createAlbumFB(name),
@@ -219,9 +251,13 @@ let createAlbum = async function(name, tags, Categories) {
 
     console.log('Data create social', vk, fb, ok);
 
-    return Categories.create({name, tags, vkId: vk.response.id,
-                                          fbId: fb.id,
-                                          okId: ok
+    if(!vk.success || !fb.success || !ok.success) {
+        throw {vk, fb, ok};
+    }
+
+    return Categories.create({name, tags, vkId: vk.data.response.id,
+                                          fbId: fb.data.id,
+                                          okId: ok.data
                                         });
 
 }

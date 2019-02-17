@@ -43,7 +43,7 @@ export class AddCategoryComponent implements OnInit {
     this.addState = 1;
 
     console.log(this.tags, this.addName);
-    this.service.addCategory(this.addName, this.tags.map((item: any) => {
+    this.service.addCategory(this.addName.toLowerCase(), this.tags.map((item: any) => {
       return item.value;
     })).subscribe((data: any) => {
       console.log(data);
@@ -65,6 +65,8 @@ export class AddCategoryComponent implements OnInit {
   onUpdata() {
 
     this.updState = 1;
+
+    this.selected.name = this.selected.name.toLowerCase();
 
     console.log('On updata', this.selected);
     this.service.updateCategory(this.selected).subscribe((data: any) => {
