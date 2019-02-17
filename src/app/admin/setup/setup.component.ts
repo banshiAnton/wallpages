@@ -8,6 +8,7 @@ import { ServiceService } from '../../services/service.service';
 })
 export class SetupComponent implements OnInit {
 
+  state = 0;
   authLinks: any = {};
 
   constructor(private service: ServiceService) { }
@@ -19,10 +20,14 @@ export class SetupComponent implements OnInit {
   }
 
   setup() {
+    this.state = 1;
     this.service.setup().subscribe((data: any) => {
       console.log(data);
       if (data.success) {
+        this.state = 2;
         window.location.href = `${window.location.protocol}//${window.location.host}/admin`;
+      } else {
+        this.state = 3;
       }
     });
   }
