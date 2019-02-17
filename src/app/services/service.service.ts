@@ -29,6 +29,12 @@ export class ServiceService {
     });
   }
 
+  setup() {
+    return this.http.get(`${this.authUrl}/makeSetup`, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || ''})
+    });
+  }
+
   getCategories() {
     return this.http.get(`${this.apiImageUrl}/categories`).pipe(
       tap(item => console.log('Resp', item))
@@ -50,17 +56,17 @@ export class ServiceService {
   addAdmin(vkid) {
     return this.http.post(`${this.authUrl}admin`, JSON.stringify({vkid}), {
       headers: new HttpHeaders({ 'Content-Type': 'application/json'})
-    })
+    });
   }
 
   getUser() {
-    return this.http.get(`${this.authUrl}admin`)
+    return this.http.get(`${this.authUrl}admin`);
   }
 
   getImages(query = {count: 10, offset: 0, category: null}) {
     console.log(query);
     console.log(`${this.apiImageUrl}?${query.category ? 'category=' + query.category : ''}&count=${query.count}&offset=${query.offset}`);
-    return this.http.get(`${this.apiImageUrl}?${query.category ? 'category='+query.category : ''}&count=${query.count}&offset=${query.offset}`)
+    return this.http.get(`${this.apiImageUrl}?${query.category ? 'category='+query.category : ''}&count=${query.count}&offset=${query.offset}`);
   }
 
   getAuthLinks() {

@@ -10,18 +10,18 @@ import { CookieService } from 'ngx-cookie-service';
 export class AdminComponent implements OnInit {
 
   isAuth = false;
-  vkAuthLink: string = '';
+  vkAuthLink = '';
 
   constructor(private service: ServiceService, private cookieService: CookieService) { }
 
   ngOnInit() {
-    this.service.getUser().subscribe((data:any) => {
+    this.service.getUser().subscribe((data: any) => {
       this.isAuth = data.success;
-      if(!this.isAuth) {
-        this.service.getAuthLinks().subscribe((data:any) => {
+      if (!this.isAuth) {
+        this.service.getAuthLinks().subscribe((data: any) => {
           this.vkAuthLink = data.vk;
-        })
+        }).unsubscribe();
       }
-    })
+    }).unsubscribe();
   }
 }

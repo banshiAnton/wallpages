@@ -38,8 +38,9 @@ router.get('/authLinks', function(req, res, next) {
 
     let OKScope = 'LONG_ACCESS_TOKEN,VALUABLE_ACCESS,PHOTO_CONTENT,GROUP_CONTENT';
     let FBScope = 'groups_access_member_info,publish_to_groups';
-    let VKScope = 'friends,notify,photos,audio,video,stories,pages,notes,status,wall,ads,offline,docs,groups,notifications,stats,email,market';
+    // let VKScope = 'friends,notify,photos,audio,video,stories,pages,notes,status,wall,ads,offline,docs,groups,notifications,stats,email,market';
     // let INSTScope = 'basic+likes+public_content';
+    let VKScope = 'friends,photos,pages,status,offline,groups,stats,email';
 
     res.json({
         vk: `https://oauth.vk.com/authorize?client_id=${process.env.vkClientId}&display=page&redirect_uri=${process.env.rUrl}&scope=${VKScope}&response_type=code&v=5.92`,
@@ -60,7 +61,7 @@ router.get('/vkcb', function(req, res, next) {
         .then(result => {
             if(result) {
                 // process.env.vktoken = data.access_token;
-                console.log('SET NEW VK TOKEN', process.env.vktoken);
+                // console.log('SET NEW VK TOKEN', process.env.vktoken);
                 jwt.sign(data, process.env.secretJWT, {algorithm: 'HS256'}, function(err, token) {
                     if(!err) {
                         res.cookie('admin_data', token, {path: '/', httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000 })
@@ -136,12 +137,19 @@ router.get('/fbcb', function(req, res, next) {
 // });
 
 router.get('/makeSetup', isAuth, function(req, res, next) {
+
+    if(!process.env.vktoken || !process.env.okRToken || !process.env.fbToken) {
+        return next({success: false, message: 'Нет всех токенов'});
+    }
+
     makeSetup()
     .then(data => {
+        let results = [];
         data.forEach(item => {
             console.log(item.get('name'), item.get('vkId'), item.get('okId'), item.get('fbId'), item.get('tags'));
+            results.push({name: item.get('name'), vkId: item.get('vkId'), okId: item.get('okId'), fbId: item.get('fbId'), tags: item.get('tags')});
         });
-        res.redirect('/admin/');
+        res.json({results, success: true});
     })
     .catch(err => {
         console.error('ERROR in MYSQL', err);

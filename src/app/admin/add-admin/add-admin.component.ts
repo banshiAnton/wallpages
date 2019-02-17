@@ -20,7 +20,7 @@ export class AddAdminComponent implements OnInit {
     console.log(this.vkid);
     this.service.addAdmin(this.vkid).subscribe(data => {
       console.log(data);
-    })
+    }).unsubscribe();
   }
 
 }

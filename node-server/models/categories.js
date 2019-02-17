@@ -7,13 +7,13 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         vkId: {
-            type: DataTypes.STRING,unique: true, allowNull: false
+            type: DataTypes.STRING,unique: false, allowNull: false, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
         },
         okId: {
-            type: DataTypes.STRING,unique: true, allowNull: false
+            type: DataTypes.STRING,unique: false, allowNull: false, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
         },
         fbId: {
-            type: DataTypes.STRING,unique: true, allowNull: false
+            type: DataTypes.STRING,unique: false, allowNull: false, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
         },
         name: { type: DataTypes.STRING, unique: true, allowNull: false,
             validate: {

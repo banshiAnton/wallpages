@@ -19,29 +19,29 @@ export class HomeComponent implements OnInit {
   }
 
   loadCategoris() {
-    this.service.getCategories().subscribe((data:any) => {
-      if(data.success) {
+    this.service.getCategories().subscribe((data: any) => {
+      if (data.success) {
         this.categories = data.categories;
       }
-    })
+    }).unsubscribe();
   }
 
   loadImages() {
-    this.service.getImages().subscribe((data:any) => {
+    this.service.getImages().subscribe((data: any) => {
       console.log(data);
-      if(data.success) {
+      if (data.success) {
         this.images = data.results;
       }
-    })
+    }).unsubscribe();
   }
 
   selectCategory(category) {
-    let query:any= { count: 10, offset: 0, category: category.id }
+    const query: any = { count: 10, offset: 0, category: category.id };
     console.log(query);
-    this.service.getImages(query).subscribe((data:any) => {
-      if(data.success) {
+    this.service.getImages(query).subscribe((data: any) => {
+      if (data.success) {
         this.images = data.results;
       }
-    })
+    }).unsubscribe();
   }
 }

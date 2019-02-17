@@ -8,14 +8,23 @@ import { ServiceService } from '../../services/service.service';
 })
 export class SetupComponent implements OnInit {
 
-  authLinks:any = {};
+  authLinks: any = {};
 
   constructor(private service: ServiceService) { }
 
   ngOnInit() {
-    this.service.getAuthLinks().subscribe((data:any) => {
+    this.service.getAuthLinks().subscribe((data: any) => {
       this.authLinks = data;
-    })
+    }).unsubscribe();
+  }
+
+  setup() {
+    this.service.setup().subscribe((data: any) => {
+      console.log(data);
+      if (data.success) {
+        window.location.href = `${window.location.protocol}//${window.location.host}/admin`;
+      }
+    }).unsubscribe();
   }
 
 }
