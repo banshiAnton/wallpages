@@ -35,7 +35,7 @@ export class AddCategoryComponent implements OnInit {
           return categ;
         });
       }
-    }).unsubscribe();
+    });
   }
 
   onAdd() {
@@ -53,7 +53,7 @@ export class AddCategoryComponent implements OnInit {
       } else {
         this.addState = 3;
       }
-    }).unsubscribe();
+    });
   }
 
   onSelect(category) {
@@ -77,7 +77,7 @@ export class AddCategoryComponent implements OnInit {
       } else {
         this.updState = 3;
       }
-    }).unsubscribe();
+    });
   }
 
   // onDelete() {

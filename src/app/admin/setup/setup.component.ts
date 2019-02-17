@@ -15,7 +15,7 @@ export class SetupComponent implements OnInit {
   ngOnInit() {
     this.service.getAuthLinks().subscribe((data: any) => {
       this.authLinks = data;
-    }).unsubscribe();
+    });
   }
 
   setup() {
@@ -24,7 +24,7 @@ export class SetupComponent implements OnInit {
       if (data.success) {
         window.location.href = `${window.location.protocol}//${window.location.host}/admin`;
       }
-    }).unsubscribe();
+    });
   }
 
 }

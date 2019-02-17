@@ -106,8 +106,15 @@ let errorHandle = function(err, req, res, next) {
 let isAuth = function(req, res, next) {
     if(req.cookies.admin_data) {
         let decoded = jwt.decode(req.cookies.admin_data);
+        console.log('Decoded data', decoded);
         Admins.findOne({ where: {vkid: decoded.user_id} })
-        .then(() => next())
+        .then(data => {
+            if(data.length) {
+                return next();
+            } else {
+                throw { message: 'нет такого админа' };
+            }
+        })
         .catch(err => next(err))
     } else {
         res.json({success: false})

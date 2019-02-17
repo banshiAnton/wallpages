@@ -32,7 +32,7 @@ export class AddImagesComponent implements OnInit {
           return categ;
         });
       }
-    }).unsubscribe();
+    });
   }
 
   ngOnInit() {
@@ -60,7 +60,7 @@ export class AddImagesComponent implements OnInit {
     this.service.postImages(data).subscribe((result: any) => {
       console.log('Response data', result);
       this.state = result.success ? 2 : 3;
-    }).unsubscribe();
+    });
   }
 
   onChange(inputFiles) {

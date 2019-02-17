@@ -17,21 +17,19 @@ export class ServiceService {
 
   postImages(data) {
     console.log('service', data);
-    return this.http.post(`${this.apiImageUrl}/upload`, data, {
-      headers: new HttpHeaders({'auth': window.localStorage.getItem('token') || ''})
-    });
+    return this.http.post(`${this.apiImageUrl}/upload`, data);
   }
 
   addCategory(name, tags) {
     console.log('Service', name, tags);
     return this.http.post(`${this.apiImageUrl}/add/category`, JSON.stringify({name, tags}), {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || ''})
+      headers: new HttpHeaders({ 'Content-Type': 'application/json'})
     });
   }
 
   setup() {
     return this.http.get(`${this.authUrl}/makeSetup`, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || ''})
+      headers: new HttpHeaders({ 'Content-Type': 'application/json'})
     });
   }
 
@@ -43,13 +41,13 @@ export class ServiceService {
 
   updateCategory(category) {
     return this.http.put(`${this.apiImageUrl}/category/${category.id}`, JSON.stringify({name: category.name, tags: category.tags.map(tag => tag.value)}), {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || ''})
+      headers: new HttpHeaders({ 'Content-Type': 'application/json'})
     });
   }
 
   deleteCategory(id) {
     return this.http.delete(`${this.apiImageUrl}/category/${id}`, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'auth': window.localStorage.getItem('token') || ''})
+      headers: new HttpHeaders({ 'Content-Type': 'application/json'})
     });
   }
 

@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
       if (data.success) {
         this.categories = data.categories;
       }
-    }).unsubscribe();
+    });
   }
 
   loadImages() {
@@ -32,7 +32,7 @@ export class HomeComponent implements OnInit {
       if (data.success) {
         this.images = data.results;
       }
-    }).unsubscribe();
+    });
   }
 
   selectCategory(category) {
@@ -42,6 +42,6 @@ export class HomeComponent implements OnInit {
       if (data.success) {
         this.images = data.results;
       }
-    }).unsubscribe();
+    });
   }
 }

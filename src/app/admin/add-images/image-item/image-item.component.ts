@@ -19,7 +19,7 @@ export class ImageItemComponent implements OnInit, OnChanges {
   constructor() { }
 
   ngOnChanges() {
-    if(this.inOne.inOne && this.inOne.category) {
+    if (this.inOne.inOne && this.inOne.category) {
       this.tags = this.categories.find(categ => categ.name === this.inOne.category).tags;
     } else {
       this.tags = [];
@@ -27,7 +27,7 @@ export class ImageItemComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    if(this.inOne.inOne && this.inOne.category) {
+    if (this.inOne.inOne && this.inOne.category) {
       this.tags = this.categories.find(categ => categ.name === this.inOne.category).tags;
     } else {
       this.tags = [];

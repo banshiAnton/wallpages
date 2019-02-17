@@ -10,7 +10,7 @@ import { CookieService } from 'ngx-cookie-service';
 export class AdminComponent implements OnInit {
 
   isAuth = false;
-  vkAuthLink = '';
+  links: any;
 
   constructor(private service: ServiceService, private cookieService: CookieService) { }
 
@@ -19,9 +19,10 @@ export class AdminComponent implements OnInit {
       this.isAuth = data.success;
       if (!this.isAuth) {
         this.service.getAuthLinks().subscribe((data: any) => {
-          this.vkAuthLink = data.vk;
-        }).unsubscribe();
+          console.log('Vk link', data);
+          this.links = data;
+        });
       }
-    }).unsubscribe();
+    });
   }
 }
