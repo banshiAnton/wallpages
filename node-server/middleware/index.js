@@ -109,6 +109,7 @@ let isAuth = function(req, res, next) {
         console.log('Decoded data', decoded);
         Admins.findOne({ where: {vkid: decoded.user_id} })
         .then(data => {
+            console.log('Find data', data);
             if(data.length) {
                 return next();
             } else {

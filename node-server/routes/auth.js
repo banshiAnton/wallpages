@@ -31,7 +31,7 @@ router.post('/admin', function(req, res, next) {
 })
 
 router.get('/admin', isAuth, function(req, res, next) {
-    res.json({success: true})
+    res.json({success: true});
 });
 
 router.get('/authLinks', function(req, res, next) {
