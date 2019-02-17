@@ -65,7 +65,7 @@ router.get('/vkcb', function(req, res, next) {
                 jwt.sign(data, process.env.secretJWT, {algorithm: 'HS256'}, function(err, token) {
                     if(!err) {
                         res.cookie('admin_data', token, {path: '/', httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000 })
-                        res.redirect('/admin/setup/');
+                        res.redirect('/admin/');
                     }
                 })
             }
