@@ -4,6 +4,7 @@
 
 body {
     background-image: linear-gradient(to right, #1D2B64 , #ff80ff);
+    padding: 30px;
 }
 
 tag-input input {

@@ -1,7 +1,14 @@
-a {
-    text-decoration: none;
-    font-size: 2em;
-    padding: 1%;
+button {
+    font-size: 1.6em;
+    padding: 0.7%;
     width: max-content;
-    border-right: 5px solid yellowgreen;
+}
+
+a {
+    font-size: 1.6em;
+    padding: 10px;
+}
+
+a:last-of-type {
+    margin-left: 13px; 
 }

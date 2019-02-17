@@ -106,13 +106,14 @@ let errorHandle = function(err, req, res, next) {
 let isAuth = function(req, res, next) {
     if(req.cookies.admin_data) {
         let decoded = jwt.decode(req.cookies.admin_data);
-        console.log('Decoded data', decoded);
+        // console.log('Decoded data', decoded);
         Admins.findOne({ where: {vkid: decoded.user_id} })
         .then(data => {
-            console.log('Find data', data);
-            if(data.length) {
+            // console.log('Find data admin', data);
+            if(data) {
                 return next();
             } else {
+                console.log('No admin in DB');
                 throw { message: 'нет такого админа' };
             }
         })
