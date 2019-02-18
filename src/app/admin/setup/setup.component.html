@@ -6,14 +6,4 @@
 <br>
 
 <button type="button" class="btn btn-primary btn-lg" (click)="setup();">Инициализировать альбомы</button>
-<div class="alerts">
-    <div *ngIf="state==1">
-        Загрузка...
-      </div>
-      <div *ngIf="state==2" class="alert alert-success" role="alert">
-        Загружено
-      </div>
-      <div *ngIf="state==3" class="alert alert-danger" role="alert">
-        Ошибка
-      </div>
-</div>
+<app-alert-div [state]="state"></app-alert-div>

@@ -71,4 +71,12 @@ export class ServiceService {
     return this.http.get(`${this.authUrl}authLinks`);
   }
 
+  getAdmins() {
+    return this.http.get(`${this.authUrl}admins`);
+  }
+
+  deleteAdmin(id: number) {
+    return this.http.delete(`${this.authUrl}admin/${id}`);
+  }
+
 }

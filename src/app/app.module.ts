@@ -18,6 +18,7 @@ import { AddCategoryComponent } from './admin/add-category/add-category.componen
 import { HomeComponent } from './home/home.component';
 import { AddAdminComponent } from './admin/add-admin/add-admin.component';
 import { SetupComponent } from './admin/setup/setup.component';
+import { AlertDivComponent } from './alert-div/alert-div.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { SetupComponent } from './admin/setup/setup.component';
     HomeComponent,
     AddAdminComponent,
     SetupComponent,
+    AlertDivComponent,
   ],
   imports: [
     BrowserModule,

@@ -5,7 +5,16 @@
             <label>VK id администратора</label>
             <input type="text" [(ngModel)]="vkid" [ngModelOptions]="{standalone: true}" class="form-control" placeholder="VK id администратора">
         </div>
-        <button type="submit" (submit)="onAdd($event)" class="btn btn-primary">Добавить Администратора</button>
+        <button type="submit" class="btn btn-primary">Добавить Администратора</button>
+        <app-alert-div [state]="state"></app-alert-div>
       </form>
+
+      <div *ngIf="admins.length" class="admins-list">
+        <div class="admin-item" *ngFor="let admin of admins">
+          VK id: {{admin.vkid}}
+          <button class="btn btn-danger" (click)="onDelete(admin.id);">X</button>
+        </div>
+      </div>
+
     </div>
 </div>

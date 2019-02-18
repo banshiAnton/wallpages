@@ -103,23 +103,35 @@ let errorHandle = function(err, req, res, next) {
     }
 }
 
-let isAuth = function(req, res, next) {
-    if(req.cookies.admin_data) {
-        let decoded = jwt.decode(req.cookies.admin_data);
-        // console.log('Decoded data', decoded);
-        Admins.findOne({ where: {vkid: decoded.user_id} })
-        .then(data => {
-            // console.log('Find data admin', data);
-            if(data) {
-                return next();
-            } else {
-                console.log('No admin in DB');
-                throw { message: 'нет такого админа' };
+let isAuth = function(isOnlyGodAdmin = false) {
+    return function(req, res, next) {
+        if(req.cookies.admin_data) {
+
+            let decoded = jwt.decode(req.cookies.admin_data);
+            console.log(decoded);
+
+            if(isOnlyGodAdmin) {
+                if(decoded.user_id == process.env.vkGodAdminId) {
+                    return next();
+                } else {
+                    return next({message: 'вы не главный админ'});
+                }
             }
-        })
-        .catch(err => next(err))
-    } else {
-        res.json({success: false})
+            // console.log('Decoded data', decoded);
+            Admins.findOne({ where: {vkid: decoded.user_id} })
+            .then(data => {
+                // console.log('Find data admin', data);
+                if(data) {
+                    return next();
+                } else {
+                    console.log('No admin in DB');
+                    throw { message: 'нет такого админа' };
+                }
+            })
+            .catch(err => next(err))
+        } else {
+            res.json({success: false})
+        }
     }
 }
 

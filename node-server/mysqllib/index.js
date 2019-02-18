@@ -27,3 +27,4 @@ exports.Admins = Admins;
 exports.Categories = Categories;
 exports.Images = Images;
 exports.Posts = Posts;
+exports.Op = Sequelize.Op;

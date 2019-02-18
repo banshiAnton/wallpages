@@ -51,7 +51,7 @@ router.get('/', makeApiQuery, function (req, res, next) {
     }).catch(err => next(err))
 });
 
-router.post('/upload', isAuth, parseFilesData, groupFileDataToFiles, function (req, res, next) {
+router.post('/upload', isAuth(), parseFilesData, groupFileDataToFiles, function (req, res, next) {
     saveImages(path.join(__dirname, `../public/images`), req.files.images, {Images, Posts, Categories}, { categOps: req.categOps, publish_date: req.body.publish_date, url: `${req.protocol}://${req.host}/images/` })
     .then(results => {
         console.log('End response END', results);
@@ -91,7 +91,7 @@ router.get('/categories', function(req, res, next) {
 //     .catch(error => res.json({success: false, error}))
 // });
 
-router.post('/add/category', isAuth, function(req, res, next) {
+router.post('/add/category', isAuth(), function(req, res, next) {
 
     let name = req.body.name;
     let tags = req.body.tags;
@@ -106,7 +106,7 @@ router.post('/add/category', isAuth, function(req, res, next) {
     
 });
 
-router.put('/category/:id', isAuth, function(req, res, next) {
+router.put('/category/:id', isAuth(), function(req, res, next) {
     console.log(req.params.id, req.body);
     Categories.findById(req.params.id)
     .then(categ => {

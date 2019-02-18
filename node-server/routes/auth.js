@@ -8,14 +8,14 @@ const { isAuth } = require('../middleware/');
 
 const { getAlbums } = require('../funcs');
 
-const { Categories, Admins } = require('../mysqllib');
+const { Categories, Admins, Op } = require('../mysqllib');
 
 let makeSetup = () => getAlbums()
                      .then(bToCreate => Categories.bulkCreate(bToCreate))
                      .then(() => Categories.findAll());
 
 
-Admins.sync({force: true})
+Admins.sync({force: !!process.env.forceTables})
 .then(res => console.log(res))
 .then(() => Admins.create({vkid: process.env.vkGodAdminId}))
 .then(data => console.log(data.get('vkid')))
@@ -28,9 +28,46 @@ router.post('/admin', function(req, res, next) {
         console.log('Admin Saved', result);
         res.json({success: true});
     }).catch(err => next(err))
+});
+
+router.delete('/admin/:id', isAuth(true), function(req, res, next) {
+    console.log('Params', req.params.id);
+    Admins.destroy({
+        where: {
+            id: req.params.id
+        }
+    }).then(result => {
+        console.log('Result del', result);
+        res.json({success: true});
+    })
+    .catch(err => next(err))
 })
 
-router.get('/admin', isAuth, function(req, res, next) {
+router.get('/admins', isAuth(true), function(req, res, next) {
+    Admins.findAll({
+        where: {
+            vkid: {
+                [Op.ne]: process.env.vkGodAdminId
+            }
+        }
+    })
+    .then(admins => {
+        console.log(admins);
+        admins.map(user => {
+            return {
+                id: user.get('id'),
+                vkid: user.get('vkid')
+            }
+        });
+        res.json({admins, success: true});
+    }).catch(err => next(err))
+});
+
+router.get('/admin', isAuth(), function(req, res, next) {
+    res.json({success: true});
+});
+
+router.get('/isMainAdmin', isAuth(true), function(req, res, next) {
     res.json({success: true});
 });
 
@@ -90,7 +127,7 @@ router.get('/okcb', function(req, res, next) {
     })
     .catch(err => {
         console.log(err);
-        res.json(err);
+        next(err);
     })
 });
 
@@ -105,12 +142,11 @@ router.get('/fbcb', function(req, res, next) {
     .then(data => {
         console.log('FB long-live-TOKEN', data);
         process.env.fbToken = data.access_token;
-        res.cookie('fb_data', data.access_token, { path: '/', httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000 });
         res.redirect('/admin/setup/');
     })
     .catch(err => {
         console.log(err);
-        res.json(err);
+        next(err);
     })
 });
 
@@ -136,7 +172,7 @@ router.get('/fbcb', function(req, res, next) {
 //     })
 // });
 
-router.get('/makeSetup', isAuth, function(req, res, next) {
+router.get('/makeSetup', isAuth(true), function(req, res, next) {
 
     if(!process.env.vktoken || !process.env.okRToken || !process.env.fbToken) {
         return next({success: false, message: 'Нет всех токенов'});
@@ -153,7 +189,7 @@ router.get('/makeSetup', isAuth, function(req, res, next) {
     })
     .catch(err => {
         console.error('ERROR in MYSQL', err);
-        res.json({error: err, success: false});
+        next(err);
     });
 });
 
