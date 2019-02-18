@@ -57,8 +57,8 @@ export class ServiceService {
     });
   }
 
-  getUser() {
-    return this.http.get(`${this.authUrl}admin`);
+  getAdmin(isMainAdmin = false) {
+    return this.http.get(`${this.authUrl}${isMainAdmin ? 'isMainAdmin' : 'admin'}`);
   }
 
   getImages(query = {count: 10, offset: 0, category: null}) {

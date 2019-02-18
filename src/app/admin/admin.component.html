@@ -1,5 +1,5 @@
 <div *ngIf="!isAuth">
-  <a href="{{links?.vk}}">VK</a>
+  <a class="btn btn-primary btn-lg active" href="{{links?.vk}}">VK</a>
 </div>
 
 <div *ngIf="isAuth">
@@ -8,4 +8,7 @@
     <a class="nav-item" routerLink="addCategoty">Добавить(редактировать) категорию</a><br>
     <a class="nav-item" routerLink="addImages">Добавить изображения</a>
   </nav>
+  <div class="child-outlet">
+      <router-outlet></router-outlet>
+  </div>
 </div>

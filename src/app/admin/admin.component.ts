@@ -15,12 +15,12 @@ export class AdminComponent implements OnInit {
   constructor(private service: ServiceService, private cookieService: CookieService) { }
 
   ngOnInit() {
-    this.service.getUser().subscribe((data: any) => {
+    this.service.getAdmin().subscribe((data: any) => {
       this.isAuth = data.success;
       if (!this.isAuth) {
-        this.service.getAuthLinks().subscribe((data: any) => {
-          console.log('Vk link', data);
-          this.links = data;
+        this.service.getAuthLinks().subscribe((links: any) => {
+          console.log('Vk link', links);
+          this.links = links;
         });
       }
     });

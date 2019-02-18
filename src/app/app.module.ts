@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule }    from '@angular/forms';
-import { HttpClientModule }    from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { TagInputModule } from 'ngx-chips';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // this is needed!
@@ -37,13 +37,13 @@ import { AlertDivComponent } from './alert-div/alert-div.component';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    TagInputModule, 
+    TagInputModule,
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     DlDateTimePickerDateModule
   ],
-  providers: [CookieService ],
+  providers: [CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

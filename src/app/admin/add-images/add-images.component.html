@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="main-form row">
-      <div class="offset-1 col-6 mr-auto">
+      <div class="col-6">
         <form enctype="application/x-www-form-urlencoded" (submit)="onSubmit($event, form)" #form>
           <div class="form-check">
               <label class="form-check-label">
@@ -39,7 +39,7 @@
     
   <div>
     <div *ngFor="let file of imagesList" class="row">
-      <app-image-item class="offset-1 col-8 mr-auto" [inOne]="{inOne: inOne, category: oneCategory}" [categories]="categories" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
+      <app-image-item class="col-8" [inOne]="{inOne: inOne, category: oneCategory}" [categories]="categories" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
     </div>
   </div>
 </div>
