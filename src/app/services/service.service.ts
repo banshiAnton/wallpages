@@ -40,7 +40,9 @@ export class ServiceService {
   }
 
   updateCategory(category) {
-    return this.http.put(`${this.apiImageUrl}/category/${category.id}`, JSON.stringify({name: category.name, tags: category.tags.map(tag => tag.value)}), {
+    return this.http.put(`${this.apiImageUrl}/category/${category.id}`,
+    JSON.stringify({name: category.name, tags: category.tags.map(tag => tag.value)}),
+    {
       headers: new HttpHeaders({ 'Content-Type': 'application/json'})
     });
   }
@@ -77,6 +79,14 @@ export class ServiceService {
 
   deleteAdmin(id: number) {
     return this.http.delete(`${this.authUrl}admin/${id}`);
+  }
+
+  isInit() {
+    return this.http.get(`${this.apiImageUrl}/isInit`);
+  }
+
+  getLastTokenUpd() {
+    return this.http.get(`${this.apiImageUrl}/lastTokenUpd`);
   }
 
 }

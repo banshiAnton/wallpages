@@ -123,6 +123,7 @@ router.get('/okcb', function(req, res, next) {
     .then(data => {
         console.log('OK TOKEN', data);
         process.env.okRToken = data.refresh_token;
+        process.env.okTokeLastUpd = Date.now() + '';
         res.redirect('/admin/setup/');
     })
     .catch(err => {
@@ -142,6 +143,7 @@ router.get('/fbcb', function(req, res, next) {
     .then(data => {
         console.log('FB long-live-TOKEN', data);
         process.env.fbToken = data.access_token;
+        process.env.fbTokeLastUpd = Date.now() + '';
         res.redirect('/admin/setup/');
     })
     .catch(err => {
@@ -172,10 +174,14 @@ router.get('/fbcb', function(req, res, next) {
 //     })
 // });
 
-router.get('/makeSetup', isAuth(true), function(req, res, next) {
+router.get('/makeSetup', isAuth(), function(req, res, next) {
+
+    console.log(process.env.isInit, !!process.env.isInit);
 
     if(!process.env.vktoken || !process.env.okRToken || !process.env.fbToken) {
         return next({success: false, message: 'Нет всех токенов'});
+    } else if(!!process.env.isInit) {
+        return next({success: false, message: 'Уже инициализировано'});
     }
 
     makeSetup()
@@ -185,6 +191,7 @@ router.get('/makeSetup', isAuth(true), function(req, res, next) {
             console.log(item.get('name'), item.get('vkId'), item.get('okId'), item.get('fbId'), item.get('tags'));
             results.push({name: item.get('name'), vkId: item.get('vkId'), okId: item.get('okId'), fbId: item.get('fbId'), tags: item.get('tags')});
         });
+        process.env.isInit = true;
         res.json({results, success: true});
     })
     .catch(err => {

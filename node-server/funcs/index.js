@@ -446,6 +446,8 @@ let postFBAlbum = async function(images, ops) {
             //url: `${ops.url}${img.name}`
 
             let caption = images[categ].tags.concat(img.tags).map(tag => '#' + tag).join(' ');
+
+            console.log('Test img FB', `${ops.url}${img.name}`);
             
             let pr = parallel([
                 graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name}`, caption, published: false}).catch(err => err),
@@ -509,7 +511,7 @@ let postOnTime = function(Posts, pathToFolder) {
 
     setInterval(async () => {
 
-        if(flag) {
+        if(flag && process.env.isInit) {
 
             let time = Math.ceil(Date.now() / 1000);
 
@@ -525,7 +527,7 @@ let postOnTime = function(Posts, pathToFolder) {
             })
 
             if(data && data.length) {
-                flag = true;
+                flag = false;//изменил!!
 
                 try {
                     let results = await parallel([
@@ -539,7 +541,6 @@ let postOnTime = function(Posts, pathToFolder) {
                 }
             }
 
-            flag = true;
             let resDel = await Posts.destroy({
                 where: {
                     pTime: {
@@ -548,6 +549,8 @@ let postOnTime = function(Posts, pathToFolder) {
                 }
             })
             .catch(err => err);
+
+            flag = true;
 
             console.log(resDel);
         }

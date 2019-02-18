@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from '../guards/auth.guard';
 import { MainAdminGuard } from '../guards/main-admin.guard';
+import { InitGuard } from '../guards/init.guard';
 
 import { AdminComponent } from '../admin/admin.component';
 import { AddImagesComponent } from '../admin/add-images/add-images.component';
@@ -14,7 +15,7 @@ import { HomeComponent } from '../home/home.component';
 const routes: Routes = [
   { path: 'admin', component: AdminComponent, canActivateChild: [AuthGuard],
     children: [
-      { path: 'addImages', component: AddImagesComponent },
+      { path: 'addImages', component: AddImagesComponent, canActivate: [InitGuard] },
       { path: 'addCategoty', component: AddCategoryComponent },
       { path: 'addAdmin', component: AddAdminComponent, canActivate: [MainAdminGuard] },
       { path: 'setup', component: SetupComponent },

@@ -103,6 +103,16 @@ let errorHandle = function(err, req, res, next) {
     }
 }
 
+let isInit = function() {
+    return function(req, res, next) {
+        if(process.env.isInit) {
+            return next();
+        } else {
+            next({success: false, message: 'Не инициализировано'});
+        }
+    }
+}
+
 let isAuth = function(isOnlyGodAdmin = false) {
     return function(req, res, next) {
         if(req.cookies.admin_data) {
@@ -135,6 +145,7 @@ let isAuth = function(isOnlyGodAdmin = false) {
     }
 }
 
+exports.isInit = isInit;
 exports.isAuth = isAuth;
 exports.makeApiQuery = makeApiQuery;
 exports.errorHandle = errorHandle;
