@@ -1,6 +1,14 @@
 <!-- <a class="btn btn-primary btn-lg active" href="{{authLinks.vk}}">VK</a> -->
-<a class="btn btn-primary btn-lg active" href="{{authLinks.ok}}">OK</a>
-<a class="btn btn-primary btn-lg active" href="{{authLinks.fb}}">FaceBook</a>
+
+<div>
+    <input type="text" placeholder="VK token" [(ngModel)]="vkToken">
+    <button type="button" class="btn btn-primary btn-lg" (click)="setVKToken();">Установить токен</button>
+</div>
+
+<div>
+    <a class="btn btn-primary btn-lg active" href="{{authLinks.ok}}">OK</a>
+    <a class="btn btn-primary btn-lg active" href="{{authLinks.fb}}">FaceBook</a>
+</div>
 
 <br>
 <br>

@@ -10,6 +10,7 @@ export class SetupComponent implements OnInit {
 
   state = 0;
   authLinks: any = {};
+  vkToken: string;
 
   constructor(private service: ServiceService) { }
 
@@ -30,6 +31,10 @@ export class SetupComponent implements OnInit {
         this.state = 3;
       }
     });
+  }
+
+  setVKToken() {
+    console.log(this.vkToken);
   }
 
 }
