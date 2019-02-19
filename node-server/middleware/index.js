@@ -118,7 +118,7 @@ let isAuth = function(isOnlyGodAdmin = false) {
         if(req.cookies.admin_data) {
 
             let decoded = jwt.decode(req.cookies.admin_data);
-            console.log(decoded);
+            // console.log(decoded);
 
             if(isOnlyGodAdmin) {
                 if(decoded.user_id == process.env.vkGodAdminId) {

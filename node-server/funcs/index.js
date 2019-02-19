@@ -76,7 +76,7 @@ let imgCutResolution = function (image, pathToFolder) {
             const mulMin_16_10_Res = 1280 * 800;
         
             if(mulResolution <= mulMin_16_9_Res || mulResolution <= mulMin_16_10_Res) {
-                return writeFile(path.join(pathToFolder, '/small/', image.name), image.data)
+                return writeFile(path.join(pathToFolder, '/', image.name), image.data)
             }
         
             const props_16_9 = 1.78;
@@ -791,11 +791,11 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
 
     try {
 
-        // let resultsPr = await parallel([
-        //     postFBAlbum(categGroup, ops),
-        //     postVK(categGroup, ops), 
-        //     postOK(categGroup, ops)
-        // ]);
+        let resultsPr = await parallel([
+            postFBAlbum(categGroup, ops),
+            postVK(categGroup, ops), 
+            postOK(categGroup, ops)
+        ]);
 
         console.log('Paraller results', resultsPr);
 
@@ -803,7 +803,7 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
         results.vk = resultsPr[1];
         results.ok = resultsPr[2];
 
-        results.social = true;//resultsPr.every(res => res.success);
+        results.social = resultsPr.every(res => res.success);
 
     } catch(err) {
         console.log('Paraller (catch(err))', err);
@@ -813,8 +813,8 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
 
     try {
 
-        // results.db = await postToDB(categGroup, db.Posts, ops);
-        // console.log('Post ind DB res', results.db);
+        results.db = await postToDB(categGroup, db.Posts, ops);
+        console.log('Post ind DB res', results.db);
 
         results.db = {success: true};
 

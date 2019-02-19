@@ -41,8 +41,8 @@ router.get('/', makeApiQuery, function (req, res, next) {
             console.log('Test', item.get('category_id'), item.get('file'));
         arr.push({
                 id: item.get('id'),
-                url: path.existsSync(path.join(__dirname, 'public', pathToStatics)) ? `${pathToStatics}${item.get('file')}`: `${pathToStatics}small/${item.get('file')}`,
-                minimizeUrl: `${pathToStatics}small/${item.get('file')}`,
+                url: `${pathToStatics}${item.get('file')}`,//path.existsSync(path.join(__dirname, 'public', pathToStatics)) ? `${pathToStatics}${item.get('file')}`: `${pathToStatics}small/${item.get('file')}`,
+                minimizeUrl: path.existsSync(path.join(__dirname, 'public', pathToStatics, small, item.get('file'))) ? `${pathToStatics}small/${item.get('file')}` : `${pathToStatics}${item.get('file')}`,
                 tags: item.get('tags'),
                 category_id: item.get('category_id')
             })
@@ -74,6 +74,16 @@ router.get('/categories', function(req, res, next) {
 router.get('/lastTokenUpd', isInit(), function(req, res, next) {
     res.json({success: true, ok: process.env.okTokeLastUpd, fb: process.env.fbTokeLastUpd});
 });
+
+// router.post('/vktoken', isAuth(), function(req, res, next) {
+//     //vktoken=a11acee1a6e2c1bde58d2e0e67b15e229bd4f3ad9f26da0b36345149f01ab6948e242d358249b2834d208
+//     if(process.env.vktoken) {
+//         res.json({success: false, message: 'Уже установлен'});
+//     } else {
+//         process.env.vktoken = req.body.token;
+//         res.json({success: true});
+//     }
+// });
 
 router.post('/add/category', isAuth(), function(req, res, next) {
 

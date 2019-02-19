@@ -14,9 +14,5 @@ a:last-of-type {
 }
 
 .vktoken {
-    padding: 10px;
-}
-
-.vktoken input {
-    
+    padding: 10px 0 40px 0;
 }
