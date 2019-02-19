@@ -1,4 +1,4 @@
-button {
+.setup {
     font-size: 1.6em;
     padding: 0.7%;
     width: max-content;
@@ -11,4 +11,12 @@ a {
 
 a:last-of-type {
     margin-left: 13px; 
+}
+
+.vktoken {
+    padding: 10px;
+}
+
+.vktoken input {
+    
 }

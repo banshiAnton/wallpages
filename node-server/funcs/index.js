@@ -68,6 +68,45 @@ let categoryGetRes = function(seqRes) {
     return Promise.resolve(res);
 }
 
+let imgCutResolution = function (image, pathToFolder) {
+    return function(metadata) {
+
+            const mulResolution = metadata.width * metadata.height;
+            const mulMin_16_9_Res = 1280 * 720;
+            const mulMin_16_10_Res = 1280 * 800;
+        
+            if(mulResolution <= mulMin_16_9_Res || mulResolution <= mulMin_16_10_Res) {
+                return writeFile(path.join(pathToFolder, '/small/', image.name), image.data)
+            }
+        
+            const props_16_9 = 1.78;
+            const props_16_10 = 1.6;
+
+            let promisesArr = [writeFile(path.join(pathToFolder, '/', image.name), image.data)];
+        
+            if(metadata.width < metadata.height) {
+                let props = parseFloat((metadata.height / metadata.width).toFixed(2));
+                if(props === props_16_9) {
+                    promisesArr.push(sharp(image.data).resize(720, 1280).toFile(path.join(pathToFolder, '/small/', image.name)));
+                } else if(props === props_16_10) {
+                    promisesArr.push(sharp(image.data).resize(800, 1280).toFile(path.join(pathToFolder, '/small/', image.name)));
+                }
+            } else {
+                let props = parseFloat((metadata.width / metadata.height).toFixed(2));
+                if(props === props_16_9) {
+                    promisesArr.push(sharp(image.data).resize(1280, 720).toFile(path.join(pathToFolder, '/small/', image.name)));
+                } else if(props === props_16_10) {
+                    promisesArr.push(sharp(image.data).resize(1280, 800).toFile(path.join(pathToFolder, '/small/', image.name)));
+                }
+            }
+
+            if(promisesArr.length == 1) {
+                promisesArr.push(sharp(image.data).resize(Math.round(metadata.width / 1.5), Math.round(metadata.height / 1.5)).toFile(path.join(pathToFolder, '/small/', image.name)));
+            }
+
+            return parallel(promisesArr);
+    }
+};
 
 let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
 
@@ -75,13 +114,15 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
             if(!image.mimetype.match(/^image\//)) throw new Error('Type must be image');
             res();
         })
-        .then(() => writeFile(path.join(pathToFolder, '/', image.name), image.data))
         .then(() => sharp(image.data).metadata())
-        .then(metadata => {
-            console.log('Metadata', metadata, JSON.stringify(metadata));
-            return metadata;
-        })
-        .then(metadata => sharp(image.data).resize(Math.round(metadata.width / 8), Math.round(metadata.height / 8)).toFile(path.join(pathToFolder, '/small/', image.name)))
+        .then(imgCutResolution(image, pathToFolder))
+        // .then(() => writeFile(path.join(pathToFolder, '/', image.name), image.data))
+        // .then(() => sharp(image.data).metadata())
+        // .then(metadata => {
+        //     console.log('Metadata', metadata, JSON.stringify(metadata));
+        //     return metadata;
+        // })
+        // .then(metadata => sharp(image.data).resize(Math.round(metadata.width / 8), Math.round(metadata.height / 8)).toFile(path.join(pathToFolder, '/small/', image.name)))
         .then(() => ImagesDb.create({file: image.name, tags: image.tags, category_id: image.category}))
         .then(data => {
             // console.log('File: ', image.name, ' saved ', data);
@@ -750,11 +791,11 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
 
     try {
 
-        let resultsPr = await parallel([
-            postFBAlbum(categGroup, ops),
-            postVK(categGroup, ops), 
-            postOK(categGroup, ops)
-        ]);
+        // let resultsPr = await parallel([
+        //     postFBAlbum(categGroup, ops),
+        //     postVK(categGroup, ops), 
+        //     postOK(categGroup, ops)
+        // ]);
 
         console.log('Paraller results', resultsPr);
 
@@ -762,7 +803,7 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
         results.vk = resultsPr[1];
         results.ok = resultsPr[2];
 
-        results.social = resultsPr.every(res => res.success);
+        results.social = true;//resultsPr.every(res => res.success);
 
     } catch(err) {
         console.log('Paraller (catch(err))', err);
@@ -772,8 +813,10 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
 
     try {
 
-        results.db = await postToDB(categGroup, db.Posts, ops);
-        console.log('Post ind DB res', results.db);
+        // results.db = await postToDB(categGroup, db.Posts, ops);
+        // console.log('Post ind DB res', results.db);
+
+        results.db = {success: true};
 
     } catch (err) {
         console.log('Error post OK Teleg FB In DB (catch(err))', err);

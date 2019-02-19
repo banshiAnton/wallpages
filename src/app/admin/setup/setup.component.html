@@ -1,8 +1,8 @@
 <!-- <a class="btn btn-primary btn-lg active" href="{{authLinks.vk}}">VK</a> -->
 
-<div>
-    <input type="text" placeholder="VK token" [(ngModel)]="vkToken">
-    <button type="button" class="btn btn-primary btn-lg" (click)="setVKToken();">Установить токен</button>
+<div class="vktoken">
+    <input class="" type="text" placeholder="VK token" [(ngModel)]="vkToken">
+    <button type="button" class="btn btn-primary" (click)="setVKToken();">Установить токен</button>
 </div>
 
 <div>
@@ -13,5 +13,5 @@
 <br>
 <br>
 
-<button type="button" class="btn btn-primary btn-lg" (click)="setup();">Инициализировать альбомы</button>
+<button type="button" class="btn btn-primary btn-lg setup" (click)="setup();">Инициализировать альбомы</button>
 <app-alert-div [state]="state"></app-alert-div>
