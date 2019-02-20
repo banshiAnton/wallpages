@@ -371,12 +371,12 @@ let postOK = async function(images, ops) {
             "publishAtMs": (+ops.publish_date * 1000) + ''
         };
 
-        if((text.length > 1) && text) {
+        // if((text.length > 1) && text) {
             at.media.push({
                 "type": "text",
-                "text": text
+                "text": ''
             })
-        }
+        // }
 
         for(let id in data.photos) {
             // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token);
@@ -485,11 +485,14 @@ let postVK = async function(images, ops) {
     .then(data => data.json())
     .then(post => {
         console.log('End post VK', post);
-        return {res: post, success: true, vk: 'VK'};
+        if ( !post.response || !post.response.post_id ) {
+            throw error;
+        }
+        return { res: post, success: true, vk: 'VK' };
     })
     .catch(error => {
         console.log('Promis error VK', error);
-        return {error, success: false, vk: 'VK'};
+        return { error, success: false, vk: 'VK' };
     });
 }
 
@@ -517,7 +520,7 @@ let postFBAlbum = async function(images, ops) {
                 graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name}`, caption}).catch(err => err)
             ]).then(([wall, album]) => {
 
-                if(!wall.id) {
+                if(!wall.id || !album.id) {
                     throw {wall, album};
                 }
 
