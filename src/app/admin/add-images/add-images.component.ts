@@ -47,13 +47,13 @@ export class AddImagesComponent implements OnInit {
         console.log('Chose category');
         return;
       }
-      for(const image in this.imageData) {
+      for (const image in this.imageData) {
         this.imageData[image]['category'] = this.categories.find(categ => categ.name === this.oneCategory).id;
       }
     }
 
     const data = new FormData(form);
-    const date = this.selectedDate ?  ((this.selectedDate.getTime() / 1000) + '') : ( ( Math.ceil(Date.now() / 1000) + 30 * 2 ) + '' );
+    const date = this.selectedDate ?  ((this.selectedDate.getTime() / 1000) + '') : ( ( Math.ceil(Date.now() / 1000) + 60 * 5 ) + '' );
     data.append('publish_date', date);
 
     data.append('filesData', JSON.stringify(this.imageData));
