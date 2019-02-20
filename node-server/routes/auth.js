@@ -112,6 +112,9 @@ router.get('/okcb', function(req, res, next) {
     .then(data => data.json())
     .then(data => {
         console.log('OK TOKEN', data);
+        if(!data.refresh_token) {
+            throw data;
+        }
         process.env.okRToken = data.refresh_token;
         process.env.okTokeLastUpd = Date.now() + '';
         res.redirect('/admin/setup/');
@@ -133,6 +136,9 @@ router.get('/fbcb', function(req, res, next) {
     }).then(data => data.json())
     .then(data => {
         console.log('FB long-live-TOKEN', data);
+        if(!data.refresh_token) {
+            throw data;
+        }
         process.env.fbToken = data.access_token;
         process.env.fbTokeLastUpd = Date.now() + '';
         res.redirect('/admin/setup/');

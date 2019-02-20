@@ -20,7 +20,7 @@ export class ServiceService {
   postImages(data) {
     console.log('service', data);
     return this.http.post(`${this.apiImageUrl}/upload`, data).pipe(
-      timeout(60 * 1000), catchError(error => of({success: false, error}))
+      timeout(5 * 60 * 1000), catchError(error => of({success: false, error}))
     );
   }
 
