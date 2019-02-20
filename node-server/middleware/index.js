@@ -61,33 +61,37 @@ let parseFilesData = function (req, res, next) {
 
 let groupFileDataToFiles = async function(req, res, next) {
 
-    console.log(req.body.filesData, req.files);
+    try {
+        console.log(req.body.filesData, req.files);
 
-    let categOps = {};
+        let categOps = {};
 
-    if(!Array.isArray(req.files.images)) req.files.images = [req.files.images];
+        if(!Array.isArray(req.files.images)) req.files.images = [req.files.images];
 
-    for(let file of req.files.images) {
-        file.category = req.body.filesData[file.name].category;
-        file.tags = req.body.filesData[file.name].tags;
-        file.name = Date.now() + '_' + file.name;
-        file.name.trim();
+        for(let file of req.files.images) {
+            file.category = req.body.filesData[file.name].category;
+            file.tags = req.body.filesData[file.name].tags;
+            file.name = Date.now() + '_' + file.name;
+            file.name.trim();
 
-        if(!categOps[file.category]) {
-            let categData = await Categories.findOne({where: {id: file.category}}).catch(err => err);
-            categOps[file.category] = {
-                tags: categData.get('tags'),
-                vkAid: categData.get('vkId'),
-                okAid: categData.get('okId'),
-                fbAid: categData.get('fbId')
+            if(!categOps[file.category]) {
+                let categData = await Categories.findOne({where: {id: file.category}}).catch(err => err);
+                categOps[file.category] = {
+                    tags: categData.get('tags'),
+                    vkAid: categData.get('vkId'),
+                    okAid: categData.get('okId'),
+                    fbAid: categData.get('fbId')
+                }
             }
         }
+
+        req.categOps = categOps;
+
+        console.log('Transformed', req.files.images, '\n\nFiles **', categOps);
+        next();
+    } catch(error) {
+        next({error});
     }
-
-    req.categOps = categOps;
-
-    console.log('Transformed', req.files.images, '\n\nFiles **', categOps);
-    next()
 }
 
 let errorHandle = function(err, req, res, next) {

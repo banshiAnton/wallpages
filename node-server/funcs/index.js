@@ -810,7 +810,6 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
         throw err;
     }
 
-
     try {
 
         results.db = await postToDB(categGroup, db.Posts, ops);

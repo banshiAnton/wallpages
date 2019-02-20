@@ -17,8 +17,8 @@ let makeSetup = () => getAlbums()
 
 Admins.sync({force: !!process.env.forceTables})
 .then(res => console.log(res))
-.then(() => Admins.create({vkid: process.env.vkGodAdminId}))
-.then(data => console.log(data.get('vkid')))
+// .then(() => Admins.create({vkid: process.env.vkGodAdminId}))
+// .then(data => console.log(data.get('vkid')))
 .catch(err => console.error('ERROR in MYSQL', err));
 
 router.post('/admin', function(req, res, next) {
