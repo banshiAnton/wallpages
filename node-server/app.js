@@ -42,8 +42,10 @@ app.use('/*', function(req, res, next) {
 
 app.use(function(error, req, res, next) {
     console.log('Error last', error);
-    if(errorHandle(error, req, res, next)) {
+    if ( errorHandle(error, req, res, next) ) {
         return;
+    } else if ( error.redirect ) {
+        return res.redirect('/admin/');
     }
     res.status(error.status || 200);
     res.json({message: error.message || 'error', success: false, error});

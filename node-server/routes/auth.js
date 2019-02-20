@@ -6,7 +6,7 @@ const FormData = require('form-data');
 
 const { isAuth } = require('../middleware/');
 
-const { getAlbums } = require('../funcs');
+const { getAlbums, vkAuthCB } = require('../funcs');
 
 const { Categories, Admins, Op } = require('../mysqllib');
 
@@ -17,8 +17,8 @@ let makeSetup = () => getAlbums()
 
 Admins.sync({force: !!process.env.forceTables})
 .then(res => console.log(res))
-// .then(() => Admins.create({vkid: process.env.vkGodAdminId}))
-// .then(data => console.log(data.get('vkid')))
+.then(() => Admins.create({vkid: process.env.vkGodAdminId}))
+.then(data => console.log(data.get('vkid')))
 .catch(err => console.error('ERROR in MYSQL', err));
 
 router.post('/admin', function(req, res, next) {
@@ -92,24 +92,14 @@ router.get('/vkcb', function(req, res, next) {
     let url = `https://oauth.vk.com/access_token?client_id=${process.env.vkClientId}&redirect_uri=${process.env.rUrl}&client_secret=${process.env.vkClientSecret}&code=${req.query.code}&v=5.92`;
     fetch(url)
     .then(data => data.json())
-    .then(data => {
-        console.log('VK TOKEN', data);
-        return Admins.findOne({ where: {vkid: data.user_id} })
-        .then(result => {
-            if(result) {
-                // process.env.vktoken = data.access_token;
-                // console.log('SET NEW VK TOKEN', process.env.vktoken);
-                jwt.sign(data, process.env.secretJWT, {algorithm: 'HS256'}, function(err, token) {
-                    if(!err) {
-                        res.cookie('admin_data', token, {path: '/', httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000 })
-                        res.redirect('/admin/');
-                    }
-                })
-            }
-        })
+    .then(data => vkAuthCB(data, Admins))
+    .then(token => {
+        res.cookie('admin_data', token, {path: '/', httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000 })
+        res.redirect('/admin/');
     })
     .catch(err => {
         console.log('Auth err', err);
+        err.redirect = true;
         next(err);
     });
 })
@@ -128,6 +118,7 @@ router.get('/okcb', function(req, res, next) {
     })
     .catch(err => {
         console.log(err);
+        err.redirect = true;
         next(err);
     })
 });
@@ -148,6 +139,7 @@ router.get('/fbcb', function(req, res, next) {
     })
     .catch(err => {
         console.log(err);
+        err.redirect = true;
         next(err);
     })
 });

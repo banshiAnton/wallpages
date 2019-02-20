@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path')
 const url = require('url');
 
+const jwt = require('jsonwebtoken');
+
 const util = require('util');
 
 const writeFile = util.promisify(fs.writeFile);
@@ -50,6 +52,22 @@ let getSigOk = function(obj, token) {
 
     return md5(baseStr);
 }
+
+let vkAuthCB = function(data, Admins) {
+    if(!data || !data.user_id) {
+        return Promise.reject('vk data error');
+    }
+
+    delete data.access_token;
+
+    return Admins.findOne({ where: {vkid: data.user_id} })
+            .then(result => {
+                if(!result) {
+                    throw new Error('no admin with id');
+                }
+                return jwt.sign(data, process.env.secretJWT, {algorithm: 'HS256'});
+            });
+};
 
 let okAppOprions = {
     applicationSecretKey: process.env.okprKey,
@@ -825,6 +843,7 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     return results;
 }
 
+exports.vkAuthCB = vkAuthCB;
 exports.categoryGetRes = categoryGetRes;
 exports.saveImages = saveImages;
 exports.createAlbum = createAlbum;

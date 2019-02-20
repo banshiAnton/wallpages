@@ -124,25 +124,27 @@ let isAuth = function(isOnlyGodAdmin = false) {
             let decoded = jwt.decode(req.cookies.admin_data);
             // console.log(decoded);
 
-            if(isOnlyGodAdmin) {
-                if(decoded.user_id == process.env.vkGodAdminId) {
+            if ( isOnlyGodAdmin ) {
+                if ( decoded.user_id == process.env.vkGodAdminId ) {
                     return next();
                 } else {
                     return next({message: 'вы не главный админ'});
                 }
+            } else if ( decoded.user_id === process.env.vkGodAdminId && !isOnlyGodAdmin ) {
+                return next();
+            } else {
+                Admins.findOne({ where: {vkid: decoded.user_id} })
+                .then(data => {
+                    // console.log('Find data admin', data);
+                    if(data) {
+                        return next();
+                    } else {
+                        console.log('No admin in DB');
+                        throw { message: 'нет такого админа' };
+                    }
+                })
+                .catch(err => next(err))
             }
-            // console.log('Decoded data', decoded);
-            Admins.findOne({ where: {vkid: decoded.user_id} })
-            .then(data => {
-                // console.log('Find data admin', data);
-                if(data) {
-                    return next();
-                } else {
-                    console.log('No admin in DB');
-                    throw { message: 'нет такого админа' };
-                }
-            })
-            .catch(err => next(err))
         } else {
             res.json({success: false})
         }
