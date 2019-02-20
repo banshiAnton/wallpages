@@ -16,7 +16,7 @@ const routes: Routes = [
   { path: 'admin', component: AdminComponent, canActivateChild: [AuthGuard],
     children: [
       { path: 'addImages', component: AddImagesComponent, canActivate: [InitGuard] },
-      { path: 'addCategoty', component: AddCategoryComponent },
+      { path: 'addCategoty', component: AddCategoryComponent, canActivate: [InitGuard] },
       { path: 'addAdmin', component: AddAdminComponent, canActivate: [MainAdminGuard] },
       { path: 'setup', component: SetupComponent },
     ]

@@ -3,6 +3,7 @@ const util = require('util');
 const Sequelize = require('sequelize');
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const randomstring = require("randomstring");
 
 const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
 
@@ -71,8 +72,12 @@ let groupFileDataToFiles = async function(req, res, next) {
         for(let file of req.files.images) {
             file.category = req.body.filesData[file.name].category;
             file.tags = req.body.filesData[file.name].tags;
-            file.name = Date.now() + '_' + file.name;
-            file.name.trim();
+
+            if(file.name.lastIndexOf('.') === -1) {
+                throw { message: 'invalid ext' };
+            }
+
+            file.name = (randomstring.generate( { length: 10, charset: 'alphanumeric ' } ) + file.name.slice( file.name.lastIndexOf('.') )).trim();
 
             if(!categOps[file.category]) {
                 let categData = await Categories.findOne({where: {id: file.category}}).catch(err => err);
