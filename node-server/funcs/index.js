@@ -134,13 +134,6 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
         })
         .then(() => sharp(image.data).metadata())
         .then(imgCutResolution(image, pathToFolder))
-        // .then(() => writeFile(path.join(pathToFolder, '/', image.name), image.data))
-        // .then(() => sharp(image.data).metadata())
-        // .then(metadata => {
-        //     console.log('Metadata', metadata, JSON.stringify(metadata));
-        //     return metadata;
-        // })
-        // .then(metadata => sharp(image.data).resize(Math.round(metadata.width / 8), Math.round(metadata.height / 8)).toFile(path.join(pathToFolder, '/small/', image.name)))
         .then(() => ImagesDb.create({file: image.name, tags: image.tags, category_id: image.category}))
         .then(data => {
             // console.log('File: ', image.name, ' saved ', data);
@@ -371,12 +364,12 @@ let postOK = async function(images, ops) {
             "publishAtMs": (+ops.publish_date * 1000) + ''
         };
 
-        // if((text.length > 1) && text) {
+        if((text.length > 1) && text) {
             at.media.push({
                 "type": "text",
-                "text": ''
+                "text": text
             })
-        // }
+        }
 
         for(let id in data.photos) {
             // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token);
@@ -478,7 +471,7 @@ let postVK = async function(images, ops) {
             message,
             attachments,
             owner_id: -process.env.vkgid,
-            // access_token: process.env.vktoken,
+            access_token: process.env.vktoken,
             from_group: 1,
             publish_date: ops.publish_date,
             v: 5.67
@@ -519,8 +512,8 @@ let postFBAlbum = async function(images, ops) {
             console.log('Test img FB', `${ops.url}${img.name}`);
             
             let pr = parallel([
-                graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name + 'sdfgsdfgsdfgsdfg'}`, caption, published: false}).catch(err => err),
-                graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name + 'sdfgsdfgsdfgsdfg'}`, caption}).catch(err => err)
+                graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name}`, caption, published: false}).catch(err => err),
+                graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name}`, caption}).catch(err => err)
             ]).then(([wall, album]) => {
 
                 if(!wall.id || !album.id) {
