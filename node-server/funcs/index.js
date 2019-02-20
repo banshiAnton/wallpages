@@ -406,11 +406,14 @@ let postOK = async function(images, ops) {
     .then(data => data.json())
     .then(post => {
         console.log('End post OK', post);
-        return {res: post, success: true};
+        if ( post instanceof Object ) {
+            throw post;
+        }
+        return { res: post, success: true };
     })
     .catch(error => {
         console.log('Promis error OK', error);
-        return {error, success: false};
+        return { error, success: false };
     });
 }
 
@@ -475,7 +478,7 @@ let postVK = async function(images, ops) {
             message,
             attachments,
             owner_id: -process.env.vkgid,
-            access_token: process.env.vktoken,
+            // access_token: process.env.vktoken,
             from_group: 1,
             publish_date: ops.publish_date,
             v: 5.67
@@ -516,8 +519,8 @@ let postFBAlbum = async function(images, ops) {
             console.log('Test img FB', `${ops.url}${img.name}`);
             
             let pr = parallel([
-                graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name}`, caption, published: false}).catch(err => err),
-                graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name}`, caption}).catch(err => err)
+                graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name + 'sdfgsdfgsdfgsdfg'}`, caption, published: false}).catch(err => err),
+                graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name + 'sdfgsdfgsdfgsdfg'}`, caption}).catch(err => err)
             ]).then(([wall, album]) => {
 
                 if(!wall.id || !album.id) {
