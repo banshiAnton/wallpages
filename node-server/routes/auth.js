@@ -136,7 +136,7 @@ router.get('/fbcb', function(req, res, next) {
     }).then(data => data.json())
     .then(data => {
         console.log('FB long-live-TOKEN', data);
-        if(!data.refresh_token) {
+        if(!data.access_token) {
             throw data;
         }
         process.env.fbToken = data.access_token;

@@ -12,15 +12,17 @@ import { of } from 'rxjs';
 })
 export class ServiceService {
 
-  apiImageUrl = '/api.images';
-  authUrl = '/auth/';
+  private apiImageUrl = '/api.images';
+  private authUrl = '/auth/';
+
+  private timeout = 5 * 60 * 1000;
 
   constructor(private http: HttpClient) { }
 
   postImages(data) {
     console.log('service', data);
     return this.http.post(`${this.apiImageUrl}/upload`, data).pipe(
-      timeout(5 * 60 * 1000), catchError(error => of({success: false, error}))
+      timeout(this.timeout), catchError(error => of({success: false, error}))
     );
   }
 
