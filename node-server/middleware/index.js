@@ -77,7 +77,7 @@ let groupFileDataToFiles = async function(req, res, next) {
                 throw { message: 'invalid ext' };
             }
 
-            file.name = (randomstring.generate( { length: 10, charset: 'alphanumeric ' } ) + file.name.slice( file.name.lastIndexOf('.') )).trim();
+            file.name = (randomstring.generate( 10 ) + file.name.slice( file.name.lastIndexOf('.') )).trim();
 
             if(!categOps[file.category]) {
                 let categData = await Categories.findOne({where: {id: file.category}}).catch(err => err);

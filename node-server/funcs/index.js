@@ -482,13 +482,13 @@ let postVK = async function(images, ops) {
     .then(post => {
         console.log('End post VK', post);
         if ( !post.response || !post.response.post_id ) {
-            throw error;
+            throw post;
         }
-        return { res: post, success: true, vk: 'VK' };
+        return { res: post, success: true };
     })
     .catch(error => {
         console.log('Promis error VK', error);
-        return { error, success: false, vk: 'VK' };
+        return { error, success: false, };
     });
 }
 
