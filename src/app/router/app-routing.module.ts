@@ -18,7 +18,7 @@ const routes: Routes = [
       { path: 'addImages', component: AddImagesComponent, canActivate: [InitGuard] },
       { path: 'addCategoty', component: AddCategoryComponent, canActivate: [InitGuard] },
       { path: 'addAdmin', component: AddAdminComponent, canActivate: [MainAdminGuard] },
-      { path: 'setup', component: SetupComponent },
+      { path: 'setup', component: SetupComponent, canActivate: [MainAdminGuard] },
     ]
   },
   { path: 'home', component: HomeComponent }

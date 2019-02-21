@@ -354,6 +354,10 @@ let postOK = async function(images, ops) {
     .then(data => {
         // console.log('\n\n****Uploaded****\n\n', data.photos);
 
+        if( ( (+ops.publish_date * 1000) + 10000 ) < Date.now() ) {
+            ops.publish_date = Date.now() + 10000;
+        }
+
         let at = {
             "media": [
               {
@@ -462,6 +466,10 @@ let postVK = async function(images, ops) {
 
     // console.log('Tags************\n\n', tags);
     let message = getTagsStr(images);
+
+    if( ( +ops.publish_date + 10 ) < ( Date.now() / 1000 ) ) {
+        ops.publish_date = (( Date.now() / 1000 ) + 10).toFixed(0);
+    }
 
     let postUrl = url.format({
         protocol: 'https',
