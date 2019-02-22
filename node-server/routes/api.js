@@ -42,7 +42,7 @@ router.get('/', makeApiQuery, function (req, res, next) {
             console.log('Test', item.get('category_id'), item.get('file'));
         arr.push({
                 id: item.get('id'),
-                url: `${pathToStatics}${item.get('file')}`,//path.existsSync(path.join(__dirname, 'public', pathToStatics)) ? `${pathToStatics}${item.get('file')}`: `${pathToStatics}small/${item.get('file')}`,
+                url: `${pathToStatics}${item.get('file')}`,
                 minimizeUrl: fs.existsSync(path.join(__dirname, '../public', pathToStatics, 'small', item.get('file'))) ? `${pathToStatics}small/${item.get('file')}` : `${pathToStatics}${item.get('file')}`,
                 tags: item.get('tags'),
                 category_id: item.get('category_id')
