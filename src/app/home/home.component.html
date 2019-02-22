@@ -10,7 +10,7 @@
     <div class="img-item" *ngFor="let image of images">
       <img class="img-fluid" src="{{image.minimizeUrl}}" alt="">
       <span class="tags">{{image.tags.join(" ")}}</span>
-      <span class="tags"><a href="{{image.url}}" download="">Download</span>
+      <span class="tags"><a href="{{image.url}}" download="">Download</a></span>
     </div>
   </div>
 </div>
