@@ -649,7 +649,7 @@ let postTelegram = async function(records, pathToFolder) {
 
                     formPhoto.append('chat_id', process.env.telGroup);
                     formPhoto.append('caption', caption);
-                    formDoc.append('photo', file, {
+                    formPhoto.append('photo', file, {
                         filename: img.name,
                         contentType: img.mimetype
                     });
