@@ -3,7 +3,7 @@
 @import '~open-iconic/font/css/open-iconic-bootstrap.css';
 
 body {
-    background-image: linear-gradient(to right, #1D2B64 , #ff80ff);
+    background-color: #141d24;
     padding: 30px;
 }
 
@@ -19,4 +19,16 @@ body {
 
 label{
     font-size: 1.7em;
+}
+
+.nav-item {
+    color: #f8ffff;
+}
+
+.nav-item:hover {
+    text-decoration: none;
+}
+
+div.dl-abdtp-date-button[role="gridcell"] {
+    color: white;
 }

@@ -23,13 +23,13 @@
             startView="day"
             maxView="year"
             minView="minute"
-            minuteStep="5"
+            minuteStep="30"
             [(ngModel)]="selectedDate"
             [ngModelOptions]="{standalone: true}"
           >
           </dl-date-time-picker>
           </div>
-          <button type="submit" class="btn btn-primary btn-lg">Post</button>
+          <button type="submit" class="btn btn-primary btn-lg">ОТПРАВИТЬ</button>
 
           <app-alert-div [state]="state"></app-alert-div>
           
