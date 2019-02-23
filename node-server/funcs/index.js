@@ -600,9 +600,9 @@ let postOnTime = function(Posts, pathToFolder) {
                 flag = false;//изменил!!
 
                 try {
+                    postTelegram(data, pathToFolder);
                     let results = await parallel([
-                        postFBWall(data), 
-                        postTelegram(data, pathToFolder), 
+                        postFBWall(data),
                         postOKAlbum(data, pathToFolder)
                     ]);
                     console.log(results);
@@ -632,48 +632,71 @@ let postTelegram = async function(records, pathToFolder) {
 
     // console.log('Pre data', records);
 
-    let media = [];
-    let form = new FormData();
-    let i = 1;
-
     for(let rec of records) {
         rec = rec.get('jsonData')
         for(let categ in rec) {
             for(let img of rec[categ].files) {
 
-                let file = null
                 try {
-                    file = await readFile(path.join(pathToFolder, '/', img.name));
-                    // console.log('File', file);
+
+                    let file = await readFile(path.join(pathToFolder, '/', img.name));
+
+                    let caption = rec[categ].tags.concat(img.tags).map(tag => '#' + tag).join(' ');
+
+
+
+                    let formPhoto = new FormData();
+
+                    formPhoto.append('chat_id', process.env.telGroup);
+                    formPhoto.append('caption', caption);
+                    formDoc.append('photo', file, {
+                        filename: img.name,
+                        contentType: img.mimetype
+                    });
+
+                    let formDoc = new FormData();
+                    
+                    formDoc.append('chat_id', process.env.telGroup);
+                    formDoc.append('caption', caption);
+                    formDoc.append('document', file, {
+                        filename: img.name,
+                        contentType: img.mimetype
+                    });
+
+                    let resPhoto = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
+                        method: "POST",
+                        body: formPhoto,
+                        headers: formPhoto.getHeaders(),
+                    })
+                    .then(res => res.json())
+                    .catch(err => {
+                        console.log('Error photo', err);
+                        return err;
+                    });
+
+                    console.log('Telegram photo', resPhoto);
+
+                    let resDoc = await fetch(`https://api.telegram.org/bot${token}/sendDocument`, {
+                        method: "POST",
+                        body: formDoc,
+                        headers: formDoc.getHeaders(),
+                    })
+                    .then(res => res.json())
+                    .catch(err => {
+                        console.log('Error doc', err);
+                        return err;
+                    });
+
+                    console.log('Telegram photo', resDoc);
+
                 } catch (err) {
-                    // console.log(err);
+                    console.log(err);
                     continue;
                 }
-    
-                let fName = `file${i++}`
-                form.append(fName, file, {
-                    filename: img.name,
-                    contentType: img.mimetype
-                });
-
-                let caption = rec[categ].tags.concat(img.tags).map(tag => '#' + tag).join(' ');
-
-                media.push({type: 'photo', media: `attach://${fName}`, caption})
 
             }
         }
     }
-
-    // console.log('End media', media);
-    form.append('media', JSON.stringify(media));
-    form.append('chat_id', process.env.telGroup);
-
-    return fetch(`https://api.telegram.org/bot${process.env.telToken}/sendMediaGroup`, {
-        method: "POST",
-        body: form,
-        headers: form.getHeaders(),
-    })
-    .then(res => res.json())
 }
 
 let postOKAlbum = async function(records, pathToFolder) {
