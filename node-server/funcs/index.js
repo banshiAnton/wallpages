@@ -663,7 +663,7 @@ let postTelegram = async function(records, pathToFolder) {
                         contentType: img.mimetype
                     });
 
-                    let resPhoto = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
+                    let resPhoto = await fetch(`https://api.telegram.org/bot${process.env.telToken}/sendPhoto`, {
                         method: "POST",
                         body: formPhoto,
                         headers: formPhoto.getHeaders(),
@@ -676,7 +676,7 @@ let postTelegram = async function(records, pathToFolder) {
 
                     console.log('Telegram photo', resPhoto);
 
-                    let resDoc = await fetch(`https://api.telegram.org/bot${token}/sendDocument`, {
+                    let resDoc = await fetch(`https://api.telegram.org/bot${process.env.telToken}/sendDocument`, {
                         method: "POST",
                         body: formDoc,
                         headers: formDoc.getHeaders(),
