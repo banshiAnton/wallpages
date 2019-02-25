@@ -1,11 +1,10 @@
 a.nav-item:first-child {
-    font-size: 2.1em;
     margin-left: 0;
 }
 
 a.nav-item {
     font-size: 2.1em;
-    margin-left: 2%;
+    margin-left: 5%;
 }
 
 .topnav {
@@ -16,3 +15,20 @@ a.nav-item {
     margin-bottom: 35px;
     font-size: 25px;
 }
+
+
+@media screen and (max-width: 400px) {
+
+    a.nav-item:first-child {
+        margin-left: 0;
+    }
+    
+    a.nav-item {
+        font-size: 25px;
+    }
+    
+    .date-last-token-upd {
+        margin-bottom: 15px;
+        font-size: 15px;
+    }
+  }

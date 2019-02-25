@@ -32,3 +32,10 @@ label{
 div.dl-abdtp-date-button[role="gridcell"] {
     color: white;
 }
+
+@media screen and (max-width: 400px) {
+
+    body {
+        padding: 15px;
+    }
+}

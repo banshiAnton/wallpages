@@ -1,9 +1,9 @@
 <div class="img-item row">
-  <div class="col-3">
-    <p>File name: {{file.fileName}}</p>
+  <div class="col-md-3 col-4">
+    <span class="fname">{{file.fileName}}</span>
     <img src="{{file.src}}" alt="" class="img-fluid">
   </div>
-  <div class="col-7">
+  <div class="col-md-7 col-8">
     <div *ngIf="!inOne.inOne">
       <label>Выберите категорию</label>
       <select class="form-control" (change)="onSelect(category.value)" #category>

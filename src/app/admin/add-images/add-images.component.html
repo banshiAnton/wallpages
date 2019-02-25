@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="main-form row">
-      <div class="col-6">
+      <div class="col-md-6 col-12">
         <form enctype="application/x-www-form-urlencoded" (submit)="onSubmit($event, form)" #form>
           <div class="form-check">
               <label class="form-check-label">
@@ -19,7 +19,7 @@
             <input type="file" class="form-control-file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles required>
           </div>
           <div class="date-picker">
-            <dl-date-time-picker
+            <!-- <dl-date-time-picker
             startView="day"
             maxView="year"
             minView="minute"
@@ -27,7 +27,8 @@
             [(ngModel)]="selectedDate"
             [ngModelOptions]="{standalone: true}"
           >
-          </dl-date-time-picker>
+          </dl-date-time-picker> -->
+          <input id="datetime" type="datetime-local">
           </div>
           <button type="submit" class="btn btn-primary btn-lg">ОТПРАВИТЬ</button>
 
@@ -39,7 +40,7 @@
     
   <div>
     <div *ngFor="let file of imagesList" class="row">
-      <app-image-item class="col-8" [inOne]="{inOne: inOne, category: oneCategory}" [categories]="categories" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
+      <app-image-item class="col-md-8 col-12" [inOne]="{inOne: inOne, category: oneCategory}" [categories]="categories" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
     </div>
   </div>
 </div>

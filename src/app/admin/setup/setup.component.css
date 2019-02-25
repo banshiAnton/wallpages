@@ -1,7 +1,11 @@
 .setup {
     font-size: 1.6em;
-    padding: 0.7%;
+    padding: 1%;
     width: max-content;
+}
+
+div:first-of-type {
+    margin-bottom: 40px;
 }
 
 a {
@@ -10,9 +14,17 @@ a {
 }
 
 a:last-of-type {
-    margin-left: 13px; 
+    margin-left: 10px; 
 }
 
-.vktoken {
-    padding: 10px 0 40px 0;
+@media screen and (max-width: 400px) {
+
+    .setup {
+        font-size: 1.2em;
+        padding: 3%;
+    }
+    
+    a {
+        font-size: 1.2em;
+    }
 }

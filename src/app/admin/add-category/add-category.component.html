@@ -1,5 +1,5 @@
 <div class="container-fluid row form-block">
-    <div class="offset-1 col-6 mr-auto">
+    <div class="col-12 col-md-6">
         <div class="form-group">
             <label>Имя категории</label>
             <input type="text" [(ngModel)]="addName" class="form-control" placeholder="Имя категории">
@@ -14,7 +14,7 @@
 </div>
 
 <div class="container-fluid row form-block">
-    <div class="offset-1 col-6 mr-auto">
+    <div class="col-12 col-md-6">
         <div class="form-group">
             <label>Выберите категорию</label>
             <select class="form-control" (change)="onSelect(categ.value)" #categ>
@@ -26,7 +26,7 @@
             <label>Имя категории</label>
             <input type="text" [(ngModel)]="selected.name" class="form-control" placeholder="Имя категории">
         </div>
-        <div class="form-group">
+        <div class="form-group tags">
             <label>Теги категории</label>
             <tag-input [(ngModel)]="selected.tags" [separatorKeys]="[' ']"></tag-input>
         </div>

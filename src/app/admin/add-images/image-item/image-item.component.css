@@ -9,3 +9,35 @@
 .img-fluid {
     max-width: 60%;
 }
+
+
+.fname {
+
+}
+
+@media screen and (max-width: 400px) {
+
+    .img-item {
+        padding: 5px;
+        border: 1.5px solid rgb(248, 233, 20);
+        border-radius: 0;
+        margin-bottom: 5%;
+        width: 100%;
+    }
+    
+    .img-fluid {
+        max-width: 100%;
+    }
+
+    label {
+        font-size: 15px;
+    }
+
+    .row {
+        margin: 0 0 20px 0;
+    }
+
+    .fname {
+        font-size: 13px;
+    }
+}

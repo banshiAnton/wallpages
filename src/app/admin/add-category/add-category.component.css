@@ -13,3 +13,10 @@
 .btn.btn-danger {
     margin-left: 1%;
 }
+
+@media screen and (max-width: 400px) {
+    .form-block {
+        margin-bottom: 2%;
+        font-size: 12px;
+    }
+}
