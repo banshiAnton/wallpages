@@ -19,16 +19,15 @@
             <input type="file" class="form-control-file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles required>
           </div>
           <div class="date-picker">
-            <!-- <dl-date-time-picker
-            startView="day"
-            maxView="year"
-            minView="minute"
-            minuteStep="30"
-            [(ngModel)]="selectedDate"
-            [ngModelOptions]="{standalone: true}"
-          >
-          </dl-date-time-picker> -->
-          <input id="datetime" type="datetime-local">
+            <dl-date-time-picker
+              startView="day"
+              maxView="year"
+              minView="minute"
+              minuteStep="30"
+              [(ngModel)]="selectedDate"
+              [ngModelOptions]="{standalone: true}"
+            ></dl-date-time-picker>
+            <input id="datetime" type="datetime-local">
           </div>
           <button type="submit" class="btn btn-primary btn-lg">ОТПРАВИТЬ</button>
 

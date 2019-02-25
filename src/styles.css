@@ -36,6 +36,6 @@ div.dl-abdtp-date-button[role="gridcell"] {
 @media screen and (max-width: 400px) {
 
     body {
-        padding: 15px;
+        padding: 15px 15px 100px 15px;;
     }
 }
