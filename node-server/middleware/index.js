@@ -63,13 +63,16 @@ let parseFilesData = function (req, res, next) {
 let groupFileDataToFiles = async function(req, res, next) {
 
     try {
-        console.log(req.body.filesData, req.files);
+        console.log(req.body.filesData, 'Files', req.files);
 
         let categOps = {};
 
         if(!Array.isArray(req.files.images)) req.files.images = [req.files.images];
 
         for(let file of req.files.images) {
+            
+            console.log('File',);
+
             file.category = req.body.filesData[file.name].category;
             file.tags = req.body.filesData[file.name].tags;
 

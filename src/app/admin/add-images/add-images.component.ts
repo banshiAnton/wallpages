@@ -16,6 +16,8 @@ export class AddImagesComponent implements OnInit {
 
   inOne;
 
+  files = [];
+
   oneCategory;
 
   categories;
@@ -53,6 +55,15 @@ export class AddImagesComponent implements OnInit {
     }
 
     const data = new FormData(form);
+
+    data.delete('images');
+
+    console.log('If', data.has('images'), data.has('images[]'));
+
+    this.files.forEach(file => {
+      data.append('images', file);
+    });
+
     const date = this.selectedDate ?  ((this.selectedDate.getTime() / 1000) + '') : ( ( Math.ceil(Date.now() / 1000) + 60 * 5 ) + '' );
     data.append('publish_date', date);
 
@@ -64,9 +75,15 @@ export class AddImagesComponent implements OnInit {
   }
 
   onChange(inputFiles) {
-    this.imagesList = [];
-    console.log(inputFiles.files); // FileReader
-    if (inputFiles.files.length > 5) {
+    // this.imagesList = [];
+    for (let i = 0; i < inputFiles.files.length; i++) {
+      this.files.push(inputFiles.files[i]);
+    }
+
+
+
+    console.log('Files', inputFiles.files, this.files); // FileReader
+    if (inputFiles.files.length > 5 || this.imagesList.length > 5 || this.files.length > 5) {
       alert('Не больше 5 файлов');
       inputFiles.value = '';
       return;
