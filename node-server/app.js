@@ -16,7 +16,6 @@ if(fs.existsSync(__dirname + '/.env')) {
 }
 
 console.log('Folders', fs.readdirSync(path.join('/')));
-console.log('Folders', fs.readdirSync(path.join('/app')));
 
 const { errorHandle } = require('./middleware');
 
