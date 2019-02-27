@@ -1,12 +1,12 @@
 <div class="row home">
-  <div class="col-md-1 col-1">
+  <div class="col-md-2 col-2">
     <ul class="categ-list">
       <li class="categ-list-item" *ngFor="let category of categories" (click)="selectCategory(category)">
         {{category.name}}
       </li>
     </ul>
   </div>
-  <div class="offset-1 col-md-9 col-9 mr-auto">
+  <div class="col-md-10 col-10">
     <div class="img-item" *ngFor="let image of images">
       <img class="img-fluid" src="{{image.minimizeUrl}}" alt="">
       <span class="tags">{{image.tags.join(" ")}}</span>

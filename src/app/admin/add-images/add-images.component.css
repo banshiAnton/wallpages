@@ -14,10 +14,9 @@ div[role="alert"] {
     margin-bottom: 0;
 }
 
-/* .date-picker {
-    padding: 7% 0 7% 0;
-    width: 50%;
-} */
+.date-picker {
+    padding: 5% 0 7% 0;
+}
 
 @media screen and (max-width: 400px) {
 

@@ -6,7 +6,6 @@
     display: block;
     background-color: darkgrey;
     text-align: center;
-    width: 30%;
 }
 
 .categ-list {
@@ -38,6 +37,8 @@
     margin-right: 2%;
 }
 
-.img-fluid {
-    width: 30%;
+@media screen and (max-width: 400px) {
+    .row {
+        flex-direction: column;
+    }
 }
