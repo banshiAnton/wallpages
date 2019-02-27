@@ -4,10 +4,10 @@
 /dist
 /tmp
 /out-tsc
-/node-server/public
+/public
 /node-server/.env
 /node-server/scripts
-/node-server/static/*/
+/static/*/
 
 
 # dependencies

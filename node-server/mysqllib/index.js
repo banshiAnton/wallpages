@@ -19,7 +19,7 @@ Posts.sync({force})
 .then(() => {
     Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
     Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
-    postOnTime(Posts, path.join(__dirname, `../static/images`));
+    postOnTime(Posts, path.join(__dirname, `../../static/images`));
 })
 .catch(err => console.error('ERROR in MYSQL', err));
 
