@@ -4,8 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { TagInputModule } from 'ngx-chips';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // this is needed!
-import { DlDateTimePickerDateModule } from 'angular-bootstrap-datetimepicker';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { CookieService } from 'ngx-cookie-service';
 
 import { AppComponent } from './app.component';
@@ -41,7 +41,8 @@ import { AlertDivComponent } from './alert-div/alert-div.component';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    DlDateTimePickerDateModule
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

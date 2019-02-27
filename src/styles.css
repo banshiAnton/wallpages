@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~bootstrap/dist/css/bootstrap.min.css';
 @import '~open-iconic/font/css/open-iconic-bootstrap.css';
+@import "~ng-pick-datetime/assets/style/picker.min.css";
 
 body {
     background-color: #141d24;
@@ -29,8 +30,8 @@ label{
     text-decoration: none;
 }
 
-div.dl-abdtp-date-button[role="gridcell"] {
-    color: white;
+button[class="owl-dt-control-button owl-dt-control-arrow-button"] {
+    color: black;
 }
 
 @media screen and (max-width: 400px) {

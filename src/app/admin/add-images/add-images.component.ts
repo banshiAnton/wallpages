@@ -64,7 +64,7 @@ export class AddImagesComponent implements OnInit {
       data.append('images', file);
     });
 
-    const date = this.selectedDate ?  ((this.selectedDate.getTime() / 1000) + '') : ( ( Math.ceil(Date.now() / 1000) + 60 * 5 ) + '' );
+    const date = this.selectedDate ?  (((new Date(this.selectedDate)).getTime() / 1000) + '') : ( ( Math.ceil(Date.now() / 1000) + 60 * 5 ) + '' );
     data.append('publish_date', date);
 
     data.append('filesData', JSON.stringify(this.imageData));
@@ -80,12 +80,11 @@ export class AddImagesComponent implements OnInit {
       this.files.push(inputFiles.files[i]);
     }
 
-
-
     console.log('Files', inputFiles.files, this.files); // FileReader
     if (inputFiles.files.length > 5 || this.imagesList.length > 5 || this.files.length > 5) {
       alert('Не больше 5 файлов');
       inputFiles.value = '';
+      this.imagesList = this.files = [];
       return;
     }
     for (const file of inputFiles.files) {// readAsDataURL
