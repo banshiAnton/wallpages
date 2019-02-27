@@ -7,6 +7,7 @@
 /node-server/public
 /node-server/.env
 /node-server/scripts
+/node-server/static/*/
 
 
 # dependencies
