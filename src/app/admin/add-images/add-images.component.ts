@@ -71,7 +71,12 @@ export class AddImagesComponent implements OnInit {
     data.append('filesData', JSON.stringify(this.imageData));
     this.service.postImages(data).subscribe((result: any) => {
       console.log('Response data', result);
-      this.state = result.success ? 2 : 3;
+      if (result.success) {
+        this.state = 2;
+        location.reload();
+      } else {
+        this.state = 3;
+      }
     });
   }
 
