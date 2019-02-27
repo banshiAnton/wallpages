@@ -18,14 +18,16 @@
           <div class="form-group">
             <input type="file" class="form-control-file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles required>
           </div>
-          <div class="date-picker">
-            <owl-date-time-inline stepMinute="30" [(ngModel)]="selectedDate"></owl-date-time-inline>
-          </div>
           <button type="submit" class="btn btn-primary btn-lg">ОТПРАВИТЬ</button>
 
           <app-alert-div [state]="state"></app-alert-div>
           
         </form>
+
+        <div class="date-picker">
+          <owl-date-time-inline stepMinute="30" [(ngModel)]="selectedDate"></owl-date-time-inline>
+        </div>
+
       </div>
   </div>
     

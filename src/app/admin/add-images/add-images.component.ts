@@ -6,7 +6,7 @@ import { Tag } from '../tag';
 @Component({
   selector: 'app-add-images',
   templateUrl: './add-images.component.html',
-  styleUrls: ['./add-images.component.css']
+  styleUrls: ['./add-images.component.css'],
 })
 export class AddImagesComponent implements OnInit {
 
@@ -24,7 +24,7 @@ export class AddImagesComponent implements OnInit {
 
   state = 0;
 
-  selectedDate = null;
+  selectedDate: Date;
 
   constructor(private service: ServiceService) {
     this.service.getCategories().subscribe((data: any) => {
@@ -65,6 +65,7 @@ export class AddImagesComponent implements OnInit {
     });
 
     const date = this.selectedDate ?  (((new Date(this.selectedDate)).getTime() / 1000) + '') : ( ( Math.ceil(Date.now() / 1000) + 60 * 5 ) + '' );
+    console.log('Date', this.selectedDate, date, new Date(this.selectedDate), +(new Date(this.selectedDate)));
     data.append('publish_date', date);
 
     data.append('filesData', JSON.stringify(this.imageData));

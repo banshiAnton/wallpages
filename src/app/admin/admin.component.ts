@@ -12,8 +12,6 @@ export class AdminComponent implements OnInit {
   isAuth = false;
   links: any;
 
-  selectedDate = null;
-
   constructor(private service: ServiceService, private cookieService: CookieService) { }
 
   ngOnInit() {
