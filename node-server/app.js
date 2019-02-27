@@ -5,9 +5,9 @@ const cookieParser = require('cookie-parser')
 const path = require('path');
 const fs = require('fs');
 
-if (!fs.existsSync(path.join(__dirname, './public/images'))){
-    fs.mkdirSync(path.join(__dirname, './public/images'));
-    fs.mkdirSync(path.join(__dirname, './public/images/small'));
+if (!fs.existsSync(path.join(__dirname, './static/images'))){
+    fs.mkdirSync(path.join(__dirname, './static/images'));
+    fs.mkdirSync(path.join(__dirname, './static/images/small'));
 }
 
 if(fs.existsSync(__dirname + '/.env')) {
@@ -25,7 +25,7 @@ const apiRouter = require('./routes/api');
 const authRouter = require('./routes/auth');
 
 app.use(express.static(__dirname + '/public/'));
-app.use(express.static(__dirname + '/images/'));
+app.use(express.static(__dirname + '/static/'));
 
 app.use(cookieParser());
 

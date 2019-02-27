@@ -43,7 +43,7 @@ router.get('/', makeApiQuery, function (req, res, next) {
         arr.push({
                 id: item.get('id'),
                 url: `${pathToStatics}${item.get('file')}`,
-                minimizeUrl: fs.existsSync(path.join(__dirname, '../public', pathToStatics, 'small', item.get('file'))) ? `${pathToStatics}small/${item.get('file')}` : `${pathToStatics}${item.get('file')}`,
+                minimizeUrl: fs.existsSync(path.join(__dirname, '../static', pathToStatics, 'small', item.get('file'))) ? `${pathToStatics}small/${item.get('file')}` : `${pathToStatics}${item.get('file')}`,
                 tags: item.get('tags'),
                 category_id: item.get('category_id')
             })
@@ -53,7 +53,7 @@ router.get('/', makeApiQuery, function (req, res, next) {
 });
 
 router.post('/upload', isAuth(), isInit(), parseFilesData, groupFileDataToFiles, function (req, res, next) {
-    saveImages(path.join(__dirname, `../public/images`), req.files.images, {Images, Posts, Categories}, { categOps: req.categOps, publish_date: req.body.publish_date, url: `${req.protocol}://${req.host}/images/` })
+    saveImages(path.join(__dirname, `../static/images`), req.files.images, {Images, Posts, Categories}, { categOps: req.categOps, publish_date: req.body.publish_date, url: `${req.protocol}://${req.host}/images/` })
     .then(results => {
         console.log('End response END', results);
         res.json({success: results.save && results.social && results.db.success, results});
