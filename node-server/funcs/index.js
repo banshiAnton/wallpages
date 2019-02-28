@@ -29,6 +29,10 @@ const Op = Sequelize.Op;
 
 let parallel = require('promise-parallel');
 
+let appStr = `
+Наше приложение в Google play market:
+${process.env.appUrl}`;
+
 let getTagsStr = function (images, sep = '') {
 
     let tags = [];
@@ -368,12 +372,14 @@ let postOK = async function(images, ops) {
             "publishAtMs": (+ops.publish_date * 1000) + ''
         };
 
-        if((text.length > 1) && text) {
+        text += appStr;
+
+        // if((text.length > 1) && text) {
             at.media.push({
                 "type": "text",
                 "text": text
             })
-        }
+        // }
 
         for(let id in data.photos) {
             // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token);
@@ -466,6 +472,8 @@ let postVK = async function(images, ops) {
 
     // console.log('Tags************\n\n', tags);
     let message = getTagsStr(images);
+
+    message += appStr;
 
     if( ( +ops.publish_date + 10 ) < ( Date.now() / 1000 ) ) {
         ops.publish_date = (( Date.now() / 1000 ) + 10).toFixed(0);
@@ -569,6 +577,8 @@ let postFBWall = async function(records) {
         }
     }
 
+    body.message += appStr;
+
     console.log('FB Post BODY', body);
 
     return graphPost(`/${process.env.fbGid}/feed`, body)
@@ -662,6 +672,11 @@ let postTelegram = async function(records, pathToFolder) {
                         filename: img.name,
                         contentType: img.mimetype
                     });
+                    formDoc.append('reply_markup', JSON.stringify({
+                        inline_keyboard: [[{text: 'Наше приложение', url: process.env.appUrl}]]
+                    }))
+
+                    //process.env.appUrl
 
                     let resPhoto = await fetch(`https://api.telegram.org/bot${process.env.telToken}/sendPhoto`, {
                         method: "POST",
