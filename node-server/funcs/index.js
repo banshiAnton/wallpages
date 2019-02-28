@@ -793,6 +793,8 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
 
     let results = Object.create(null);
 
+    results.save = [];
+
     // console.log(imagesArr);
     let filesSaved = [];
     for(let image of imagesArr) {
@@ -801,7 +803,7 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
             if(res.success) {
                 res.file = image.name;
                 filesSaved.push(image);
-                results.save = res;
+                results.save.push(res);
             } else {
                 res.message = 'Проблема сохранении изображения'
                 throw res;
