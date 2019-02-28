@@ -18,10 +18,6 @@
           <div class="form-group">
             <input type="file" class="form-control-file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles required>
           </div>
-          <button type="submit" class="btn btn-primary btn-lg">ОТПРАВИТЬ</button>
-
-          <app-alert-div [state]="state"></app-alert-div>
-          
         </form>
 
         <div class="date-picker">
@@ -39,4 +35,9 @@
       <app-image-item class="col-md-8 col-12" [inOne]="{inOne: inOne, category: oneCategory}" [categories]="categories" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
     </div>
   </div>
+
+  <button type="submit" class="btn btn-primary btn-lg">ОТПРАВИТЬ</button>
+
+  <app-alert-div [state]="state"></app-alert-div>
+
 </div>

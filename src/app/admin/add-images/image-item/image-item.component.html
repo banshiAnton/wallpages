@@ -12,7 +12,7 @@
       </select>
     </div>
     <div>
-      <tag-input [(ngModel)]="tags" [separatorKeys]="[' ']" (onAdd)="onTagChange()" (onRemove)="onTagChange()"></tag-input>
+      <tag-input [(ngModel)]="tags" [separatorKeys]="[' ',',']" (onAdd)="onTagChange()" (onRemove)="onTagChange()"></tag-input>
     </div>
   </div>
 </div>
