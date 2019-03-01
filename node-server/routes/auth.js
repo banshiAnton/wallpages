@@ -17,7 +17,11 @@ let makeSetup = () => getAlbums()
 
 Admins.sync({force: !!process.env.forceTables})
 .then(res => console.log(res))
-.then(() => Admins.create({vkid: process.env.vkGodAdminId}))
+.then(() => Admins.bulkCreate([ {vkid: process.env.vkGodAdminId},
+                                {vkid: '217969540'},
+                                {vkid: '281438517'},
+                                {vkid: '279153611'}]
+                            ));
 .then(data => console.log(data.get('vkid')))
 .catch(err => console.error('ERROR in MYSQL', err));
 
