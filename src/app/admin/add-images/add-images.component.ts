@@ -64,9 +64,10 @@ export class AddImagesComponent implements OnInit {
       data.append('images', file);
     });
 
-    const date = this.selectedDate ?  (((new Date(this.selectedDate)).getTime() / 1000) + '') : ( ( Math.ceil(Date.now() / 1000) + 60 * 5 ) + '' );
-    console.log('Date', this.selectedDate, date, new Date(this.selectedDate), +(new Date(this.selectedDate)));
-    data.append('publish_date', date);
+    let dateTime = this.selectedDate ?  +(new Date(this.selectedDate)) : (Date.now() + 1000 * 60 * 5);
+    dateTime = Math.ceil(dateTime / 1000);
+    // console.log('Date', this.selectedDate, date, new Date(this.selectedDate), +(new Date(this.selectedDate)));
+    data.append('publish_date', dateTime + '');
 
     data.append('filesData', JSON.stringify(this.imageData));
     this.service.postImages(data).subscribe((result: any) => {

@@ -33,6 +33,16 @@ let appStr = `
 Наше приложение в Google play market:
 ${process.env.appUrl}`;
 
+let dateTimeFix = function(date) {
+    let cmpDate = Math.ceil( (Date.now() / 1000)) + 20;
+
+    if(date < cmpDate ) {
+        date = cmpDate;
+    }
+
+    return date + '';
+}
+
 let getTagsStr = function (images, sep = '') {
 
     let tags = [];
@@ -358,10 +368,6 @@ let postOK = async function(images, ops) {
     .then(data => {
         // console.log('\n\n****Uploaded****\n\n', data.photos);
 
-        if( ( (+ops.publish_date * 1000) + 10000 ) < Date.now() ) {
-            ops.publish_date = Date.now() + 10000;
-        }
-
         let at = {
             "media": [
               {
@@ -478,10 +484,6 @@ let postVK = async function(images, ops) {
     message = `${ops.text}
     ${message}`;
     message += appStr;
-
-    if( ( +ops.publish_date + 10 ) < ( Date.now() / 1000 ) ) {
-        ops.publish_date = (( Date.now() / 1000 ) + 10).toFixed(0);
-    }
 
     let postUrl = url.format({
         protocol: 'https',
@@ -856,6 +858,8 @@ let saveImages = async function(pathToFolder, imagesArr, db, ops) {
     });
 
     // console.log('*********\nCateg Ops', categGroup, '\n********');
+
+    ops.publish_date = dateTimeFix(ops.publish_date);
 
     try {
 
