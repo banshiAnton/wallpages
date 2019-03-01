@@ -77,15 +77,6 @@ router.get('/lastTokenUpd', isInit(), function(req, res, next) {
     res.json({success: true, ok: process.env.okTokeLastUpd, fb: process.env.fbTokeLastUpd});
 });
 
-// router.post('/vktoken', isAuth(), function(req, res, next) {
-//     //vktoken=a11acee1a6e2c1bde58d2e0e67b15e229bd4f3ad9f26da0b36345149f01ab6948e242d358249b2834d208
-//     if(process.env.vktoken) {
-//         res.json({success: false, message: 'Уже установлен'});
-//     } else {
-//         process.env.vktoken = req.body.token;
-//         res.json({success: true});
-//     }
-// });
 
 router.post('/add/category', isAuth(), function(req, res, next) {
 
@@ -107,7 +98,6 @@ router.put('/category/:id', isAuth(), isInit(), function(req, res, next) {
     Categories.findById(req.params.id)
     .then(categ => {
         return categ.update({
-            name: req.body.name,
             tags: req.body.tags
         })
     }).then(data => {

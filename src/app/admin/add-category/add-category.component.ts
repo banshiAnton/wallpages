@@ -12,7 +12,7 @@ export class AddCategoryComponent implements OnInit {
 
   tags = [];
   categories = [];
-  selected = {name: null, tags: [], id: null};
+  selected = {tags: [], id: null};
   addName: string;
 
   addState = 0;
@@ -66,7 +66,7 @@ export class AddCategoryComponent implements OnInit {
 
     this.updState = 1;
 
-    this.selected.name = this.selected.name.toLowerCase();
+    // this.selected.name = this.selected.name.toLowerCase();
 
     console.log('On updata', this.selected);
     this.service.updateCategory(this.selected).subscribe((data: any) => {
