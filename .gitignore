@@ -8,6 +8,7 @@
 /node-server/.env
 /node-server/scripts
 /static/*/
+/e2e
 
 
 # dependencies
