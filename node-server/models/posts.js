@@ -4,6 +4,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        text: {
+            type: DataTypes.STRING
+        },
         jsonData: { type: DataTypes.TEXT, allowNull: false,
             validate: {
                 notEmpty: {

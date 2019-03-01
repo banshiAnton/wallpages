@@ -15,7 +15,15 @@ div[role="alert"] {
 }
 
 .date-picker {
-    padding: 5% 0 7% 0;
+    padding: 5% 0 3% 0;
+}
+
+div input[type="file"] {
+    margin-top: 60px;
+}
+
+button[type="submit"] {
+    margin-top: 30px;
 }
 
 @media screen and (max-width: 400px) {

@@ -372,6 +372,8 @@ let postOK = async function(images, ops) {
             "publishAtMs": (+ops.publish_date * 1000) + ''
         };
 
+        text = `${ops.text}
+${text}`;
         text += appStr;
 
         // if((text.length > 1) && text) {
@@ -473,6 +475,8 @@ let postVK = async function(images, ops) {
     // console.log('Tags************\n\n', tags);
     let message = getTagsStr(images);
 
+    message = `${ops.text}
+    ${message}`;
     message += appStr;
 
     if( ( +ops.publish_date + 10 ) < ( Date.now() / 1000 ) ) {
@@ -568,6 +572,7 @@ let postFBWall = async function(records) {
     let i = 0;
 
     for(let rec of records) {
+        body.message += rec.get('text') + '\n';
         rec = rec.get('jsonData');
         body.message += getTagsStr(rec, ' ') + ' ';
         for(let categ in rec) {
@@ -652,8 +657,6 @@ let postTelegram = async function(records, pathToFolder) {
                     let file = await readFile(path.join(pathToFolder, '/', img.name));
 
                     let caption = rec[categ].tags.concat(img.tags).map(tag => '#' + tag).join(' ');
-
-
 
                     let formPhoto = new FormData();
 
@@ -793,7 +796,7 @@ let postOKAlbum = async function(records, pathToFolder) {
 
 let postToDB = async function(images, Post, ops) {
     console.log('\n\n*****POST TO DB *****\n\n', images, JSON.stringify(images));
-    return Post.create({pTime: ops.publish_date, jsonData: images})
+    return Post.create({pTime: ops.publish_date, jsonData: images, text: ops.text})
     .then(res => {
         console.log(res.get('jsonData'));
         return {res, success: true}

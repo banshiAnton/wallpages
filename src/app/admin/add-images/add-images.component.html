@@ -1,12 +1,16 @@
 <div class="container-fluid">
   <div class="main-form row">
       <div class="col-md-6 col-12">
-        <form enctype="application/x-www-form-urlencoded" (submit)="onSubmit($event, form)" #form>
+        <form id="mainform" enctype="application/x-www-form-urlencoded" (submit)="onSubmit($event, form)" #form>
+          <div class="form-group">
+            <label for="comment">Текст</label>
+            <textarea class="form-control" rows="4" name="text"></textarea>
+          </div>
           <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" [(ngModel)]="inOne" [ngModelOptions]="{standalone: true}">
-                  Загрузить всё в одну категорию ?
-              </label>
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" [(ngModel)]="inOne" [ngModelOptions]="{standalone: true}">
+                Загрузить всё в одну категорию ?
+            </label>
           </div>
           <div class="form-group" *ngIf="inOne">
             <label>Выберите категорию</label>
@@ -16,7 +20,7 @@
             </select>
           </div>
           <div class="form-group">
-            <input type="file" class="form-control-file" multiple name="images" (change)="onChange(inputFiles)" #inputFiles required>
+            <input type="file" class="form-control-file" multiple="multiple" name="images" accept="image/*" (change)="onChange(inputFiles)" #inputFiles required>
           </div>
         </form>
 
@@ -36,7 +40,7 @@
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary btn-lg">ОТПРАВИТЬ</button>
+  <button type="submit" form="mainform" class="btn btn-primary btn-lg">ОТПРАВИТЬ</button>
 
   <app-alert-div [state]="state"></app-alert-div>
 

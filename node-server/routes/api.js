@@ -53,7 +53,8 @@ router.get('/', makeApiQuery, function (req, res, next) {
 });
 
 router.post('/upload', isAuth(), isInit(), parseFilesData, groupFileDataToFiles, function (req, res, next) {
-    saveImages(path.join(__dirname, `../../static/images`), req.files.images, {Images, Posts, Categories}, { categOps: req.categOps, publish_date: req.body.publish_date, url: `${req.protocol}://${req.host}/images/` })
+    console.log('Text', req.body);
+    saveImages(path.join(__dirname, `../../static/images`), req.files.images, {Images, Posts, Categories}, { text: req.body.text ? req.body.text.trim() : '', categOps: req.categOps, publish_date: req.body.publish_date, url: `${req.protocol}://${req.host}/images/` })
     .then(results => {
         console.log('End response END', results);
         res.json({success: results.social && results.db.success, results});

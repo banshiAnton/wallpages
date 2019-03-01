@@ -6,7 +6,7 @@
         </div>
         <div class="form-group">
             <label>Теги категории</label>
-            <tag-input [(ngModel)]="tags" [separatorKeys]="[' ',',']"></tag-input>
+            <tag-input [(ngModel)]="tags" [separatorKeyCodes]="[13, 32]"></tag-input>
         </div>
         <button type="submit" (click)="onAdd()" class="btn btn-primary">Добавить Категорию</button>
         <app-alert-div [state]="addState"></app-alert-div>
@@ -28,7 +28,7 @@
         </div>
         <div class="form-group tags">
             <label>Теги категории</label>
-            <tag-input [(ngModel)]="selected.tags" [separatorKeys]="[' ',',']"></tag-input>
+            <tag-input [(ngModel)]="selected.tags" [separatorKeyCodes]="[13, 32]"></tag-input>
         </div>
         <button type="button" (click)="onUpdata()" class="btn btn-primary">Обновить категорию</button>
         <!-- <button type="button" (click)="onDelete()" class="btn btn-danger">Удалить категорию</button> -->
