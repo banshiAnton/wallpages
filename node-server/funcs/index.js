@@ -34,7 +34,7 @@ let appStr = `
 ${process.env.appUrl}`;
 
 let dateTimeFix = function(date) {
-    let cmpDate = Math.ceil( (Date.now() / 1000)) + 20;
+    let cmpDate = Math.ceil( (Date.now() / 1000)) + 70;
 
     if(date < cmpDate ) {
         date = cmpDate;
