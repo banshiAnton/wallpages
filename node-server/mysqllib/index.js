@@ -13,7 +13,7 @@ const Posts = sequelize.import(path.join(__dirname, '../models/posts'));
 let force = !!process.env.forceTables;
 
 Posts.sync({force})
-.then(() => sequelize.query('DROP TABLE `images`'))
+.then(() => sequelize.query('DROP TABLE IF EXISTS `images`'))
 .then(() => Categories.sync({force}))
 .then(() => Images.sync({force}))
 .then(() => {
