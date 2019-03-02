@@ -22,6 +22,7 @@ export class HomeComponent implements OnInit {
     this.service.getCategories().subscribe((data: any) => {
       console.log('Categs', data);
       if (data.success) {
+        data.categories = data.categories.map(categ => categ.name[0].toUpperCase() + categ.name.slice(1));
         this.categories = data.categories;
       }
     });
