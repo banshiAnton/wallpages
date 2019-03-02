@@ -4,7 +4,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-            allowNull: false
         },
         vkid: { type: DataTypes.STRING, unique: true, allowNull: false,
             validate: {

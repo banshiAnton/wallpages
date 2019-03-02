@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-            allowNull: false
         },
         file: { type: DataTypes.STRING, unique: true, allowNull: false,
             validate: {

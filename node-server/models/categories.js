@@ -4,7 +4,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-            allowNull: false
         },
         vkId: {
             type: DataTypes.STRING,unique: false, allowNull: false, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
