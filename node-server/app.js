@@ -10,9 +10,9 @@ if (!fs.existsSync(path.join(__dirname, '../static/images'))){
     fs.mkdirSync(path.join(__dirname, '../static/images/small'));
 }
 
-if(fs.existsSync(__dirname + '/.env')) {
+if(fs.existsSync(path.join(__dirname, '..', '.env'))) {
     const env = require('node-env-file');
-    env(__dirname + '/.env');
+    env(path.join(__dirname, '..', '.env'));
 }
 
 // console.log('Folders', fs.readdirSync(path.join('/')));

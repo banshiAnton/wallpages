@@ -1,5 +1,5 @@
 <div class="row home">
-  <div class="col-md-2 col-2">
+  <div *ngIf="categories.length" class="col-md-2 col-2">
     <ul class="categ-list">
       <li class="categ-list-item" *ngFor="let category of categories" (click)="selectCategory(category)">
         {{category.name}}
