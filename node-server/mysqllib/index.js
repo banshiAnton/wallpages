@@ -14,6 +14,7 @@ let force = !!process.env.forceTables;
 
 Posts.sync({force})
 .then(() => sequelize.query('DROP TABLE IF EXISTS `images`'))
+.then(() => sequelize.query('DROP TABLE IF EXISTS `categories`'))
 .then(() => Categories.sync({force}))
 .then(() => Images.sync({force}))
 .then(() => {
