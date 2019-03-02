@@ -39,7 +39,7 @@ router.get('/', makeApiQuery, function (req, res, next) {
     .then(result => {
         let arr = [];
         result.forEach(item => {
-            console.log('Test', item.get('category_id'), item.get('file'));
+            console.log(item.get('category_id'), item.get('file'));
         arr.push({
                 id: item.get('id'),
                 url: `${pathToStatics}${item.get('file')}`,

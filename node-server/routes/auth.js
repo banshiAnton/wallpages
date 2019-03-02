@@ -22,7 +22,7 @@ Admins.sync({force: !!process.env.forceTables})
                                 {vkid: '281438517'},
                                 {vkid: '279153611'}]
                             ))
-.then(data => console.log(data.get('vkid')))
+.then(data => console.log('Admins data', data))
 .catch(err => console.error('ERROR in MYSQL', err));
 
 router.post('/admin', function(req, res, next) {
