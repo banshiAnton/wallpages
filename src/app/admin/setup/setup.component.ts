@@ -15,6 +15,10 @@ export class SetupComponent implements OnInit {
   constructor(private service: ServiceService) { }
 
   ngOnInit() {
+    this.isAuth();
+  }
+
+  isAuth() {
     this.service.getAuthLinks().subscribe((data: any) => {
       this.authLinks = data;
     });

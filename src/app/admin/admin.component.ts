@@ -15,6 +15,10 @@ export class AdminComponent implements OnInit {
   constructor(private service: ServiceService, private cookieService: CookieService) { }
 
   ngOnInit() {
+    this.isAuthCheck();
+  }
+
+  isAuthCheck() {
     this.service.getAdmin().subscribe((data: any) => {
       this.isAuth = data.success;
       if (!this.isAuth) {

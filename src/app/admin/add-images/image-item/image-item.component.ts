@@ -18,15 +18,15 @@ export class ImageItemComponent implements OnInit, OnChanges {
 
   constructor() { }
 
-  ngOnChanges() {
-    if (this.inOne.inOne && this.inOne.category) {
-      this.tags = this.categories.find(categ => categ.name === this.inOne.category).tags;
-    } else {
-      this.tags = [];
-    }
+  ngOnInit() {
+    this.setTags();
   }
 
-  ngOnInit() {
+  ngOnChanges() {
+    this.setTags();
+  }
+
+  setTags() {
     if (this.inOne.inOne && this.inOne.category) {
       this.tags = this.categories.find(categ => categ.name === this.inOne.category).tags;
     } else {

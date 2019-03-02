@@ -16,6 +16,10 @@ export class AddAdminComponent implements OnInit {
   constructor(private service: ServiceService) { }
 
   ngOnInit() {
+    this.isAuth();
+  }
+
+  isAuth() {
     this.service.getAdmins().subscribe((data: any) => {
       console.log(data);
       if (data.success) {

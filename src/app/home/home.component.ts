@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit {
 
   loadCategoris() {
     this.service.getCategories().subscribe((data: any) => {
+      console.log('Categs', data);
       if (data.success) {
         this.categories = data.categories;
       }

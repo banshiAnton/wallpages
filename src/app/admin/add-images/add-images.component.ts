@@ -27,6 +27,14 @@ export class AddImagesComponent implements OnInit {
   selectedDate: Date;
 
   constructor(private service: ServiceService) {
+
+  }
+
+  ngOnInit() {
+    this.getCategories();
+  }
+
+  getCategories() {
     this.service.getCategories().subscribe((data: any) => {
       if (data.success) {
         this.categories = data.categories.map(categ => {
@@ -35,9 +43,6 @@ export class AddImagesComponent implements OnInit {
         });
       }
     });
-  }
-
-  ngOnInit() {
   }
 
   onSubmit(e, form) {
