@@ -11,7 +11,7 @@
 .categ-list {
     list-style: none;
     font-size: 1.5em;
-    padding-left: 10%;
+    padding: 0;
     color: white;
 }
 
