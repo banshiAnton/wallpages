@@ -5,7 +5,7 @@
 /tmp
 /out-tsc
 /public
-/node-server/.env
+.env
 /node-server/scripts
 /static/*/
 /e2e
