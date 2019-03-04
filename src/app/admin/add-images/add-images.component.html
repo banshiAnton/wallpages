@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="main-form row">
-      <div class="col-md-6 col-12">
+      <div class="col-md-4 col-12">
         <form id="mainform" enctype="application/x-www-form-urlencoded" (submit)="onSubmit($event, form)" #form>
           <div class="form-group">
             <label for="comment">Текст</label>
@@ -37,6 +37,17 @@
   <div>
     <div *ngFor="let file of imagesList" class="row">
       <app-image-item class="col-md-8 col-12" [inOne]="{inOne: inOne, category: oneCategory}" [categories]="categories" [file]="file" (selected)="onImgSelect($event)"></app-image-item>
+    </div>
+  </div>
+
+  <div class="main-form row">
+    <div class="form-group" class="col-md-4 col-12">
+      <label>Выберите приложение</label>
+      <select class="form-control" form="mainform" name="appLinkId">
+        <option selected value="0">Full HD Обои для телефона</option>
+        <option value="1">Авто обои Full HD Машины</option>
+        <option value="2">Super Amoled - Обои Full HD энергосберегающие</option>
+      </select>
     </div>
   </div>
 
