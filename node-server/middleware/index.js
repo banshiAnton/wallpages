@@ -10,7 +10,7 @@ const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
 const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
 const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
 
-let makeApiQuery = function(req, res, next) {
+const makeApiQuery = function(req, res, next) {
     
     let limOps = {};
     let where = {};
@@ -55,12 +55,12 @@ let makeApiQuery = function(req, res, next) {
     next();
 }
 
-let parseFilesData = function (req, res, next) {
+const parseFilesData = function (req, res, next) {
     req.body.filesData = JSON.parse(req.body.filesData);
     next();
 }
 
-let groupFileDataToFiles = async function(req, res, next) {
+const groupFileDataToFiles = async function(req, res, next) {
 
     try {
         console.log(req.body.filesData, 'Files', req.files);
@@ -102,7 +102,7 @@ let groupFileDataToFiles = async function(req, res, next) {
     }
 }
 
-let errorHandle = function(err, req, res, next) {
+const errorHandle = function(err, req, res, next) {
     let obj = {sucess: false, errors: []}
     if(err instanceof sequelizeBaseError) {
         for(let error of err.errors) {
@@ -115,7 +115,7 @@ let errorHandle = function(err, req, res, next) {
     }
 }
 
-let isInit = function() {
+const isInit = function() {
     return function(req, res, next) {
         if(process.env.isInit) {
             return next();
@@ -125,7 +125,7 @@ let isInit = function() {
     }
 }
 
-let isAuth = function(isOnlyGodAdmin = false) {
+const isAuth = function(isOnlyGodAdmin = false) {
     return function(req, res, next) {
         if(req.cookies.admin_data) {
 

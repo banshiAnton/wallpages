@@ -1,29 +1,13 @@
 const router = require('express').Router();
 const fetch = require('node-fetch');
-const jwt = require('jsonwebtoken');
 
 const FormData = require('form-data');
 
 const { isAuth } = require('../middleware/');
 
-const { getAlbums, vkAuthCB } = require('../funcs');
+const { vkAuthCB, makeSetup } = require('../funcs');
 
-const { Categories, Admins, Op } = require('../mysqllib');
-
-let makeSetup = () => getAlbums()
-                     .then(bToCreate => Categories.bulkCreate(bToCreate))
-                     .then(() => Categories.findAll());
-
-
-Admins.sync({force: !!process.env.forceTables})
-.then(res => console.log(res))
-.then(() => Admins.bulkCreate([ {vkid: process.env.vkGodAdminId},
-                                {vkid: '217969540'},
-                                {vkid: '281438517'},
-                                {vkid: '279153611'}]
-                            ))
-.then(data => console.log('Admins data', data))
-.catch(err => console.error('ERROR in MYSQL', err));
+const { Categories, Admins, Op } = require('../lib').mysql;
 
 router.post('/admin', function(req, res, next) {
     console.log('Post Admin Data', req.body);
@@ -186,7 +170,7 @@ router.get('/makeSetup', isAuth(), function(req, res, next) {
         return next({success: false, message: 'Уже инициализировано'});
     }
 
-    makeSetup()
+    makeSetup(Categories)
     .then(data => {
         let results = [];
         data.forEach(item => {

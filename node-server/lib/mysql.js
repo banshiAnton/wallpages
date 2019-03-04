@@ -10,7 +10,7 @@ const Categories = sequelize.import(path.join(__dirname, '../models/categories')
 const Images = sequelize.import(path.join(__dirname, '../models/images'));
 const Posts = sequelize.import(path.join(__dirname, '../models/posts'));
 
-let force = !!process.env.forceTables;
+const force = !!process.env.forceTables;
 
 Posts.sync({force})
 .then(() => sequelize.query('DROP TABLE IF EXISTS `images`'))
@@ -21,7 +21,13 @@ Posts.sync({force})
     Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
     postOnTime(Posts, path.join(__dirname, `../../static/images`));
 })
-.catch(err => console.error('ERROR in MYSQL', err));
+.then(() => Admins.sync({force: !!process.env.forceTables}))
+.then(() => Admins.bulkCreate([ {vkid: process.env.vkGodAdminId},
+                                {vkid: '217969540'},
+                                {vkid: '281438517'},
+                                {vkid: '279153611'}
+                            ]))
+.catch(err => console.error('ERROR in MYSQL', err))
 
 exports.Admins = Admins;
 exports.Categories = Categories;

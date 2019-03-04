@@ -7,7 +7,7 @@ const { categoryGetRes, saveImages, createAlbum } = require('../funcs');
 
 const { parseFilesData, groupFileDataToFiles, makeApiQuery, isAuth, isInit } = require('../middleware');
 
-const { Posts, Images, Categories } = require('../mysqllib');
+const { Posts, Images, Categories } = require('../lib').mysql;
 
 const router = require('express').Router();
 

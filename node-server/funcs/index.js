@@ -27,13 +27,14 @@ const graphPost = util.promisify(graph.post);
 
 const Op = Sequelize.Op;
 
-let parallel = require('promise-parallel');
+const parallel = require('promise-parallel');
 
 let appStr = `
 Наше приложение в Google play market:
+
 ${process.env.appUrl}`;
 
-let dateTimeFix = function(date) {
+const dateTimeFix = function(date) {
     let cmpDate = Math.ceil( (Date.now() / 1000)) + 70;
 
     if(date < cmpDate ) {
@@ -43,7 +44,7 @@ let dateTimeFix = function(date) {
     return date + '';
 }
 
-let getTagsStr = function (images, sep = '') {
+const getTagsStr = function (images, sep = '') {
 
     let tags = [];
 
@@ -55,7 +56,7 @@ let getTagsStr = function (images, sep = '') {
     return tags.map(tag => '#' + tag).join(sep);
 }
 
-let getSigOk = function(obj, token) {
+const getSigOk = function(obj, token) {
     let sec = md5(token + process.env.okprKey);
     let baseStr = '';
     for(let param of Object.keys(obj).sort()) {
@@ -67,7 +68,7 @@ let getSigOk = function(obj, token) {
     return md5(baseStr);
 }
 
-let vkAuthCB = function(data, Admins) {
+const vkAuthCB = function(data, Admins) {
     if(!data || !data.user_id) {
         return Promise.reject('vk data error');
     }
@@ -91,7 +92,7 @@ let okAppOprions = {
 
 ok.setOptions(okAppOprions);
 
-let categoryGetRes = function(seqRes) {
+const categoryGetRes = function(seqRes) {
     let res = {};
     res.categories = seqRes.map(category => {
         return category.get('clientData');
@@ -100,7 +101,7 @@ let categoryGetRes = function(seqRes) {
     return Promise.resolve(res);
 }
 
-let imgCutResolution = function (image, pathToFolder) {
+const imgCutResolution = function (image, pathToFolder) {
     return function(metadata) {
 
             const mulResolution = metadata.width * metadata.height;
@@ -140,7 +141,7 @@ let imgCutResolution = function (image, pathToFolder) {
     }
 };
 
-let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
+const makePromiseToSave = function (pathToFolder, image, ImagesDb) {
 
     return new Promise((res, rej) => {
             if(!image.mimetype.match(/^image\//)) throw new Error('Type must be image');
@@ -159,7 +160,7 @@ let makePromiseToSave = function (pathToFolder, image, ImagesDb) {
         })
 }
 
-let getAlbumsOK = function() {
+const getAlbumsOK = function() {
     // console.log(process.env.okRToken);
     return okRefresh(process.env.okRToken)
     .then(data => {
@@ -168,19 +169,19 @@ let getAlbumsOK = function() {
     })
 }
 
-let getAlbumsFB = function() {
+const getAlbumsFB = function() {
     // console.log(process.env.fbToken);
     graph.setAccessToken(process.env.fbToken);
     return graphGet(`/${process.env.fbGid}/albums`).catch(err => err);
 }
 
 
-let getAlbumsVK = function() {
+const getAlbumsVK = function() {
     let url = `https://api.vk.com/method/photos.getAlbums?&owner_id=${-process.env.vkgid}&access_token=${process.env.vktoken}&v=5.92`;
     return fetch(url).then(data => data.json()).catch(err => err);
 }
 
-let getAlbums = async function() {
+const getAlbums = async function() {
 
     let tmp = {};
 
@@ -230,7 +231,11 @@ let getAlbums = async function() {
 
 };
 
-let createAlbumVK = function(title) {
+const makeSetup = (Categories) => getAlbums()
+                     .then(bToCreate => Categories.bulkCreate(bToCreate))
+                     .then(() => Categories.findAll());
+
+const createAlbumVK = function(title) {
 
     let urlCA = url.format({
         protocol: 'https',
@@ -254,7 +259,7 @@ let createAlbumVK = function(title) {
             });
 }
 
-let createAlbumFB = function(name) {
+const createAlbumFB = function(name) {
 
     graph.setAccessToken(process.env.fbToken);
 
@@ -267,7 +272,7 @@ let createAlbumFB = function(name) {
            });
 }
 
-let createAlbumOK = function(title) {
+const createAlbumOK = function(title) {
 
     return okRefresh(process.env.okRToken)
     .then(data => ok.setAccessToken(data.access_token))
@@ -298,7 +303,7 @@ let createAlbumOK = function(title) {
     })
 }
 
-let createAlbum = async function(name, tags, Categories) {
+const createAlbum = async function(name, tags, Categories) {
 
     let check = await Categories.findAll({where: {name}}).then(data => {
         return {success: !!data};
@@ -332,7 +337,7 @@ let createAlbum = async function(name, tags, Categories) {
 
 }
 
-let postOK = async function(images, ops) {
+const postOK = async function(images, ops) {
     // console.log('OK start', images);
 
     let allImages = [];
@@ -428,7 +433,7 @@ ${text}`;
     });
 }
 
-let savePhotoVK = function(imgGroup) {
+const savePhotoVK = function(imgGroup) {
 
     let form = new FormData();
 
@@ -463,7 +468,7 @@ let savePhotoVK = function(imgGroup) {
 }
 
 
-let postVK = async function(images, ops) {
+const postVK = async function(images, ops) {
 
     // console.log('VK start', images);
 
@@ -514,7 +519,7 @@ let postVK = async function(images, ops) {
     });
 }
 
-let postFBAlbum = async function(images, ops) {
+const postFBAlbum = async function(images, ops) {
 
     let prArr = [];
 
@@ -566,7 +571,7 @@ let postFBAlbum = async function(images, ops) {
            })     
 }
 
-let postFBWall = async function(records) {
+const postFBWall = async function(records) {
 
     let body = {};
     body.message = '';
@@ -592,7 +597,7 @@ let postFBWall = async function(records) {
     .catch(err => err);
 }
 
-let postOnTime = function(Posts, pathToFolder) {
+const postOnTime = function(Posts, pathToFolder) {
     
     let flag = true;
 
@@ -645,7 +650,7 @@ let postOnTime = function(Posts, pathToFolder) {
     }, 1000 * 15);
 }
 
-let postTelegram = async function(records, pathToFolder) {
+const postTelegram = async function(records, pathToFolder) {
 
     // console.log('Pre data', records);
 
@@ -719,7 +724,7 @@ let postTelegram = async function(records, pathToFolder) {
     }
 }
 
-let postOKAlbum = async function(records, pathToFolder) {
+const postOKAlbum = async function(records, pathToFolder) {
     // console.log('Data OK Albums', records);
 
     for(let rec of records) {
@@ -796,7 +801,7 @@ let postOKAlbum = async function(records, pathToFolder) {
     }
 }
 
-let postToDB = async function(images, Post, ops) {
+const postToDB = async function(images, Post, ops) {
     console.log('\n\n*****POST TO DB *****\n\n', images, JSON.stringify(images));
     return Post.create({pTime: ops.publish_date, jsonData: images, text: ops.text})
     .then(res => {
@@ -809,7 +814,7 @@ let postToDB = async function(images, Post, ops) {
     });
 }
 
-let saveImages = async function(pathToFolder, imagesArr, db, ops) {
+const saveImages = async function(pathToFolder, imagesArr, db, ops) {
 
     let results = Object.create(null);
 
@@ -903,3 +908,4 @@ exports.saveImages = saveImages;
 exports.createAlbum = createAlbum;
 exports.postOnTime = postOnTime;
 exports.getAlbums = getAlbums;
+exports.makeSetup = makeSetup;
