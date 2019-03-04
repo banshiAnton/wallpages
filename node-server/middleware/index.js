@@ -55,51 +55,48 @@ const makeApiQuery = function(req, res, next) {
     next();
 }
 
-const parseFilesData = function (req, res, next) {
-    req.body.filesData = JSON.parse(req.body.filesData);
-    next();
-}
 
-const groupFileDataToFiles = async function(req, res, next) {
+const parseFilesData = function(req, res, next) {
 
-    try {
-        console.log(req.body.filesData, 'Files', req.files);
+        let filesData = JSON.parse(req.body.filesData);
+        
+        console.log('Client data', filesData, 'Files', req.files.images);
 
-        let categOps = {};
+        // let categOps = {};
 
-        if(!Array.isArray(req.files.images)) req.files.images = [req.files.images];
+        if (!Array.isArray(req.files.images)) {
+            req.files.images = [req.files.images];
+        }
 
-        for(let file of req.files.images) {
+        for (let file of req.files.images) {
             
-            console.log('File',);
+            console.log('File', file);
 
-            file.category = req.body.filesData[file.name].category;
-            file.tags = req.body.filesData[file.name].tags;
+            file.category = filesData[file.name].category;
+            file.tags = filesData[file.name].tags;
 
-            if(file.name.lastIndexOf('.') === -1) {
+            if (file.name.lastIndexOf('.') === -1) {
                 throw { message: 'invalid ext' };
             }
 
             file.name = (randomstring.generate( 10 ) + file.name.slice( file.name.lastIndexOf('.') )).trim();
 
-            if(!categOps[file.category]) {
-                let categData = await Categories.findOne({where: {id: file.category}}).catch(err => err);
-                categOps[file.category] = {
-                    tags: categData.get('tags'),
-                    vkAid: categData.get('vkId'),
-                    okAid: categData.get('okId'),
-                    fbAid: categData.get('fbId')
-                }
-            }
+            // if(!categOps[file.category]) {
+            //     let categData = await Categories.findOne({where: {id: file.category}}).catch(err => err);
+            //     categOps[file.category] = {
+            //         tags: categData.get('tags'),
+            //         vkAid: categData.get('vkId'),
+            //         okAid: categData.get('okId'),
+            //         fbAid: categData.get('fbId')
+            //     }
+            // }
         }
 
-        req.categOps = categOps;
+        // req.categOps = categOps;
 
-        console.log('Transformed', req.files.images, '\n\nFiles **', categOps);
+        console.log('Transformed', req.files.images);
+
         next();
-    } catch(error) {
-        next({error});
-    }
 }
 
 const errorHandle = function(err, req, res, next) {
@@ -163,5 +160,4 @@ exports.isInit = isInit;
 exports.isAuth = isAuth;
 exports.makeApiQuery = makeApiQuery;
 exports.errorHandle = errorHandle;
-exports.groupFileDataToFiles = groupFileDataToFiles;
 exports.parseFilesData = parseFilesData;

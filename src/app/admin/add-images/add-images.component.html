@@ -14,7 +14,7 @@
           </div>
           <div class="form-group" *ngIf="inOne">
             <label>Выберите категорию</label>
-            <select class="form-control" [(ngModel)]="oneCategory" [ngModelOptions]="{standalone: true}">
+            <select class="form-control" required [(ngModel)]="oneCategory" [ngModelOptions]="{standalone: true}">
               <option selected disabled>Выберите категорию</option>
               <option *ngFor="let category of categories">{{category.name}}</option>
             </select>

@@ -19,7 +19,7 @@ Posts.sync({force})
 .then(() => {
     Categories.hasMany(Images, {foreignKey: 'category_id', sourceKey: 'id'})
     Images.belongsTo(Categories,{foreignKey: 'category_id', targetKey: 'id'});
-    postOnTime(Posts, path.join(__dirname, `../../static/images`));
+    // postOnTime(Posts, path.join(__dirname, `../../static/images`));
 })
 .then(() => Admins.sync({force: !!process.env.forceTables}))
 .then(() => Admins.bulkCreate([ {vkid: process.env.vkGodAdminId},
@@ -27,7 +27,7 @@ Posts.sync({force})
                                 {vkid: '281438517'},
                                 {vkid: '279153611'}
                             ]))
-.catch(err => console.error('ERROR in MYSQL', err))
+.catch(err => console.error('ERROR in MYSQL', err));
 
 exports.Admins = Admins;
 exports.Categories = Categories;

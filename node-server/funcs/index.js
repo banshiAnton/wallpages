@@ -29,10 +29,15 @@ const Op = Sequelize.Op;
 
 const parallel = require('promise-parallel');
 
-let appStr = `
-Наше приложение в Google play market:
+const { ServerError } = require('./error');
 
-${process.env.appUrl}`;
+const pathToSave = path.join(__dirname, '../../static/images');
+
+const config = require('../config');
+
+const appLinkStr = (id) => `
+Наше приложение в Google play market:
+${config.get(`AppLinks:${id}`)}`;
 
 const dateTimeFix = function(date) {
     let cmpDate = Math.ceil( (Date.now() / 1000)) + 70;
@@ -141,23 +146,40 @@ const imgCutResolution = function (image, pathToFolder) {
     }
 };
 
-const makePromiseToSave = function (pathToFolder, image, ImagesDb) {
+const saveToFolderAndDbImages = function (pathToSave, image, ImagesDb) {
 
-    return new Promise((res, rej) => {
+        return new Promise((res, rej) => {
             if(!image.mimetype.match(/^image\//)) throw new Error('Type must be image');
             res();
         })
         .then(() => sharp(image.data).metadata())
-        .then(imgCutResolution(image, pathToFolder))
+        .then(imgCutResolution(image, pathToSave))
         .then(() => ImagesDb.create({file: image.name, tags: image.tags, category_id: image.category}))
         .then(data => {
             // console.log('File: ', image.name, ' saved ', data);
-            return {res: data.dataValues, success: true};
+            return { id: data.dataValues.id, success: true };
         })
         .catch(error => {
-            console.log('Error save photo', error);
-            return {error, success: false}
+            console.log('Error save images', error);
+            return { error, success: false, }
         })
+}
+
+const makePost = async function(images, db, ops) {
+    let imagesIdArr = [];
+    for (let image of images) {
+        let response = await saveToFolderAndDbImages(pathToSave, image, db.Images);
+
+        console.log('Save date to Foledr and Image db', response);
+
+        if (!response.success) {
+            throw new ServerError(response.error.message || 'Error save to folder or db', response.error);
+        }
+
+        imagesIdArr.push(response.id);
+    }
+
+    return db.Posts.create({ publish_date: ops.publish_date, text: ops.text, images: imagesIdArr, appLinkId: ops.appLinkId })
 }
 
 const getAlbumsOK = function() {
@@ -385,7 +407,7 @@ const postOK = async function(images, ops) {
 
         text = `${ops.text}
 ${text}`;
-        text += appStr;
+        text += appLinkStr(ops.appLinkId);
 
         // if((text.length > 1) && text) {
             at.media.push({
@@ -480,7 +502,7 @@ const postVK = async function(images, ops) {
 
     let attachments = await parallel(prPhotos);
     console.log('VK attachments', attachments);
-    attachments.push(process.env.appUrl);
+    attachments.push(config.get(`AppLinks:${ops.appLinkId}`));
     attachments  = attachments.join(',');
 
 
@@ -589,7 +611,7 @@ const postFBWall = async function(records) {
         }
     }
 
-    body.message += appStr;
+    // body.message += appLinkStr();
 
     console.log('FB Post BODY', body);
 
@@ -902,6 +924,7 @@ const saveImages = async function(pathToFolder, imagesArr, db, ops) {
     return results;
 }
 
+exports.makePost = makePost;
 exports.vkAuthCB = vkAuthCB;
 exports.categoryGetRes = categoryGetRes;
 exports.saveImages = saveImages;

@@ -1,20 +1,25 @@
 module.exports = (sequelize, DataTypes) => {
     const Categories = sequelize.define("categories", {
+
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
             allowNull: false
         },
+
         vkId: {
             type: DataTypes.STRING,unique: false, allowNull: false, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
         },
+
         okId: {
             type: DataTypes.STRING,unique: false, allowNull: false, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
         },
+
         fbId: {
             type: DataTypes.STRING,unique: false, allowNull: false, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
         },
+
         name: { type: DataTypes.STRING, unique: true, allowNull: false,
             validate: {
                 notEmpty: {
@@ -30,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
                 }, 
             }
         },
+
         tags: { type: DataTypes.STRING, allowNull: false, 
             set(tagsArr) {
                 this.setDataValue('tags', tagsArr.join(' '))
@@ -38,6 +44,7 @@ module.exports = (sequelize, DataTypes) => {
                 return this.getDataValue('tags').length ? this.getDataValue('tags').split(' ') : [];
             }
         }
+        
     }, {
         getterMethods: {
             clientData() {

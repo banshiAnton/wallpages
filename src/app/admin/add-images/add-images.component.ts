@@ -47,15 +47,16 @@ export class AddImagesComponent implements OnInit {
 
   onSubmit(e, form) {
     e.preventDefault();
-    this.state = 1;
 
     if (this.inOne) {
       if (!this.oneCategory) {
-        console.log('Chose category');
+        alert('Выберите категорию');
         return;
       }
       for (const image in this.imageData) {
-        this.imageData[image]['category'] = this.categories.find(categ => categ.name === this.oneCategory).id;
+        if (image in this.imageData) {
+          this.imageData[image]['category'] = this.categories.find(categ => categ.name === this.oneCategory).id;
+        }
       }
     }
 
@@ -75,6 +76,9 @@ export class AddImagesComponent implements OnInit {
     data.append('publish_date', dateTime + '');
 
     data.append('filesData', JSON.stringify(this.imageData));
+
+    this.state = 1;
+
     this.service.postImages(data).subscribe((result: any) => {
       console.log('Response data', result);
       if (result.success) {

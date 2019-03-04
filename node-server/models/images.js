@@ -8,17 +8,21 @@ const Categories = sequelize.import(path.join(__dirname, '/categories.js'))
 
 module.exports = (sequelize, DataTypes) => {
     const Images = sequelize.define("images", {
+
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
+
         file: { type: DataTypes.STRING, unique: true, allowNull: false,
             validate: {
                 notEmpty: {
                     msg: "Name must be not empty"
                 }
-            } },
+            }
+        },
+
         tags: { type: DataTypes.STRING, allowNull: false, 
             set(tagsArr) {
                 this.setDataValue('tags', tagsArr.join(' '))
@@ -30,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
                 return geted;
             }
         },
+
         category_id: {
             type: DataTypes.INTEGER,
             references: {
@@ -38,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             allowNull: false
         }
+
     }, {
         getterMethods: {
             clientData() {

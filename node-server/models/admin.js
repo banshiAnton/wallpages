@@ -1,10 +1,12 @@
 module.exports = (sequelize, DataTypes) => {
     const Admins = sequelize.define("admin", {
+
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
+
         vkid: { type: DataTypes.STRING, unique: true, allowNull: false,
             validate: {
                 notEmpty: {
@@ -12,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         }
+
     });
 
     return Admins;

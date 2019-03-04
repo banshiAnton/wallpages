@@ -3,9 +3,9 @@ const fs = require('fs');
 
 const Sequelize = require('sequelize');
 
-const { categoryGetRes, saveImages, createAlbum } = require('../funcs');
+const { categoryGetRes, createAlbum, makePost } = require('../funcs');
 
-const { parseFilesData, groupFileDataToFiles, makeApiQuery, isAuth, isInit } = require('../middleware');
+const { parseFilesData, makeApiQuery, isAuth, isInit } = require('../middleware');
 
 const { Posts, Images, Categories } = require('../lib').mysql;
 
@@ -52,14 +52,16 @@ router.get('/', makeApiQuery, function (req, res, next) {
     }).catch(err => next(err))
 });
 
-router.post('/upload', isAuth(), isInit(), parseFilesData, groupFileDataToFiles, function (req, res, next) {
+router.post('/upload', isAuth(), isInit(), parseFilesData, function (req, res, next) {
     console.log('Text', req.body);
-    saveImages(path.join(__dirname, `../../static/images`), req.files.images, {Images, Posts, Categories}, { text: req.body.text ? req.body.text.trim() : '', categOps: req.categOps, publish_date: +req.body.publish_date, url: `${req.protocol}://${req.host}/images/` })
-    .then(results => {
-        console.log('End response END', results);
-        res.json({success: results.social && results.db.success, results});
-    })
-    .catch(err => next(err))
+
+    makePost(req.files.images, { Images, Posts, Categories }, {
+        text: req.body.text ? req.body.text.trim() : '', publish_date: +req.body.publish_date,
+        url: `${req.protocol}://${req.host}/images/`, appLinkId: req.body.appLinkId
+    }).then(response => {
+        console.log('Save post', response);
+        res.json({ success: true, results: response.dataValues });
+    }).catch(err => next(err))
 });
 
 router.get('/categories', function(req, res, next) {
@@ -67,7 +69,6 @@ router.get('/categories', function(req, res, next) {
     .then(result => categoryGetRes(result))
     .then(resultForm => {
         console.log(resultForm);
-        resultForm.categories.forEach(item => console.log(item.tags))
         res.json(resultForm);
     })
     .catch(err => next(err))
