@@ -480,6 +480,7 @@ const postVK = async function(images, ops) {
 
     let attachments = await parallel(prPhotos);
     console.log('VK attachments', attachments);
+    attachments.push(process.env.appUrl);
     attachments  = attachments.join(',');
 
 
@@ -488,7 +489,6 @@ const postVK = async function(images, ops) {
 
     message = `${ops.text}
     ${message}`;
-    message += appStr;
 
     let postUrl = url.format({
         protocol: 'https',
