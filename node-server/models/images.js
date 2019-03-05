@@ -1,19 +1,5 @@
-const path = require('path');
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize( {
-    dialect: 'mysql'
-});
-
-const Categories = sequelize.import(path.join(__dirname, '/categories.js'))
-
 module.exports = (sequelize, DataTypes) => {
-    const Images = sequelize.define("images", {
-
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
-        },
+    return sequelize.define("images", {
 
         file: { type: DataTypes.STRING, unique: true, allowNull: false,
             validate: {
@@ -28,21 +14,16 @@ module.exports = (sequelize, DataTypes) => {
                 this.setDataValue('tags', tagsArr.join(' '))
             },
             get() {
-                let raw = this.getDataValue('tags').split(' ');
                 let geted = [];
-                for(let tag of raw) { if(tag) geted.push(tag) }
+                if (this.getDataValue('tags')) {
+                    let raw = this.getDataValue('tags').split(' ');
+                    for(let tag of raw) { if(tag) geted.push(tag) }
+                }
                 return geted;
             }
         },
 
-        category_id: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: Categories,
-                key: 'id'
-            },
-            allowNull: false
-        }
+        isPublish: { type: Sequelize.BOOLEAN, defaultValue: false },
 
     }, {
         getterMethods: {
@@ -56,6 +37,4 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
     });
-
-    return Images;
 }

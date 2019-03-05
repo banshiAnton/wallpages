@@ -1,11 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Posts = sequelize.define("posts", {
-
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
-        },
+    return sequelize.define("posts", {
 
         publish_date: {
             type: DataTypes.STRING,
@@ -20,20 +14,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM,
             allowNull: false,
             values: ['0', '1', '2']
-        },
-
-        images: { type: DataTypes.TEXT, allowNull: false,
-            validate: {
-                notEmpty: {
-                    msg: "Name must be not empty"
-                }
-        }, set(data) {
-            this.setDataValue('images', JSON.stringify(data))
-        },
-        get() {
-            return JSON.parse(this.getDataValue('images'));
-        }},
+        }
     });
-
-    return Posts;
 };

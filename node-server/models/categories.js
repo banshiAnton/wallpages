@@ -1,12 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Categories = sequelize.define("categories", {
-
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
-            allowNull: false
-        },
+    return sequelize.define("categories", {
 
         vkId: {
             type: DataTypes.STRING,unique: false, allowNull: false, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
@@ -56,6 +49,4 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
     });
-
-    return Categories;
 };
