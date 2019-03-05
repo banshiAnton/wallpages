@@ -146,19 +146,16 @@ const imgCutResolution = function (image, pathToFolder) {
     }
 };
 
-const saveToFolderAndDbImages = function (pathToSave, image, ImagesDb) {
+const saveToFolderAndDbImages = function ( pathToSave, image, ImagesDb ) {
 
         return new Promise((res, rej) => {
             if(!image.mimetype.match(/^image\//)) throw new Error('Type must be image');
             res();
         })
-        .then(() => sharp(image.data).metadata())
-        .then(imgCutResolution(image, pathToSave))
-        .then(() => ImagesDb.create({file: image.name, tags: image.tags, category_id: image.category}))
-        .then(data => {
-            // console.log('File: ', image.name, ' saved ', data);
-            return { id: data.dataValues.id, success: true };
-        })
+        .then( () => sharp( image.data ).metadata())
+        .then( imgCutResolution( image, pathToSave ) )
+        .then( () => ImagesDb.build( { file: image.name, tags: image.tags, category_id: image.category } ) )
+        .then( image => { return { image, success: true }} )
         .catch(error => {
             console.log('Error save images', error);
             return { error, success: false, }
@@ -167,19 +164,29 @@ const saveToFolderAndDbImages = function (pathToSave, image, ImagesDb) {
 
 const makePost = async function(images, db, ops) {
     let imagesIdArr = [];
-    for (let image of images) {
-        let response = await saveToFolderAndDbImages(pathToSave, image, db.Images);
+    for ( let image of images ) {
+        let response = await saveToFolderAndDbImages( pathToSave, image, db.Images );
 
-        console.log('Save date to Foledr and Image db', response);
+        console.log( 'Save date to foledr or create instance', response );
 
-        if (!response.success) {
-            throw new ServerError(response.error.message || 'Error save to folder or db', response.error);
+        if ( !response.success ) {
+            throw new ServerError( response.error.message || 'Error save to folder or db', response.error );
         }
 
-        imagesIdArr.push(response.id);
+        try {
+            let image = await response.image.save();
+            imagesIdArr.push(image.dataValues.id)
+        } catch ( error ) {
+            console.log( 'Save date to Image db', error );
+            throw new ServerError( response.error.message || 'Error save to folder or db', response.error );
+        }
     }
 
-    return db.Posts.create({ publish_date: ops.publish_date, text: ops.text, images: imagesIdArr, appLinkId: ops.appLinkId })
+    return db.Posts.create( { 
+                publish_date: ops.publish_date, 
+                text: ops.text, images: imagesIdArr, 
+                appLinkId: ops.appLinkId 
+            } ).then( post => post.setImages( imagesIdArr ) )
 }
 
 const getAlbumsOK = function() {
