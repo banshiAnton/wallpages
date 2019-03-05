@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
 
-        isPublish: { type: Sequelize.BOOLEAN, defaultValue: false },
+        isPublish: { type: DataTypes.BOOLEAN, defaultValue: false },
 
     }, {
         getterMethods: {
