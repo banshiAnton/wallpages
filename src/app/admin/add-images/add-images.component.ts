@@ -70,10 +70,8 @@ export class AddImagesComponent implements OnInit {
       data.append('images', file);
     });
 
-    let dateTime = this.selectedDate ?  +(new Date(this.selectedDate)) : (Date.now() + 1000 * 60 * 5);
-    dateTime = Math.ceil(dateTime / 1000);
-    // console.log('Date', this.selectedDate, date, new Date(this.selectedDate), +(new Date(this.selectedDate)));
-    data.append('publish_date', dateTime + '');
+    let publish_date = this.selectedDate ? new Date(this.selectedDate) : Date.now();
+    data.append('publish_date', +publish_date + '');
 
     data.append('filesData', JSON.stringify(this.imageData));
 

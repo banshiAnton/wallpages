@@ -57,7 +57,7 @@ router.post('/upload', isAuth(), isInit(), parseFilesData, function (req, res, n
 
     makePost(req.files.images, { Images, Posts, Categories }, {
         text: req.body.text ? req.body.text.trim() : '', publish_date: +req.body.publish_date,
-        url: `${req.protocol}://${req.host}/images/`, appLinkId: req.body.appLinkId
+        url: `${req.protocol}://${req.hostname}/images/`, appLinkId: req.body.appLinkId
     }).then(response => {
         console.log('Save post', response);
         res.json({ success: true, results: response.dataValues });

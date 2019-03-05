@@ -13,7 +13,7 @@ const Categories = sequelize.import(path.join(__dirname, '../models/categories')
 const makeApiQuery = function(req, res, next) {
     
     let limOps = {};
-    let where = {};
+    let where = { isPublish: true };
 
     console.log('Query params', req.query);
 
