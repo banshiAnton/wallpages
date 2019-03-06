@@ -405,7 +405,7 @@ const postVK = async function ( post, categories ) {
     attachments.push( config.get( `AppLinks:${post.appLinkId}` ) );
     attachments = attachments.join( ',' );
 
-    let message = post.text + '\n\n' + getTagsStr( categories );
+    let message = post.text + '\n' + getTagsStr( categories );
 
     let postUrl = url.format({
         protocol: 'https',
@@ -576,81 +576,92 @@ const postOKAlbum = async function ( post, categories ) {
 
 }
 
-const postFBAlbum = async function(images, ops) {
+const postFBAlbum = async function ( post, categories ) {
 
-    let prArr = [];
+    let promiseArr = [];
 
-    graph.setAccessToken(process.env.fbToken);
+    for ( let category of categories ) {
 
-    console.log('FB start', images);
+            let categotyTags = category.get( 'tags' );
 
-    for(let categ in images) {
+            for( let image of category.dataValues.images ) {
 
-        for(let img of images[categ].files) {
+                let caption = categotyTags.concat( image.get( 'tags' ) ).map( tag => '#' + tag ).join( ' ' );
 
-            //https://www.psychologistworld.com/images/articles/a/575x360-v-dpc-71331987.jpg
-            //url: `${ops.url}${img.name}`
+                let formWall = new FormData();
 
-            let caption = images[categ].tags.concat(img.tags).map(tag => '#' + tag).join(' ');
+                formWall.append( 'photo', image.buffer, {
+                    filename: image.dataValues.file,
+                    contentType: 'image/jpeg'
+                });
 
-            console.log('Test img FB', `${ops.url}${img.name}`);
-            
-            let pr = parallel([
-                graphPost(`/${process.env.fbGid}/photos`, {url: `${ops.url}${img.name}`, caption, published: false}).catch(err => err),
-                graphPost(`/${images[categ].fbAid}/photos`, {url: `${ops.url}${img.name}`, caption}).catch(err => err)
-            ]).then(([wall, album]) => {
+                formWall.append( 'caption', caption );
+                formWall.append( 'published', "false" );
 
-                if(!wall.id || !album.id) {
-                    throw {wall, album};
-                }
+                let formAlbum = new FormData();
 
-                img.fbPostId = wall.id;
-                console.log('FB data post album', wall, album);
-                return {wall, album, success: true};
+                formAlbum.append( 'photo', image.buffer, {
+                    filename: image.dataValues.file,
+                    contentType: 'image/jpeg'
+                });
 
-            }).catch(error => {
-                console.log('FB promise save error', error);
-                return {error, success: false};
-            });
+                formAlbum.append( 'caption', caption );
 
-            prArr.push(pr);
+
+                let wall = fetch(`https://graph.facebook.com/v3.2/${process.env.fbGid}/photos?access_token=${process.env.fbToken}`, {
+                    method: 'POST',
+                    body:   formWall,
+                    headers: formWall.getHeaders(),
+                }).then( res => res.json() ).catch( err => err )
+
+                let album = fetch(`https://graph.facebook.com/v3.2/${category.get('fbId')}/photos?access_token=${process.env.fbToken}`, {
+                    method: 'POST',
+                    body:   formAlbum,
+                    headers: formAlbum.getHeaders(),
+                }).then( res => res.json() ).catch( err => err )
+
+                let promise = parallel([wall, album]).then(([wall, album]) => {
+    
+                    if ( !wall.id || !album.id ) {
+                        throw { wall, album };
+                    }
+    
+                    image.fbPostId = wall.id;
+                    console.log( 'FB data post album', wall, album );
+                    return { wall, album, success: true };
+    
+                }).catch( error => {
+                    console.log( 'FB promise save error', error );
+                    return { error, success: false };
+                });
+    
+                promiseArr.push( promise );
+
+            }
 
         }
-    }
 
-    return parallel(prArr)
-           .then(results => {
-                if(results.every(res => res.success)) {
-                    return {results, success: true};
-                }
+    let fbAblumsSave = await parallel( promiseArr );
 
-                return {results, success: false};
-           })     
+    return postFBWall( post, categories )
+    
 }
 
-const postFBWall = async function(records) {
+const postFBWall = async function( post, categories ) {
 
     let body = {};
-    body.message = '';
+    body.message = post.text + '\n' + getTagsStr( categories, ' ' ) + appLinkStr( post.appLinkId );
 
     let i = 0;
 
-    for(let rec of records) {
-        body.message += rec.get('text') + '\n';
-        rec = rec.get('jsonData');
-        body.message += getTagsStr(rec, ' ') + ' ';
-        for(let categ in rec) {
-            for(let img of rec[categ].files) {
-                body[`attached_media[${i++}]`] = {"media_fbid": img.fbPostId};
-            }
-        }
+    for ( let category of categories ) {
+
+        category.dataValues.images.forEach( image => { body[ `attached_media[${i++}]` ] = { "media_fbid": image.fbPostId } } )
     }
 
-    // body.message += appLinkStr();
+    console.log( 'FB Post BODY', body );
 
-    console.log('FB Post BODY', body);
-
-    return graphPost(`/${process.env.fbGid}/feed`, body)
+    return graphPost( `/${process.env.fbGid}/feed`, body )
     .catch(err => err);
 }
 
@@ -723,82 +734,77 @@ const getCategories = async function ( post, Images, Categories ) {
 
 const postToSocial = function ( post, categories ) {
 
-    return parallel( [ postVK( post, categories ), postOK( post, categories ), postOKAlbum( post, categories ) ] );
+    return parallel( [ postVK( post, categories ), postOK( post, categories ),
+         postTelegram( post, categories ), postOKAlbum( post, categories ), postFBAlbum( post, categories ) ] );
 
 }
 
-const postTelegram = async function ( records, pathToFolder ) {
+const postTelegram = async function ( post, categories ) {
 
-    // console.log('Pre data', records);
+    let results = [];
 
-    for(let rec of records) {
-        rec = rec.get('jsonData')
-        for(let categ in rec) {
-            for(let img of rec[categ].files) {
+    for ( let category of categories ) {
+        for ( let image of category.dataValues.images ) {
 
-                try {
+            let caption = category.get( 'tags' ).concat( image.get( 'tags' ) ).map( tag => '#' + tag ).join( ' ' );
 
-                    let file = await readFile(path.join(pathToFolder, '/', img.name));
+            let formPhoto = new FormData();
 
-                    let caption = rec[categ].tags.concat(img.tags).map(tag => '#' + tag).join(' ');
+            formPhoto.append('chat_id', process.env.telGroup);
+            formPhoto.append('caption', caption);
+            formPhoto.append('photo', image.buffer, {
+                filename: image.dataValues.file,
+                contentType: 'image/jpeg'
+            });
 
-                    let formPhoto = new FormData();
+            let formDoc = new FormData();
+            
+            formDoc.append('chat_id', process.env.telGroup);
+            formDoc.append('caption', caption);
+            formDoc.append('document', image.buffer, {
+                filename: image.dataValues.file,
+                contentType: 'image/jpeg'
+            });
+            formDoc.append('reply_markup', JSON.stringify({
+                inline_keyboard: [ [ { text: 'Наше приложение', url: config.get( `AppLinks:${post.appLinkId}` ) } ] ]
+            }))
 
-                    formPhoto.append('chat_id', process.env.telGroup);
-                    formPhoto.append('caption', caption);
-                    formPhoto.append('photo', file, {
-                        filename: img.name,
-                        contentType: img.mimetype
-                    });
+            //process.env.appUrl
 
-                    let formDoc = new FormData();
-                    
-                    formDoc.append('chat_id', process.env.telGroup);
-                    formDoc.append('caption', caption);
-                    formDoc.append('document', file, {
-                        filename: img.name,
-                        contentType: img.mimetype
-                    });
-                    formDoc.append('reply_markup', JSON.stringify({
-                        inline_keyboard: [[{text: 'Наше приложение', url: process.env.appUrl}]]
-                    }))
+            let resPhoto = await fetch(`https://api.telegram.org/bot${process.env.telToken}/sendPhoto`, {
+                method: "POST",
+                body: formPhoto,
+                headers: formPhoto.getHeaders(),
+            })
+            .then(res => res.json())
+            .catch(err => {
+                console.log('Error photo', err);
+                return err;
+            });
 
-                    //process.env.appUrl
+            results.push( resPhoto );
 
-                    let resPhoto = await fetch(`https://api.telegram.org/bot${process.env.telToken}/sendPhoto`, {
-                        method: "POST",
-                        body: formPhoto,
-                        headers: formPhoto.getHeaders(),
-                    })
-                    .then(res => res.json())
-                    .catch(err => {
-                        console.log('Error photo', err);
-                        return err;
-                    });
+            console.log('Telegram photo', resPhoto);
 
-                    console.log('Telegram photo', resPhoto);
+            let resDoc = await fetch(`https://api.telegram.org/bot${process.env.telToken}/sendDocument`, {
+                method: "POST",
+                body: formDoc,
+                headers: formDoc.getHeaders(),
+            })
+            .then(res => res.json())
+            .catch(err => {
+                console.log('Error doc', err);
+                return err;
+            });
 
-                    let resDoc = await fetch(`https://api.telegram.org/bot${process.env.telToken}/sendDocument`, {
-                        method: "POST",
-                        body: formDoc,
-                        headers: formDoc.getHeaders(),
-                    })
-                    .then(res => res.json())
-                    .catch(err => {
-                        console.log('Error doc', err);
-                        return err;
-                    });
+            results.push( resDoc );
 
-                    console.log('Telegram photo', resDoc);
+            console.log('Telegram photo', resDoc);
 
-                } catch (err) {
-                    console.log(err);
-                    continue;
-                }
-
-            }
         }
     }
+
+    return results;
 }
 
 
