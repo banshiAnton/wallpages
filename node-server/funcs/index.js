@@ -49,16 +49,16 @@ const dateTimeFix = function(date) {
     return date + '';
 }
 
-const getTagsStr = function (images, sep = '') {
+const getTagsStr = function ( categories , sep = '' ) {
 
     let tags = [];
 
-    for(let img in images) {
-        tags = tags.concat(images[img].tags);
-        images[img].files.forEach(img => tags = tags.concat(img.tags));
+    for ( let category of categories ) {
+        tags = tags.concat( category.get( 'tags' ) );
+        category.dataValues.images.forEach( image => tags = tags.concat( image.get( 'tags' ) ) );
     }
 
-    return tags.map(tag => '#' + tag).join(sep);
+    return tags.map( tag => '#' + tag ).join( sep );
 }
 
 const getSigOk = function(obj, token) {
@@ -462,61 +462,49 @@ ${text}`;
     });
 }
 
-const savePhotoVK = function(imgGroup) {
+const savePhotoVK = function ( category ) {
 
     let form = new FormData();
 
-    imgGroup.files.forEach((img, i) => {
-        form.append(`file${i+1}`, img.data, {
-            filename: img.name,
-            contentType: img.mimetype
+    category.images.forEach( ( image, i ) => {
+
+        form.append(`file${i+1}`, image.buffer, {
+            filename: image.dataValues.file,
+            mimetype: 'image/jpeg'
         });
+
     }) 
 
-    let getServer = `https://api.vk.com/method/photos.getUploadServer?&album_id=${imgGroup.vkAid}&group_id=${process.env.vkgid}&access_token=${process.env.vktoken}&v=5.62`;
-    return fetch(getServer)
-            .then(data => data.json())
-            .then(data => data.response.upload_url)
-            .then(url => fetch(url, {
-                method: 'POST',
-                body:    form,
-                headers: form.getHeaders(),
-            }))
-            .then(data => data.json())
-            .then(data => {
-                // console.log('Photos list', data);
-                let url = `https://api.vk.com/method/photos.save?album_id=${data.aid}&group_id=${data.gid}&server=${data.server}&hash=${data.hash}&photos_list=${data.photos_list}&access_token=${process.env.vktoken}&v=5.62`
-                return fetch(url);
-            })
-            .then(data => data.json())
-            .then(data => {
-                // console.log(data);
-                return data.response.map(photo => `photo${photo.owner_id}_${photo.id}`).join(',');
-            })
-            .catch(err => err)
+    let getServer = `https://api.vk.com/method/photos.getUploadServer?&album_id=${category.vkId}&group_id=${process.env.vkgid}&access_token=${process.env.vktoken}&v=5.62`;
+
+    return fetch( getServer )
+            .then( data => data.json()  )
+            .then( data => data.response.upload_url )
+            .then( url => fetch( url, { method: 'POST', body:    form, headers: form.getHeaders() } ) )
+            .then( data => data.json() )
+            .then( data => fetch( `https://api.vk.com/method/photos.save?album_id=${data.aid}&group_id=${data.gid}&server=${data.server}&hash=${data.hash}&photos_list=${data.photos_list}&access_token=${process.env.vktoken}&v=5.62` ) )
+            .then( data => data.json() )
+            .then( data => data.response.map( photo => `photo${photo.owner_id}_${photo.id}`).join( ',' ) )
+            .catch( error => error )
 }
 
 
-const postVK = async function(images, ops) {
+const postVK = async function ( post, categories ) {
 
-    // console.log('VK start', images);
+    let promiseUploadPhotos = [];
 
-    let prPhotos = [];
-
-    for(let img in images) {
-        prPhotos.push(savePhotoVK(images[img]));
+    for ( let category of categories ) {
+        promiseUploadPhotos.push( savePhotoVK( category.dataValues ) );
     }
 
-    let attachments = await parallel(prPhotos);
-    console.log('VK attachments', attachments);
-    attachments.push(config.get(`AppLinks:${ops.appLinkId}`));
-    attachments  = attachments.join(',');
+    let attachments = await parallel( promiseUploadPhotos );
+    console.log( 'VK attachments', attachments );
+    attachments.push( config.get( `AppLinks:${post.appLinkId}` ) );
+    attachments = attachments.join( ',' );
 
+    let message = getTagsStr( categories );
 
-    // console.log('Tags************\n\n', tags);
-    let message = getTagsStr(images);
-
-    message = `${ops.text}
+    message = `${post.text}
     ${message}`;
 
     let postUrl = url.format({
@@ -529,12 +517,11 @@ const postVK = async function(images, ops) {
             owner_id: -process.env.vkgid,
             access_token: process.env.vktoken,
             from_group: 1,
-            publish_date: ops.publish_date,
             v: 5.67
         }
     })
-    return fetch(postUrl)
-    .then(data => data.json())
+    return fetch( postUrl )
+    .then( data => data.json() )
     .then(post => {
         console.log('End post VK', post);
         if ( !post.response || !post.response.post_id ) {
@@ -626,60 +613,80 @@ const postFBWall = async function(records) {
     .catch(err => err);
 }
 
-const postOnTime = function(Posts, pathToFolder) {
+const postOnTime = function(Posts, Images, Categories) {
     
     let flag = true;
 
     setInterval(async () => {
 
-        if(flag && process.env.isInit) {
+        try {
 
-            let time = Math.ceil(Date.now() / 1000);
+            if ( flag && process.env.isInit ) {
 
-            let data = await Posts.findAll({
-                where: {
-                    pTime: {
-                        [Op.lte]: time
+                let currentDate = Date.now();
+    
+                let posts = await Posts.findAll( { where: { publish_date: { [Op.lte]: currentDate } } } );
+
+                console.log( 'Post on time', posts );
+
+                if( posts && posts.length ) {
+
+                    flag = false;
+
+                    for ( let post of posts ) {
+
+                        let categories = await getCategories( post.dataValues, Images, Categories );
+
+                        console.log( 'Categories', categories );
+
+                        let postsSocial = await postToSocial( post.dataValues, categories );
+
+                        console.log( 'End', postsSocial );
                     }
+
                 }
-            }).catch(err => {
+                
+                let delPost = await Posts.destroy( { where: { publish_date: { [Op.lte]: currentDate } } } );
+
+                console.log( 'Post on time delete', delPost );
+    
                 flag = true;
-                console.log(err);
-            })
-
-            if(data && data.length) {
-                flag = false;//изменил!!
-
-                try {
-                    postTelegram(data, pathToFolder);
-                    let results = await parallel([
-                        postFBWall(data),
-                        postOKAlbum(data, pathToFolder)
-                    ]);
-                    console.log(results);
-                } catch(err) {
-                    console.log('Post on time error', err);
-                }
             }
 
-            let resDel = await Posts.destroy({
-                where: {
-                    pTime: {
-                        [Op.lte]: time
-                    }
-                }
-            })
-            .catch(err => err);
-
-            flag = true;
-
-            console.log(resDel);
+        } catch ( error ) {
+            console.log( 'Post on time error', error );
         }
 
-    }, 1000 * 15);
+    }, 1000 * 5);
 }
 
-const postTelegram = async function(records, pathToFolder) {
+const getCategories = async function ( post, Images, Categories ) {
+
+    let categories = await Categories.findAll( {
+        attributes: [ 'vkId', 'okId', 'fbId', 'tags' ],
+        include: [
+            { model: Images, required: true, where: { post_id: post.id, isPublish: false } }
+        ]
+    } );
+
+    //load buffer
+
+    for ( let category of categories ) {
+        for ( let image of category.images ) {
+            image.buffer = await readFile( path.join( pathToSave, image.file ) )
+        }
+    }
+
+    return categories;
+}
+
+const postToSocial = function ( post, categories ) {
+
+    return parallel( [ postVK( post, categories ) ] );
+
+}
+
+const postTelegram = async function ( records, pathToFolder ) {
 
     // console.log('Pre data', records);
 
