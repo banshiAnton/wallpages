@@ -11,14 +11,16 @@ import { AddCategoryComponent } from '../admin/add-category/add-category.compone
 import { AddAdminComponent } from '../admin/add-admin/add-admin.component';
 import { SetupComponent } from '../admin/setup/setup.component';
 import { HomeComponent } from '../home/home.component';
+import { PostsComponent } from '../admin/posts/posts.component';
 
 const routes: Routes = [
   { path: 'admin', component: AdminComponent, canActivateChild: [AuthGuard],
     children: [
-      { path: 'addImages', component: AddImagesComponent, canActivate: [InitGuard] },
-      { path: 'addCategoty', component: AddCategoryComponent, canActivate: [InitGuard] },
-      { path: 'addAdmin', component: AddAdminComponent, canActivate: [MainAdminGuard] },
-      { path: 'setup', component: SetupComponent, canActivate: [MainAdminGuard] },
+      { path: 'addImages', component: AddImagesComponent, canActivate: [ InitGuard ] },
+      { path: 'addCategoty', component: AddCategoryComponent, canActivate: [ InitGuard ] },
+      { path: 'addAdmin', component: AddAdminComponent, canActivate: [ MainAdminGuard ] },
+      { path: 'setup', component: SetupComponent, canActivate: [ MainAdminGuard ] },
+      { path: 'posts', component: PostsComponent, canActivate: [ InitGuard ] },
     ]
   },
   { path: 'home', component: HomeComponent }

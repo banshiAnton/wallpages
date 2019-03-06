@@ -120,4 +120,10 @@ export class ServiceService {
     );
   }
 
+  getPosts() {
+    return this.http.get(`${this.apiImageUrl}/posts`).pipe(
+      catchError(error => of({success: false, error}))
+    );
+  }
+
 }

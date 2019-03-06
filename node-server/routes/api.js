@@ -64,6 +64,10 @@ router.post('/upload', isAuth(), isInit(), parseFilesData, function (req, res, n
     }).catch(err => next(err))
 });
 
+router.get('/posts', isAuth(), isInit(), function (req, res, next) {
+    res.json({success: true});
+});
+
 router.get('/categories', function(req, res, next) {
     Categories.findAll()
     .then(result => categoryGetRes(result))
