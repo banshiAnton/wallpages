@@ -366,102 +366,6 @@ const createAlbum = async function(name, tags, Categories) {
 
 }
 
-const postOK = async function(images, ops) {
-    // console.log('OK start', images);
-
-    let allImages = [];
-
-    for(let img in images) {
-        images[img].files.forEach(img => allImages.push(img));
-    }
-
-    let text = getTagsStr(images, ' ');
-
-    return okRefresh(process.env.okRToken)
-    .then(data => ok.setAccessToken(data.access_token))
-    .then(() => okGet({method: 'photosV2.getUploadUrl', count: allImages.length, gid: process.env.okGid}))
-    .then(data => {
-        // console.log(data);
-
-        let form = new FormData();
-
-        allImages.forEach((img, i) => {
-            form.append(`pic${i+1}`, img.data, {
-                filename: img.name,
-                contentType: img.mimetype
-            });
-        })
-
-        return fetch(data.upload_url, {
-                     method: 'post',
-                     body: form,
-                     headers: form.getHeaders()
-                })
-    })
-    .then(data => data.json())
-    .then(data => {
-        // console.log('\n\n****Uploaded****\n\n', data.photos);
-
-        let at = {
-            "media": [
-              {
-                "type": "photo",
-                "list": []
-              }
-            ],
-            "publishAtMs": (+ops.publish_date * 1000) + ''
-        };
-
-        text = `${ops.text}
-${text}`;
-        text += appLinkStr(ops.appLinkId);
-
-        // if((text.length > 1) && text) {
-            at.media.push({
-                "type": "text",
-                "text": text
-            })
-        // }
-
-        for(let id in data.photos) {
-            // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token);
-            at.media[0].list.push({id: data.photos[id].token});
-        }
-
-
-        let urlPost = url.format({
-            protocol: 'https',
-            hostname: 'api.ok.ru',
-            pathname: 'fb.do',
-            query: {
-                application_key: process.env.okpbKey,
-                format: 'json',
-                method: 'mediatopic.post',
-                type: 'GROUP_THEME',
-                gid: process.env.okGid,
-                attachment: JSON.stringify(at),
-                sig: getSigOk({application_key: process.env.okpbKey, format: 'json', method: 'mediatopic.post', type: 'GROUP_THEME', gid: process.env.okGid, attachment: JSON.stringify(at)}, ok.getAccessToken().trim()),
-                access_token: ok.getAccessToken().trim()
-            }
-        });
-
-        return fetch(urlPost)
-
-    })
-    .then(data => data.json())
-    .then(post => {
-        console.log('End post OK', post);
-        if ( post instanceof Object ) {
-            throw post;
-        }
-        return { res: post, success: true };
-    })
-    .catch(error => {
-        console.log('Promis error OK', error);
-        return { error, success: false };
-    });
-}
-
 const savePhotoVK = function ( category ) {
 
     let form = new FormData();
@@ -502,10 +406,7 @@ const postVK = async function ( post, categories ) {
     attachments.push( config.get( `AppLinks:${post.appLinkId}` ) );
     attachments = attachments.join( ',' );
 
-    let message = getTagsStr( categories );
-
-    message = `${post.text}
-    ${message}`;
+    let message = post.text + '\n\n' + getTagsStr( categories );
 
     let postUrl = url.format({
         protocol: 'https',
@@ -533,6 +434,165 @@ const postVK = async function ( post, categories ) {
         console.log('Promis error VK', error);
         return { error, success: false, };
     });
+}
+
+const postOK = async function ( post, categories ) {
+    // console.log('OK start', images);
+
+    let allImages = [];
+
+    for ( let category of categories ) {
+        allImages = allImages.concat( category.dataValues.images );
+    }
+
+    let text = post.text + '\n\n' + getTagsStr( categories , ' ' ) + appLinkStr( post.appLinkId );
+
+    return okRefresh( process.env.okRToken )
+    .then( data => ok.setAccessToken( data.access_token ) )
+    .then( () => okGet( { method: 'photosV2.getUploadUrl', count: allImages.length, gid: process.env.okGid } ) )
+    .then( data => {
+
+        let form = new FormData();
+
+        allImages.forEach( ( image , i ) => {
+            form.append( `pic${i+1}`, image.buffer, {
+                filename: image.dataValues.file,
+                contentType: 'image/jpeg'
+            });
+        })
+
+        return fetch(data.upload_url, { method: 'post', body: form, headers: form.getHeaders() } );
+    })
+    .then( data => data.json() )
+    .then( data => {
+
+        let at = {
+            "media": [
+              {
+                "type": "photo",
+                "list": []
+              }, 
+              {
+                  "type": "text",
+                  "text": text
+              }
+            ]
+        };
+
+        for(let id in data.photos) {
+            // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token);
+            at.media[0].list.push({id: data.photos[id].token});
+        }
+
+
+        let urlPost = url.format({
+            protocol: 'https',
+            hostname: 'api.ok.ru',
+            pathname: 'fb.do',
+            query: {
+                application_key: process.env.okpbKey,
+                format: 'json',
+                method: 'mediatopic.post',
+                type: 'GROUP_THEME',
+                gid: process.env.okGid,
+                attachment: JSON.stringify(at),
+                sig: getSigOk({application_key: process.env.okpbKey, format: 'json', method: 'mediatopic.post', type: 'GROUP_THEME', gid: process.env.okGid, attachment: JSON.stringify(at)}, ok.getAccessToken().trim()),
+                access_token: ok.getAccessToken().trim()
+            }
+        });
+
+        return fetch( urlPost );
+
+    })
+    .then( data => data.json() )
+    .then( post => {
+        console.log('End post OK', post);
+        if ( post instanceof Object ) {
+            throw post;
+        }
+        return { res: post, success: true };
+    })
+    .catch(error => {
+        console.log('Promis error OK', error);
+        return { error, success: false };
+    });
+}
+
+const postOKAlbum = async function ( post, categories ) {
+    // console.log('Data OK Albums', records);
+
+    for(let rec of records) {
+        rec = rec.get('jsonData')
+        for(let categ in rec) {
+
+            await okRefresh(process.env.okRToken)
+            .then(data => {
+                // console.log('Refresh', data);
+                ok.setAccessToken(data.access_token);
+            }).then(() => okGet({method: 'photosV2.getUploadUrl', count: rec[categ].files.length, gid: process.env.okGid, aid: rec[categ].okAid }))
+            .then(async data => {
+                // console.log(data);
+
+                let form = new FormData();
+                let i = 1;
+
+                for(let img of rec[categ].files) {
+
+                    let file = null
+                    try {
+                        file = await readFile(path.join(pathToFolder, '/', img.name));
+                        // console.log('File', file);
+                    } catch (err) {
+                        // console.log(err);
+                        continue;
+                    }
+        
+                    let fName = `file${i++}`
+                    form.append(fName, file, {
+                        filename: img.name,
+                        contentType: img.mimetype
+                    });
+                }
+
+                return fetch(data.upload_url, {
+                    method: 'post',
+                    body: form,
+                    headers: form.getHeaders()
+               });
+            }).then(data => data.json())
+            .then(async data => {
+                
+                let arrRes = [];
+
+                for(let id in data.photos) {
+                    // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token)
+                    let urlSave = url.format({
+                        protocol: 'https',
+                        hostname: 'api.ok.ru',
+                        pathname: 'fb.do',
+                        query: {
+                            application_key: process.env.okpbKey,
+                            format: 'json',
+                            method: 'photosV2.commit',
+                            photo_id: id,
+                            token: data.photos[id].token,
+                            sig: getSigOk({application_key: process.env.okpbKey, format: 'json', method: 'photosV2.commit', photo_id: id, token: data.photos[id].token}, ok.getAccessToken().trim()),
+                            access_token: ok.getAccessToken().trim()
+                        }
+                    });
+        
+        
+                    let reult = await fetch(urlSave).then(data => data.json()).catch(err => err);
+        
+                    arrRes.push(reult);
+                }
+        
+                return arrRes;
+            })
+            .catch(err => err);
+
+        }
+    }
 }
 
 const postFBAlbum = async function(images, ops) {
@@ -682,7 +742,7 @@ const getCategories = async function ( post, Images, Categories ) {
 
 const postToSocial = function ( post, categories ) {
 
-    return parallel( [ postVK( post, categories ) ] );
+    return parallel( [ postVK( post, categories ), postOK( post, categories ) ] );
 
 }
 
@@ -760,82 +820,6 @@ const postTelegram = async function ( records, pathToFolder ) {
     }
 }
 
-const postOKAlbum = async function(records, pathToFolder) {
-    // console.log('Data OK Albums', records);
-
-    for(let rec of records) {
-        rec = rec.get('jsonData')
-        for(let categ in rec) {
-
-            await okRefresh(process.env.okRToken)
-            .then(data => {
-                // console.log('Refresh', data);
-                ok.setAccessToken(data.access_token);
-            }).then(() => okGet({method: 'photosV2.getUploadUrl', count: rec[categ].files.length, gid: process.env.okGid, aid: rec[categ].okAid }))
-            .then(async data => {
-                // console.log(data);
-
-                let form = new FormData();
-                let i = 1;
-
-                for(let img of rec[categ].files) {
-
-                    let file = null
-                    try {
-                        file = await readFile(path.join(pathToFolder, '/', img.name));
-                        // console.log('File', file);
-                    } catch (err) {
-                        // console.log(err);
-                        continue;
-                    }
-        
-                    let fName = `file${i++}`
-                    form.append(fName, file, {
-                        filename: img.name,
-                        contentType: img.mimetype
-                    });
-                }
-
-                return fetch(data.upload_url, {
-                    method: 'post',
-                    body: form,
-                    headers: form.getHeaders()
-               });
-            }).then(data => data.json())
-            .then(async data => {
-                
-                let arrRes = [];
-
-                for(let id in data.photos) {
-                    // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token)
-                    let urlSave = url.format({
-                        protocol: 'https',
-                        hostname: 'api.ok.ru',
-                        pathname: 'fb.do',
-                        query: {
-                            application_key: process.env.okpbKey,
-                            format: 'json',
-                            method: 'photosV2.commit',
-                            photo_id: id,
-                            token: data.photos[id].token,
-                            sig: getSigOk({application_key: process.env.okpbKey, format: 'json', method: 'photosV2.commit', photo_id: id, token: data.photos[id].token}, ok.getAccessToken().trim()),
-                            access_token: ok.getAccessToken().trim()
-                        }
-                    });
-        
-        
-                    let reult = await fetch(urlSave).then(data => data.json()).catch(err => err);
-        
-                    arrRes.push(reult);
-                }
-        
-                return arrRes;
-            })
-            .catch(err => err);
-
-        }
-    }
-}
 
 const postToDB = async function(images, Post, ops) {
     console.log('\n\n*****POST TO DB *****\n\n', images, JSON.stringify(images));
