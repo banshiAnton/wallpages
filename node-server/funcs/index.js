@@ -39,16 +39,6 @@ const appLinkStr = (id) => `
 Наше приложение в Google play market:
 ${config.get(`AppLinks:${id}`)}`;
 
-const dateTimeFix = function(date) {
-    let cmpDate = Math.ceil( (Date.now() / 1000)) + 70;
-
-    if(date < cmpDate ) {
-        date = cmpDate;
-    }
-
-    return date + '';
-}
-
 const getTagsStr = function ( categories , sep = '' ) {
 
     let tags = [];
@@ -190,7 +180,6 @@ const makePost = async function(images, db, ops) {
 }
 
 const getAlbumsOK = function() {
-    // console.log(process.env.okRToken);
     return okRefresh(process.env.okRToken)
     .then(data => {
         ok.setAccessToken(data.access_token);
@@ -199,7 +188,6 @@ const getAlbumsOK = function() {
 }
 
 const getAlbumsFB = function() {
-    // console.log(process.env.fbToken);
     graph.setAccessToken(process.env.fbToken);
     return graphGet(`/${process.env.fbGid}/albums`).catch(err => err);
 }
@@ -223,38 +211,27 @@ const getAlbums = async function() {
         }
     });
 
-    // console.log(tmp);
-
     let okAlbums = await getAlbumsOK();
     let fbAlbums = await getAlbumsFB();
 
-    // console.log('albums fb', fbAlbums.data);
-
     okAlbums.albums.forEach(album => {
         if(album.title.toLowerCase() == 'разное') {
-            // console.log('In IF');
             tmp['основной'].okId = album.aid;
         } else {
-            // console.log('Ok test', album.title.toLowerCase(), tmp[album.title.toLowerCase()]);
             tmp[album.title.toLowerCase()].okId = album.aid;
         }
     });
 
     fbAlbums.data.forEach(album => {
-        // console.log('FB test', album.name.toLowerCase(), tmp[album.name.toLowerCase()]);
         tmp[album.name.toLowerCase()].fbId = album.id;
     });
 
     tmp['основной'].fbId = process.env.fbGid;
 
-    // console.log(tmp);
-
     let toSave = [];
     for(let name in tmp) {
         toSave.push(Object.assign({name}, tmp[name]))
     }
-
-    // console.log(toSave);
 
     return toSave;
 
@@ -542,7 +519,7 @@ const postOKAlbum = async function ( post, categories ) {
             let arrRes = [];
 
             for(let id in data.photos) {
-                // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token)
+                
                 let urlSave = url.format({
                     protocol: 'https',
                     hostname: 'api.ok.ru',
@@ -665,80 +642,6 @@ const postFBWall = async function( post, categories ) {
     .catch(err => err);
 }
 
-const postOnTime = function(Posts, Images, Categories) {
-    
-    let flag = true;
-
-    setInterval(async () => {
-
-        try {
-
-            if ( flag && process.env.isInit ) {
-
-                let currentDate = Date.now();
-    
-                let posts = await Posts.findAll( { where: { publish_date: { [Op.lte]: currentDate } } } );
-
-                console.log( 'Post on time', posts );
-
-                if( posts && posts.length ) {
-
-                    flag = false;
-
-                    for ( let post of posts ) {
-
-                        let categories = await getCategories( post.dataValues, Images, Categories );
-
-                        console.log( 'Categories', categories );
-
-                        let postsSocial = await postToSocial( post.dataValues, categories );
-
-                        console.log( 'End', postsSocial );
-                    }
-
-                }
-                
-                let delPost = await Posts.destroy( { where: { publish_date: { [Op.lte]: currentDate } } } );
-
-                console.log( 'Post on time delete', delPost );
-    
-                flag = true;
-            }
-
-        } catch ( error ) {
-            console.log( 'Post on time error', error );
-        }
-
-    }, 1000 * 5);
-}
-
-const getCategories = async function ( post, Images, Categories ) {
-
-    let categories = await Categories.findAll( {
-        attributes: [ 'vkId', 'okId', 'fbId', 'tags' ],
-        include: [
-            { model: Images, required: true, where: { post_id: post.id, isPublish: false } }
-        ]
-    } );
-
-    //load buffer
-
-    for ( let category of categories ) {
-        for ( let image of category.images ) {
-            image.buffer = await readFile( path.join( pathToSave, image.file ) )
-        }
-    }
-
-    return categories;
-}
-
-const postToSocial = function ( post, categories ) {
-
-    return parallel( [ postVK( post, categories ), postOK( post, categories ),
-         postTelegram( post, categories ), postOKAlbum( post, categories ), postFBAlbum( post, categories ) ] );
-
-}
-
 const postTelegram = async function ( post, categories ) {
 
     let results = [];
@@ -807,112 +710,88 @@ const postTelegram = async function ( post, categories ) {
     return results;
 }
 
+const postOnTime = function(Posts, Images, Categories) {
+    
+    let flag = true;
 
-const postToDB = async function(images, Post, ops) {
-    console.log('\n\n*****POST TO DB *****\n\n', images, JSON.stringify(images));
-    return Post.create({pTime: ops.publish_date, jsonData: images, text: ops.text})
-    .then(res => {
-        console.log(res.get('jsonData'));
-        return {res, success: true}
-    })
-    .catch(error => {
-        console.log('Promis error OK', error);
-        return {error, success: false};
-    });
-}
+    setInterval(async () => {
 
-const saveImages = async function(pathToFolder, imagesArr, db, ops) {
-
-    let results = Object.create(null);
-
-    results.save = [];
-
-    // console.log(imagesArr);
-    let filesSaved = [];
-    for(let image of imagesArr) {
         try {
-            let res = await makePromiseToSave(pathToFolder, image, db.Images);
-            if(res.success) {
-                res.file = image.name;
-                filesSaved.push(image);
-                results.save.push(res);
-            } else {
-                res.message = 'Проблема сохранении изображения'
-                throw res;
+
+            if ( flag && process.env.isInit ) {
+
+                let currentDate = Date.now();
+    
+                let posts = await Posts.findAll( { where: { publish_date: { [Op.lte]: currentDate } } } );
+
+                console.log( 'Post on time', posts );
+
+                if( posts && posts.length ) {
+
+                    flag = false;
+
+                    for ( let post of posts ) {
+
+                        let categories = await getCategories( post.dataValues, Images, Categories );
+
+                        console.log( 'Categories', categories );
+
+                        let postsSocial = await postToSocial( post.dataValues, categories );
+
+                        console.log( 'End social', postsSocial );
+
+                        let update = await Images.update( { isPublish: true }, { where: { post_id: post.dataValues.id } } )
+
+                        console.log( 'Update images', update );
+                    }
+
+                }
+                
+                let delPost = await Posts.destroy( { where: { publish_date: { [Op.lte]: currentDate } } } );
+
+                console.log( 'Post on time delete', delPost );
+    
+                flag = true;
             }
-        } catch (err) {
-            console.log('Error Save Db (catch(err))', err);
-            throw err;
-        }
-    }
 
-    // console.log(filesSaved);
-    let categGroup = {};
-    filesSaved.forEach(img => {
-
-        img.toJSON = function() {
-            return {
-                name: this.name,
-                mimetype: this.mimetype,
-                tags: this.tags,
-                fbPostId: this.fbPostId
-            }
+        } catch ( error ) {
+            console.log( 'Post on time error', error );
         }
 
-        if(!categGroup[img.category]) {
-            categGroup[img.category] = {
-                files: [img]
-            }
-            categGroup[img.category] = Object.assign(categGroup[img.category], ops.categOps[img.category])
-        } else {
-            categGroup[img.category].files.push(img);
-        }
-    });
-
-    // console.log('*********\nCateg Ops', categGroup, '\n********');
-
-    ops.publish_date = dateTimeFix(ops.publish_date);
-
-    try {
-
-        let resultsPr = await parallel([
-            postFBAlbum(categGroup, ops),
-            postVK(categGroup, ops), 
-            postOK(categGroup, ops)
-        ]);
-
-        console.log('Paraller results', resultsPr);
-
-        results.fb = resultsPr[0];
-        results.vk = resultsPr[1];
-        results.ok = resultsPr[2];
-
-        results.social = resultsPr.every(res => res.success);
-
-    } catch(err) {
-        console.log('Paraller (catch(err))', err);
-        throw err;
-    }
-
-    try {
-
-        results.db = await postToDB(categGroup, db.Posts, ops);
-        console.log('Post ind DB res', results.db);
-
-        results.db = {success: true};
-
-    } catch (err) {
-        console.log('Error post OK Teleg FB In DB (catch(err))', err);
-        throw err;
-    }
-
-    return results;
+    }, 1000 * 5);
 }
+
+const getCategories = async function ( post, Images, Categories ) {
+
+    let categories = await Categories.findAll( {
+        attributes: [ 'vkId', 'okId', 'fbId', 'tags' ],
+        include: [
+            { model: Images, required: true, where: { post_id: post.id, isPublish: false } }
+        ]
+    } );
+
+    //load buffer
+
+    for ( let category of categories ) {
+        for ( let image of category.images ) {
+            image.buffer = await readFile( path.join( pathToSave, image.file ) )
+        }
+    }
+
+    return categories;
+}
+
+const postToSocial = function ( post, categories ) {
+
+    return parallel( [ postVK( post, categories ), postOK( post, categories ),
+         postTelegram( post, categories ), postOKAlbum( post, categories ), postFBAlbum( post, categories ) ] );
+
+}
+
 
 exports.makePost = makePost;
 exports.vkAuthCB = vkAuthCB;
 exports.categoryGetRes = categoryGetRes;
-exports.saveImages = saveImages;
 exports.createAlbum = createAlbum;
 exports.postOnTime = postOnTime;
 exports.getAlbums = getAlbums;

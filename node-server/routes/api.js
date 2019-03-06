@@ -52,7 +52,7 @@ router.get('/', makeApiQuery, function (req, res, next) {
     }).catch(err => next(err))
 });
 
-router.post('/upload', isAuth(), parseFilesData, function (req, res, next) {
+router.post('/upload', isAuth(), isInit(), parseFilesData, function (req, res, next) {
     console.log('Text', req.body);
 
     makePost(req.files.images, { Images, Posts, Categories }, {

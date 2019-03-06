@@ -23,6 +23,8 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
 
+        mimetype: { type: DataTypes.STRING, defaultValue: 'image/jpeg', allowNull: false },
+
         isPublish: { type: DataTypes.BOOLEAN, defaultValue: false },
 
     }, {

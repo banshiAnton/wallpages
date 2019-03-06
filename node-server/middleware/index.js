@@ -5,10 +5,11 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const randomstring = require("randomstring");
 
+const { ServerError } = require('../funcs/error');
+
 const sequelize = new Sequelize(process.env.CLEARDB_DATABASE_URL);
 
 const Admins = sequelize.import(path.join(__dirname, '../models/admin'));
-const Categories = sequelize.import(path.join(__dirname, '../models/categories'));
 
 const makeApiQuery = function(req, res, next) {
     
@@ -62,7 +63,6 @@ const parseFilesData = function(req, res, next) {
         
         console.log('Client data', filesData, 'Files', req.files.images);
 
-        // let categOps = {};
 
         if (!Array.isArray(req.files.images)) {
             req.files.images = [req.files.images];
@@ -71,6 +71,9 @@ const parseFilesData = function(req, res, next) {
         for (let file of req.files.images) {
             
             console.log('File', file);
+
+
+            if ( !filesData[ file.name ].category ) throw new ServerError('No category selected');
 
             file.category = filesData[file.name].category;
             file.tags = filesData[file.name].tags;
@@ -81,18 +84,8 @@ const parseFilesData = function(req, res, next) {
 
             file.name = (randomstring.generate( 10 ) + file.name.slice( file.name.lastIndexOf('.') )).trim();
 
-            // if(!categOps[file.category]) {
-            //     let categData = await Categories.findOne({where: {id: file.category}}).catch(err => err);
-            //     categOps[file.category] = {
-            //         tags: categData.get('tags'),
-            //         vkAid: categData.get('vkId'),
-            //         okAid: categData.get('okId'),
-            //         fbAid: categData.get('fbId')
-            //     }
-            // }
         }
 
-        // req.categOps = categOps;
 
         console.log('Transformed', req.files.images);
 

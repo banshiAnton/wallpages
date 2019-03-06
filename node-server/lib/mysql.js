@@ -10,18 +10,18 @@ const Categories = sequelize.import(path.join(__dirname, '../models/categories')
 const Images = sequelize.import(path.join(__dirname, '../models/images'));
 const Posts = sequelize.import(path.join(__dirname, '../models/posts'));
 
-Categories.hasMany(Images, {foreignKey: 'category_id' });
-Images.belongsTo(Categories, {foreignKey: 'category_id' });
+Categories.hasMany( Images, { foreignKey: 'category_id', allowNull: false  } )
+Images.belongsTo( Categories, { foreignKey: 'category_id', allowNull: false } );
 
-Posts.hasMany(Images, { foreignKey: 'post_id' })
-Images.belongsTo(Posts, { foreignKey: 'post_id' });
+Posts.hasMany( Images, { foreignKey: 'post_id' } )
+Images.belongsTo( Posts, { foreignKey: 'post_id' } );
 
 const force = !!process.env.forceTables;
 
 sequelize.query('DROP TABLE IF EXISTS `images`')
 .then(() => Posts.sync({force})).then(() => Categories.sync({force}))
 .then(() => Images.sync({force})).then(() => Admins.sync({force}))
-// .then(() => Admins.bulkCreate([ {vkid: process.env.vkGodAdminId}, {vkid: '217969540'}, {vkid: '281438517'}, {vkid: '279153611'} ]))
+.then(() => Admins.bulkCreate([ {vkid: process.env.vkGodAdminId}, {vkid: '217969540'}, {vkid: '281438517'}, {vkid: '279153611'} ]))
 .then(() => postOnTime(Posts, Images, Categories))
 .catch(err => console.error('ERROR in MYSQL', err));
 
