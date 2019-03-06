@@ -19,6 +19,7 @@ import { HomeComponent } from './home/home.component';
 import { AddAdminComponent } from './admin/add-admin/add-admin.component';
 import { SetupComponent } from './admin/setup/setup.component';
 import { AlertDivComponent } from './alert-div/alert-div.component';
+import { PostsComponent } from './admin/posts/posts.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { AlertDivComponent } from './alert-div/alert-div.component';
     AddAdminComponent,
     SetupComponent,
     AlertDivComponent,
+    PostsComponent,
   ],
   imports: [
     BrowserModule,
