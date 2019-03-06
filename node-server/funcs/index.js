@@ -402,7 +402,6 @@ const postVK = async function ( post, categories ) {
     }
 
     let attachments = await parallel( promiseUploadPhotos );
-    console.log( 'VK attachments', attachments );
     attachments.push( config.get( `AppLinks:${post.appLinkId}` ) );
     attachments = attachments.join( ',' );
 
@@ -437,7 +436,6 @@ const postVK = async function ( post, categories ) {
 }
 
 const postOK = async function ( post, categories ) {
-    // console.log('OK start', images);
 
     let allImages = [];
 
@@ -480,7 +478,6 @@ const postOK = async function ( post, categories ) {
         };
 
         for(let id in data.photos) {
-            // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token);
             at.media[0].list.push({id: data.photos[id].token});
         }
 
@@ -519,80 +516,64 @@ const postOK = async function ( post, categories ) {
 }
 
 const postOKAlbum = async function ( post, categories ) {
-    // console.log('Data OK Albums', records);
 
-    for(let rec of records) {
-        rec = rec.get('jsonData')
-        for(let categ in rec) {
+    await okRefresh(process.env.okRToken).then(data => ok.setAccessToken(data.access_token));
 
-            await okRefresh(process.env.okRToken)
-            .then(data => {
-                // console.log('Refresh', data);
-                ok.setAccessToken(data.access_token);
-            }).then(() => okGet({method: 'photosV2.getUploadUrl', count: rec[categ].files.length, gid: process.env.okGid, aid: rec[categ].okAid }))
-            .then(async data => {
-                // console.log(data);
+    let promiseArr = [];
 
-                let form = new FormData();
-                let i = 1;
+    for ( let category of categories ) {
 
-                for(let img of rec[categ].files) {
+        let promise = okGet( { method: 'photosV2.getUploadUrl', count: category.dataValues.images.length, gid: process.env.okGid, aid: category.get( 'okId' ) } )
+        .then( data => {
 
-                    let file = null
-                    try {
-                        file = await readFile(path.join(pathToFolder, '/', img.name));
-                        // console.log('File', file);
-                    } catch (err) {
-                        // console.log(err);
-                        continue;
-                    }
-        
-                    let fName = `file${i++}`
-                    form.append(fName, file, {
-                        filename: img.name,
-                        contentType: img.mimetype
-                    });
-                }
+            let form = new FormData();
 
-                return fetch(data.upload_url, {
-                    method: 'post',
-                    body: form,
-                    headers: form.getHeaders()
-               });
-            }).then(data => data.json())
-            .then(async data => {
-                
-                let arrRes = [];
-
-                for(let id in data.photos) {
-                    // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token)
-                    let urlSave = url.format({
-                        protocol: 'https',
-                        hostname: 'api.ok.ru',
-                        pathname: 'fb.do',
-                        query: {
-                            application_key: process.env.okpbKey,
-                            format: 'json',
-                            method: 'photosV2.commit',
-                            photo_id: id,
-                            token: data.photos[id].token,
-                            sig: getSigOk({application_key: process.env.okpbKey, format: 'json', method: 'photosV2.commit', photo_id: id, token: data.photos[id].token}, ok.getAccessToken().trim()),
-                            access_token: ok.getAccessToken().trim()
-                        }
-                    });
-        
-        
-                    let reult = await fetch(urlSave).then(data => data.json()).catch(err => err);
-        
-                    arrRes.push(reult);
-                }
-        
-                return arrRes;
+            category.dataValues.images.forEach( ( image , i ) => {
+                form.append( `file${i+1}`, image.buffer, {
+                    filename: image.dataValues.file,
+                    contentType: 'image/jpeg'
+                });
             })
-            .catch(err => err);
 
-        }
+            return fetch(data.upload_url, { method: 'post', body: form, headers: form.getHeaders() } );
+        }).then( data => data.json() )
+        .then(async data => {
+            
+            let arrRes = [];
+
+            for(let id in data.photos) {
+                // console.log('\n\nID:', id,  '\nToken:', data.photos[id].token)
+                let urlSave = url.format({
+                    protocol: 'https',
+                    hostname: 'api.ok.ru',
+                    pathname: 'fb.do',
+                    query: {
+                        application_key: process.env.okpbKey,
+                        format: 'json',
+                        method: 'photosV2.commit',
+                        photo_id: id,
+                        token: data.photos[id].token,
+                        sig: getSigOk({application_key: process.env.okpbKey, format: 'json', method: 'photosV2.commit', photo_id: id, token: data.photos[id].token}, ok.getAccessToken().trim()),
+                        access_token: ok.getAccessToken().trim()
+                    }
+                });
+
+
+                let reult = await fetch(urlSave).then(data => data.json()).catch(err => err);
+
+                arrRes.push(reult);
+            }
+
+            return arrRes;
+        })
+        .catch(err => err);
+
+        promiseArr.push( promise );
+
     }
+
+    return parallel( promiseArr );
+
 }
 
 const postFBAlbum = async function(images, ops) {
@@ -742,7 +723,7 @@ const getCategories = async function ( post, Images, Categories ) {
 
 const postToSocial = function ( post, categories ) {
 
-    return parallel( [ postVK( post, categories ), postOK( post, categories ) ] );
+    return parallel( [ postVK( post, categories ), postOK( post, categories ), postOKAlbum( post, categories ) ] );
 
 }
 
