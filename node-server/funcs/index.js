@@ -214,6 +214,8 @@ const getAlbums = async function() {
     let okAlbums = await getAlbumsOK();
     let fbAlbums = await getAlbumsFB();
 
+    console.log(okAlbums, fbAlbums);
+
     okAlbums.albums.forEach(album => {
         if(album.title.toLowerCase() == 'разное') {
             tmp['основной'].okId = album.aid;
@@ -519,7 +521,7 @@ const postOKAlbum = async function ( post, categories ) {
             let arrRes = [];
 
             for(let id in data.photos) {
-                
+
                 let urlSave = url.format({
                     protocol: 'https',
                     hostname: 'api.ok.ru',
