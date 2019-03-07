@@ -8,6 +8,8 @@ import { ServiceService } from '../../services/service.service';
 })
 export class PostsComponent implements OnInit {
 
+  posts = [];
+
   constructor( private service: ServiceService ) { }
 
   ngOnInit() {
@@ -17,10 +19,14 @@ export class PostsComponent implements OnInit {
   getPosts() {
     this.service.getPosts().subscribe( ( data: any ) => {
       console.log('Post', data);
-
-      if ( data.subscribe ) {
-        
+      if ( data.success ) {
+        this.posts = data.posts;
       }
     });
   }
+
+  editPost( id ) {
+    console.log(id);
+  }
+
 }

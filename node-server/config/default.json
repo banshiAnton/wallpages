@@ -1,7 +1,7 @@
 {
     "AppLinks": {
-        "0": "https://play.google.com/store/apps/details?id=com.wallpaper.fullhd.p1080new",
-        "1": "https://play.google.com/store/apps/details?id=com.wallpaper.fullhd.p1080.car",
-        "2": "https://play.google.com/store/apps/details?id=com.wallpapers1080.amoled"
+        "0": { "link": "https://play.google.com/store/apps/details?id=com.wallpaper.fullhd.p1080new", "name": "Full HD Wallpapers" },
+        "1": { "link": "https://play.google.com/store/apps/details?id=com.wallpaper.fullhd.p1080.car", "name": "Авто обои Full HD Машины" },
+        "2": { "link": "https://play.google.com/store/apps/details?id=com.wallpapers1080.amoled", "name": "Super Amoled - Обои Full HD" }
     }
 }

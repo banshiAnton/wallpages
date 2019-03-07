@@ -1,3 +1,22 @@
-<p>
-  posts works!
-</p>
+<div class="post-list row" *ngIf="posts.length">
+  <div class="post col-md-8 col-12" *ngFor="let post of posts">
+    <div>
+      <p>Текст: {{ post.text }}</p>
+      <p>Приложение: {{ post.appLinkId }}</p>
+    </div>
+    <div>
+      <div class="row images-list" *ngFor="let image of post.images">
+        <div class="col-md-5 col-12">
+            <img src="/images/{{image.file}}" class="img-fluid" alt="">
+        </div>
+        <div class="col-md-7 col-12">
+            <p>Категория: {{ image.category.name }}</p>
+            <p>Теги: ( {{ image.category.tags }} ) {{ image.tags }}</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <button class="btn btn-primary" (click)="editPost(post.id);">Редактировать</button>
+    </div>
+  </div>
+</div>

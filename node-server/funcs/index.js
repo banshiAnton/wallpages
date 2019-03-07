@@ -37,7 +37,7 @@ const config = require('../config');
 
 const appLinkStr = (id) => `
 Наше приложение в Google play market:
-${config.get(`AppLinks:${id}`)}`;
+${config.get(`AppLinks:${id}:link`)}`;
 
 const getTagsStr = function ( categories , sep = '' ) {
 
@@ -381,7 +381,7 @@ const postVK = async function ( post, categories ) {
     }
 
     let attachments = await parallel( promiseUploadPhotos );
-    attachments.push( config.get( `AppLinks:${post.appLinkId}` ) );
+    attachments.push( config.get( `AppLinks:${post.appLinkId}:link` ) );
     attachments = attachments.join( ',' );
 
     let message = post.text + '\n' + getTagsStr( categories );
@@ -620,7 +620,7 @@ const postFBAlbum = async function ( post, categories ) {
 
         }
 
-    let fbAblumsSave = await parallel( promiseArr );
+    await parallel( promiseArr );
 
     return postFBWall( post, categories )
     
@@ -671,7 +671,7 @@ const postTelegram = async function ( post, categories ) {
                 contentType: image.dataValues.mimetype
             });
             formDoc.append('reply_markup', JSON.stringify({
-                inline_keyboard: [ [ { text: 'Наше приложение', url: config.get( `AppLinks:${post.appLinkId}` ) } ] ]
+                inline_keyboard: [ [ { text: 'Наше приложение', url: config.get( `AppLinks:${post.appLinkId}:link` ) } ] ]
             }))
 
             //process.env.appUrl
@@ -790,7 +790,49 @@ const postToSocial = function ( post, categories ) {
 
 }
 
+const getPosts = async function ( Posts, Images, Categories ) {
 
+    let response = [];
+
+    return Posts.findAll( { attributes: [ 'id', 'text', 'appLinkId' ], include: [
+        { model: Images, required: true, attributes: [ 'id', 'file', 'tags', 'category_id', 'mimetype' ] }
+     ] } ).then( async posts => {
+
+        console.log( 'Posts', posts );
+
+        for ( let post of posts ) {
+
+            let postToClient = post.dataValues;
+
+            postToClient.appLinkId = config.get(`AppLinks:${postToClient.appLinkId}:name`);
+
+            let images = [];
+
+            for ( let image of postToClient.images ) {
+
+                    let category = await image.getCategory( { attributes: [ 'id', 'name', 'tags' ] } );
+
+                    image = image.dataValues;
+
+                    image.file = await fs.existsSync( path.join( pathToSave, '/small/', image.file ) ) ? `small/${image.file}` : image.file;
+
+                    image.category = category.dataValues;
+
+                    images.push( image );
+
+            }
+
+            postToClient.images = images;
+
+            response.push( postToClient );
+        }
+
+        return response;
+    })
+
+}
+
+exports.getPosts = getPosts;
 exports.makePost = makePost;
 exports.vkAuthCB = vkAuthCB;
 exports.categoryGetRes = categoryGetRes;

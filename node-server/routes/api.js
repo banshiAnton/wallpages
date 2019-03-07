@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const Sequelize = require('sequelize');
 
-const { categoryGetRes, createAlbum, makePost } = require('../funcs');
+const { categoryGetRes, createAlbum, makePost, getPosts } = require('../funcs');
 
 const { parseFilesData, makeApiQuery, isAuth, isInit } = require('../middleware');
 
@@ -64,8 +64,13 @@ router.post('/upload', isAuth(), isInit(), parseFilesData, function (req, res, n
     }).catch(err => next(err))
 });
 
-router.get('/posts', isAuth(), isInit(), function (req, res, next) {
-    res.json({success: true});
+router.get('/posts', function (req, res, next) {
+    getPosts( Posts, Images, Categories )
+    .then( posts => res.json( { success: true, posts } ) )
+    .catch( error => {
+        console.log( 'Posts error', error );
+        res.json( { success: false, error } );
+    } )
 });
 
 router.get('/categories', function(req, res, next) {

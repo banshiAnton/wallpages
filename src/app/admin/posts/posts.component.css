@@ -1,0 +1,23 @@
+.post-list {
+    width: 100%;
+    flex-direction: column;
+}
+
+.post-list p {
+    font-size: 20px;
+}
+
+.post {
+    margin-bottom: 50px;
+    padding: 20px;
+    border: 2px solid blue;
+}
+
+.post button {
+    font-size: 25px;
+}
+
+.images-list {
+    align-items: center;
+    padding-bottom: 20px;
+}
