@@ -790,39 +790,57 @@ const postToSocial = function ( post, categories ) {
 
 }
 
-const getPosts = async function ( Posts, Images, Categories ) {
+const parsePost = async function ( post ) { 
+
+    post.appLinkId = config.get(`AppLinks:${post.appLinkId}:name`);
+    post.publish_date = new Date( +post.publish_date );
+
+    let images = [];
+
+    for ( let image of post.images ) {
+
+        let category = await image.getCategory( { attributes: [ 'id', 'name', 'tags' ] } );
+
+        image = image.dataValues;
+
+        image.file = await fs.existsSync( path.join( pathToSave, '/small/', image.file ) ) ? `small/${image.file}` : image.file;
+
+        image.category = category.dataValues;
+
+        images.push( image );
+
+    }
+
+    post.images = images;
+
+    return post;
+}
+
+const getPost = async function ( id, Posts, Images ) {
+
+    return Posts.findOne( { attributes: [ 'id', 'text', 'appLinkId', 'publish_date' ], where: { id }, include: [
+        { model: Images, required: true, attributes: [ 'id', 'file', 'tags', 'category_id' ] }
+     ] } ).then( async post => {
+
+        console.log( 'Post', post );
+
+        return await parsePost( post );
+    })
+}
+
+const getPosts = async function ( Posts, Images ) {
 
     let response = [];
 
-    return Posts.findAll( { attributes: [ 'id', 'text', 'appLinkId' ], include: [
-        { model: Images, required: true, attributes: [ 'id', 'file', 'tags', 'category_id', 'mimetype' ] }
+    return Posts.findAll( { attributes: [ 'id', 'text', 'appLinkId', 'publish_date' ], include: [
+        { model: Images, required: true, attributes: [ 'id', 'file', 'tags', 'category_id' ] }
      ] } ).then( async posts => {
 
         console.log( 'Posts', posts );
 
         for ( let post of posts ) {
 
-            let postToClient = post.dataValues;
-
-            postToClient.appLinkId = config.get(`AppLinks:${postToClient.appLinkId}:name`);
-
-            let images = [];
-
-            for ( let image of postToClient.images ) {
-
-                    let category = await image.getCategory( { attributes: [ 'id', 'name', 'tags' ] } );
-
-                    image = image.dataValues;
-
-                    image.file = await fs.existsSync( path.join( pathToSave, '/small/', image.file ) ) ? `small/${image.file}` : image.file;
-
-                    image.category = category.dataValues;
-
-                    images.push( image );
-
-            }
-
-            postToClient.images = images;
+            let postToClient = await parsePost( post );
 
             response.push( postToClient );
         }
@@ -832,6 +850,7 @@ const getPosts = async function ( Posts, Images, Categories ) {
 
 }
 
+exports.getPost = getPost;
 exports.getPosts = getPosts;
 exports.makePost = makePost;
 exports.vkAuthCB = vkAuthCB;

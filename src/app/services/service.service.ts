@@ -126,4 +126,10 @@ export class ServiceService {
     );
   }
 
+  getPost(id) {
+    return this.http.get(`${this.apiImageUrl}/post/${id}`).pipe(
+      catchError(error => of({success: false, error}))
+    );
+  }
+
 }

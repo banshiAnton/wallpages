@@ -3,6 +3,7 @@
     <div>
       <p>Текст: {{ post.text }}</p>
       <p>Приложение: {{ post.appLinkId }}</p>
+      <p>Время: {{ post.publish_date | date:'y, MM, dd : HH:mm:ss' }}</p>
     </div>
     <div>
       <div class="row images-list" *ngFor="let image of post.images">
@@ -16,7 +17,7 @@
       </div>
     </div>
     <div>
-      <button class="btn btn-primary" (click)="editPost(post.id);">Редактировать</button>
+      <a class="btn btn-primary" routerLink="../edit/{{post.id}}">Редактировать</a>
     </div>
   </div>
 </div>

@@ -12,6 +12,7 @@ import { AddAdminComponent } from '../admin/add-admin/add-admin.component';
 import { SetupComponent } from '../admin/setup/setup.component';
 import { HomeComponent } from '../home/home.component';
 import { PostsComponent } from '../admin/posts/posts.component';
+import { EditComponent } from '../admin/edit/edit.component';
 
 const routes: Routes = [
   { path: 'admin', component: AdminComponent, canActivateChild: [AuthGuard],
@@ -21,6 +22,7 @@ const routes: Routes = [
       { path: 'addAdmin', component: AddAdminComponent, canActivate: [ MainAdminGuard ] },
       { path: 'setup', component: SetupComponent, canActivate: [ MainAdminGuard ] },
       { path: 'posts', component: PostsComponent, canActivate: [ InitGuard ] },
+      { path: 'edit/:postId', component: EditComponent, canActivate: [ InitGuard ] },
     ]
   },
   { path: 'home', component: HomeComponent }

@@ -20,6 +20,7 @@ import { AddAdminComponent } from './admin/add-admin/add-admin.component';
 import { SetupComponent } from './admin/setup/setup.component';
 import { AlertDivComponent } from './alert-div/alert-div.component';
 import { PostsComponent } from './admin/posts/posts.component';
+import { EditComponent } from './admin/edit/edit.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { PostsComponent } from './admin/posts/posts.component';
     SetupComponent,
     AlertDivComponent,
     PostsComponent,
+    EditComponent,
   ],
   imports: [
     BrowserModule,
