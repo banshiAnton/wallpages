@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const Sequelize = require('sequelize');
 
-const { categoryGetRes, createAlbum, makePost, getPosts, getPost } = require('../funcs');
+const { categoryGetRes, createAlbum, makePost, getPosts, getPost, delteImage, deletePost } = require('../funcs');
 
 const { parseFilesData, makeApiQuery, isAuth, isInit } = require('../middleware');
 
@@ -78,6 +78,24 @@ router.get('/post/:id', function (req, res, next) {
     .then( post => res.json( { success: true, post } ) )
     .catch( error => {
         console.log( 'Post error', error );
+        res.json( { success: false, error } );
+    } )
+});
+
+router.delete('/post/:id', function (req, res, next) {
+    deletePost( req.params.id, Posts, Images )
+    .then( () => res.json( { success: true } ) )
+    .catch( error => {
+        console.log( 'Post error', error );
+        res.json( { success: false, error } );
+    } )
+});
+
+router.delete('/images/:id', function (req, res, next) {
+    delteImage( req.params.id, Images )
+    .then( () => res.json( { success: true, id: req.params.id } ) )
+    .catch( error => {
+        console.log( 'Delete image error', error );
         res.json( { success: false, error } );
     } )
 });

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import { Tag } from '../../tag';
 
@@ -12,6 +12,8 @@ export class ImageEditComponent implements OnInit {
   @Input() image;
 
   @Input() categories;
+
+  @Output() deleteImage = new EventEmitter<number>();
 
   constructor() { }
 
@@ -28,6 +30,10 @@ export class ImageEditComponent implements OnInit {
 
   onChangeCategoty() {
     this.initTags();
+  }
+
+  delete() {
+    this.deleteImage.emit(this.image.id);
   }
 
 }

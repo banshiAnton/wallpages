@@ -132,4 +132,16 @@ export class ServiceService {
     );
   }
 
+  deleteImage(id) {
+    return this.http.delete(`${this.apiImageUrl}/images/${id}`).pipe(
+      catchError(error => of({success: false, error}))
+    );
+  }
+
+  deletePost(id) {
+    return this.http.delete(`${this.apiImageUrl}/post/${id}`).pipe(
+      catchError(error => of({success: false, error}))
+    );
+  }
+
 }

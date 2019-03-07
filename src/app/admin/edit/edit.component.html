@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid" *ngIf="isLoaded">
   <div class="main-form row">
       <div class="col-md-4 col-12">
         <form id="mainform" enctype="application/x-www-form-urlencoded" #form>
@@ -15,7 +15,7 @@
           <owl-date-time-inline stepMinute="30" [(ngModel)]="post.publish_date"></owl-date-time-inline>
           <br>
           <br>
-          <h5>Date: {{ post.publish_date | date:'y, MM, dd : HH:mm:ss' }}</h5>
+          <h5>Date: {{ post?.publish_date | date:'y, MM, dd : HH:mm:ss' }}</h5>
         </div>
 
       </div>
@@ -23,7 +23,7 @@
     
   <div>
     <div *ngFor="let image of post.images" class="row images">
-      <app-image-edit class="col-md-8 col-12" [image]="image" [categories]=categories></app-image-edit>
+      <app-image-edit class="col-md-8 col-12" [image]="image" [categories]=categories (deleteImage)="onDeleteImage($event)" ></app-image-edit>
     </div>
   </div>
 
@@ -38,7 +38,8 @@
     </div>
   </div>
 
-  <button (click)="updatePost();" class="btn btn-primary btn-lg">ОБНОВИТЬ</button>
+  <button (click)="update();" class="btn btn-primary btn-lg">ОБНОВИТЬ</button><br>
+  <button (click)="delete();" class="btn btn-danger btn-lg">УДАЛИТЬ</button>
 
   <app-alert-div [state]="state"></app-alert-div>
 

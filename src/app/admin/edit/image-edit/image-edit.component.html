@@ -6,10 +6,11 @@
     <label>Категория</label>
     <select class="form-control" [(ngModel)]="image.category_id" (change)="onChangeCategoty($event);">
       <option selected disabled>Choose category</option>
-      <option *ngFor="let category of categories" value="{{category.id}}">{{category.name}}</option>
+      <option *ngFor="let category of categories" value="{{category.id}}">{{category?.name}}</option>
     </select>
     <div>
       <tag-input [(ngModel)]="image.tags" [separatorKeyCodes]="[13, 32]"></tag-input>
     </div>
+    <button (click)="delete();" class="btn btn-danger">УДАЛИТЬ</button>
   </div>
 </div>

@@ -16,6 +16,7 @@ Images.belongsTo( Categories, { foreignKey: 'category_id', as: 'category' } );
 Posts.hasMany( Images, { foreignKey: 'post_id' } )
 Images.belongsTo( Posts, { foreignKey: 'post_id' } );
 
+
 const force = !!process.env.forceTables;
 
 // sequelize.query('DROP TABLE IF EXISTS `images`')

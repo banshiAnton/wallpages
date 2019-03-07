@@ -15,6 +15,10 @@ export class AppComponent implements OnInit {
   constructor(private servise: ServiceService) {}
 
   ngOnInit() {
+    //this.lastUpdateToken();
+  }
+
+  lastUpdateToken() {
     this.servise.getLastTokenUpd().subscribe((data: any) => {
       console.log(data);
       if (data.success) {

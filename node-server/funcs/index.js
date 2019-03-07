@@ -8,6 +8,7 @@ const util = require('util');
 
 const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);
+const unlinkFile = util.promisify(fs.unlink);
 
 const sharp = require('sharp');
 const fetch = require('node-fetch');
@@ -790,7 +791,7 @@ const postToSocial = function ( post, categories ) {
 
 }
 
-const parsePost = async function ( post, text = false ) { 
+const parsePost = async function ( post, text = false, categoty = true ) { 
 
     post.appLinkId = text ? config.get(`AppLinks:${post.appLinkId}:name`) : +post.appLinkId;
     post.publish_date = new Date( +post.publish_date );
@@ -803,9 +804,9 @@ const parsePost = async function ( post, text = false ) {
 
         image = image.dataValues;
 
-        image.file = await fs.existsSync( path.join( pathToSave, '/small/', image.file ) ) ? `small/${image.file}` : image.file;
+        image.file = fs.existsSync( path.join( pathToSave, '/small/', image.file ) ) ? `small/${image.file}` : image.file;
 
-        image.category = category.dataValues;
+        if ( categoty ) image.category = category.dataValues;
 
         images.push( image );
 
@@ -824,7 +825,7 @@ const getPost = async function ( id, Posts, Images ) {
 
         console.log( 'Post', post );
 
-        return await parsePost( post );
+        return await parsePost( post, false, false );
     })
 }
 
@@ -847,9 +848,30 @@ const getPosts = async function ( Posts, Images ) {
 
         return response;
     })
-
 }
 
+const delteImage = async function ( id, Images ) {
+    let image = await Images.findOne( { where: { id } } );
+
+    let file = image.dataValues.file;
+
+    return image.destroy()
+            .then( async () => {
+                if ( fs.existsSync( path.join( pathToSave, '/small/', file ) ) ) {
+                    await unlinkFile(path.join( pathToSave, '/small/', file ));
+                }
+                await unlinkFile(path.join( pathToSave, '/', file ));
+            })
+}
+
+const deletePost = async function ( id, Posts, Images ) {
+    let post = await Posts.findOne( { where: { id } } );
+    return Images.destroy( { where: { post_id: id  } } )
+            .then(() => post.destroy())
+}
+
+exports.deletePost = deletePost;
+exports.delteImage = delteImage;
 exports.getPost = getPost;
 exports.getPosts = getPosts;
 exports.makePost = makePost;

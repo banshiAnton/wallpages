@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceService } from '../../services/service.service';
 
 import {
   tap, switchMap, timeout, catchError
 } from 'rxjs/operators';
+import { from } from 'rxjs';
 
 @Component({
   selector: 'app-edit',
@@ -17,21 +18,22 @@ export class EditComponent implements OnInit {
 
   categories = [];
 
-  constructor(private router: ActivatedRoute, private service: ServiceService) {
+  isLoaded: boolean;
 
-  }
+  constructor(private router: Router, private routerActive: ActivatedRoute, private service: ServiceService) {}
 
   ngOnInit() {
-    this.loadPost();
     this.getCategories();
+    this.loadPost();
   }
 
 
   loadPost() {
-    this.router.params.pipe(switchMap( (params: any) => this.service.getPost(+params.postId)))
+    this.routerActive.params.pipe(switchMap( (params: any) => this.service.getPost(+params.postId)))
                       .subscribe( (data: any) => {
                         console.log('Post', data);
                         if ( data.success ) {
+                          this.isLoaded = true;
                           this.post = data.post;
                         }
                       });
@@ -46,8 +48,34 @@ export class EditComponent implements OnInit {
     });
   }
 
-  updatePost() {
-    console.log('Post', this.post);
+  update() {
+    console.log('Post update', this.post);
+  }
+
+  delete() {
+    console.log('Post delete', this.post.id);
+    this.service.deletePost(this.post.id).subscribe( (data: any) => {
+      console.log('Delete post', data);
+      if ( data.success ) {
+        this.router.navigate(['admin/posts']);
+      }
+    } );
+  }
+
+
+  onDeleteImage(id: number) {
+    this.service.deleteImage(id).subscribe( (data: any) => {
+      console.log('Delete data', data);
+      if ( data.success ) {
+        this.findAndRemoveById(data.id);
+      }
+    });
+  }
+
+  private findAndRemoveById(id: number) {
+    const imageToDelete = this.post.images.find( (image: any) => image.id === +id );
+
+    this.post.images.splice(1, this.post.images.indexOf(imageToDelete));
   }
 
 }
