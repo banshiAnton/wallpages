@@ -21,6 +21,7 @@ import { SetupComponent } from './admin/setup/setup.component';
 import { AlertDivComponent } from './alert-div/alert-div.component';
 import { PostsComponent } from './admin/posts/posts.component';
 import { EditComponent } from './admin/edit/edit.component';
+import { ImageEditComponent } from './admin/edit/image-edit/image-edit.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { EditComponent } from './admin/edit/edit.component';
     AlertDivComponent,
     PostsComponent,
     EditComponent,
+    ImageEditComponent,
   ],
   imports: [
     BrowserModule,

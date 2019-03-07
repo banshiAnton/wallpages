@@ -1,0 +1,43 @@
+.img-item {
+    padding: 1% 0 1% 1%;
+    border: 2px solid rgb(63, 123, 141);
+    border-radius: 15px;
+    margin-bottom: 1%;
+    width: 100%;
+}
+
+.img-fluid {
+    max-width: 60%;
+}
+
+label {
+    font-size: 18px;
+}
+
+
+@media screen and (max-width: 400px) {
+
+    .img-item {
+        padding: 5px 5px 10px 5px;
+        border: 1.5px solid rgb(63, 123, 141);
+        border-radius: 0;
+        margin-bottom: 5%;
+        width: 100%;
+    }
+    
+    .img-fluid {
+        max-width: 100%;
+    }
+
+    label {
+        font-size: 15px;
+    }
+
+    .row {
+        margin: 0 0 20px 0;
+    }
+
+    .fname {
+        font-size: 13px;
+    }
+}

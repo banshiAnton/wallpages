@@ -790,9 +790,9 @@ const postToSocial = function ( post, categories ) {
 
 }
 
-const parsePost = async function ( post ) { 
+const parsePost = async function ( post, text = false ) { 
 
-    post.appLinkId = config.get(`AppLinks:${post.appLinkId}:name`);
+    post.appLinkId = text ? config.get(`AppLinks:${post.appLinkId}:name`) : +post.appLinkId;
     post.publish_date = new Date( +post.publish_date );
 
     let images = [];
@@ -840,7 +840,7 @@ const getPosts = async function ( Posts, Images ) {
 
         for ( let post of posts ) {
 
-            let postToClient = await parsePost( post );
+            let postToClient = await parsePost( post, true );
 
             response.push( postToClient );
         }

@@ -1,3 +1,45 @@
-<p>
-  edit works! {{postId}}
-</p>
+<div class="container-fluid">
+  <div class="main-form row">
+      <div class="col-md-4 col-12">
+        <form id="mainform" enctype="application/x-www-form-urlencoded" #form>
+          <div class="form-group">
+            <label for="comment">Текст</label>
+            <textarea class="form-control" rows="4" [(ngModel)]="post.text" [ngModelOptions]="{standalone: true}" ></textarea>
+          </div>
+          <div class="form-group">
+            <input type="file" class="form-control-file" multiple="multiple" name="images" accept="image/*" (change)="onChange(inputFiles)" #inputFiles>
+          </div>
+        </form>
+
+        <div class="date-picker">
+          <owl-date-time-inline stepMinute="30" [(ngModel)]="post.publish_date"></owl-date-time-inline>
+          <br>
+          <br>
+          <h5>Date: {{ post.publish_date | date:'y, MM, dd : HH:mm:ss' }}</h5>
+        </div>
+
+      </div>
+  </div>
+    
+  <div>
+    <div *ngFor="let image of post.images" class="row images">
+      <app-image-edit class="col-md-8 col-12" [image]="image" [categories]=categories></app-image-edit>
+    </div>
+  </div>
+
+  <div class="main-form row">
+    <div class="form-group" class="col-md-4 col-12">
+      <label>Выберите приложение</label>
+      <select class="form-control" [(ngModel)]="post.appLinkId" form="mainform">
+        <option value="0">Full HD Обои для телефона</option>
+        <option value="1">Авто обои Full HD Машины</option>
+        <option value="2">Super Amoled - Обои Full HD энергосберегающие</option>
+      </select>
+    </div>
+  </div>
+
+  <button (click)="updatePost();" class="btn btn-primary btn-lg">ОБНОВИТЬ</button>
+
+  <app-alert-div [state]="state"></app-alert-div>
+
+</div>

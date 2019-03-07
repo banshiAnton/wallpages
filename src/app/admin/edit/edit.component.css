@@ -1,0 +1,40 @@
+.main-form {
+    padding: 10px 10px 10px 0;
+}
+
+input[type="checkbox"] {
+    margin-top: 15px;
+}
+
+button[type="submit"] {
+    margin-bottom: 20px;
+}
+
+div[role="alert"] {
+    margin-bottom: 0;
+}
+
+.date-picker {
+    padding: 5% 0 3% 0;
+}
+
+div input[type="file"] {
+    margin-top: 60px;
+}
+
+button[type="submit"] {
+    margin-top: 30px;
+}
+
+
+@media screen and (max-width: 400px) {
+
+    label {
+        font-size: 20px;
+        margin-bottom: 30px;
+    }
+
+    .col-12 {
+        padding: 0;
+    }
+}
