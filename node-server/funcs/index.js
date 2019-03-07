@@ -144,7 +144,7 @@ const saveToFolderAndDbImages = function ( pathToSave, image, ImagesDb ) {
         })
         .then( () => sharp( image.data ).metadata())
         .then( imgCutResolution( image, pathToSave ) )
-        .then( () => ImagesDb.build( { file: image.name, tags: image.tags, category_id: image.category } ) )
+        .then( () => ImagesDb.build( { file: image.name, mimetype: image.mimetype, tags: image.tags, category_id: image.category } ) )
         .then( image => { return { image, success: true }} )
         .catch(error => {
             console.log('Error save images', error);
@@ -353,7 +353,7 @@ const savePhotoVK = function ( category ) {
 
         form.append(`file${i+1}`, image.buffer, {
             filename: image.dataValues.file,
-            mimetype: 'image/jpeg'
+            mimetype: image.dataValues.mimetype
         });
 
     }) 
@@ -434,7 +434,7 @@ const postOK = async function ( post, categories ) {
         allImages.forEach( ( image , i ) => {
             form.append( `pic${i+1}`, image.buffer, {
                 filename: image.dataValues.file,
-                contentType: 'image/jpeg'
+                contentType: image.dataValues.mimetype
             });
         })
 
@@ -510,7 +510,7 @@ const postOKAlbum = async function ( post, categories ) {
             category.dataValues.images.forEach( ( image , i ) => {
                 form.append( `file${i+1}`, image.buffer, {
                     filename: image.dataValues.file,
-                    contentType: 'image/jpeg'
+                    contentType: image.dataValues.mimetype
                 });
             })
 
@@ -571,7 +571,7 @@ const postFBAlbum = async function ( post, categories ) {
 
                 formWall.append( 'photo', image.buffer, {
                     filename: image.dataValues.file,
-                    contentType: 'image/jpeg'
+                    contentType: image.dataValues.mimetype
                 });
 
                 formWall.append( 'caption', caption );
@@ -581,7 +581,7 @@ const postFBAlbum = async function ( post, categories ) {
 
                 formAlbum.append( 'photo', image.buffer, {
                     filename: image.dataValues.file,
-                    contentType: 'image/jpeg'
+                    contentType: image.dataValues.mimetype
                 });
 
                 formAlbum.append( 'caption', caption );
@@ -659,7 +659,7 @@ const postTelegram = async function ( post, categories ) {
             formPhoto.append('caption', caption);
             formPhoto.append('photo', image.buffer, {
                 filename: image.dataValues.file,
-                contentType: 'image/jpeg'
+                contentType: image.dataValues.mimetype
             });
 
             let formDoc = new FormData();
@@ -668,7 +668,7 @@ const postTelegram = async function ( post, categories ) {
             formDoc.append('caption', caption);
             formDoc.append('document', image.buffer, {
                 filename: image.dataValues.file,
-                contentType: 'image/jpeg'
+                contentType: image.dataValues.mimetype
             });
             formDoc.append('reply_markup', JSON.stringify({
                 inline_keyboard: [ [ { text: 'Наше приложение', url: config.get( `AppLinks:${post.appLinkId}` ) } ] ]
