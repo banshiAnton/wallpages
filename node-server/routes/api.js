@@ -103,7 +103,7 @@ router.delete('/images/:id', function (req, res, next) {
 
 router.post('/image/:post_id', nomalizeArray, function (req, res, next) {
     console.log('Files', req.files, req.body);
-    saveImages(req.files.images, Images, +req.params.post_id)
+    saveImages(req.files.images, Categories, Images, +req.params.post_id)
     .then( images => res.json( { success: true } ) )
     .catch( error => {
         console.log( 'Delete image error', error );

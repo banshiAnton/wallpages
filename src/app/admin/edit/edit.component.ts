@@ -67,7 +67,7 @@ export class EditComponent implements OnInit {
     this.service.deleteImage(id).subscribe( (data: any) => {
       console.log('Delete data', data);
       if ( data.success ) {
-        this.findAndRemoveById(data.id);
+        this.findAndRemoveById(+data.id);
       }
     });
   }
@@ -90,9 +90,9 @@ export class EditComponent implements OnInit {
   }
 
   private findAndRemoveById(id: number) {
-    const imageToDelete = this.post.images.find( (image: any) => image.id === +id );
+    const imageToDelete = this.post.images.find( (image: any) => image.id === id );
 
-    this.post.images.splice(1, this.post.images.indexOf(imageToDelete));
+    this.post.images.splice(this.post.images.indexOf(imageToDelete), 1);
   }
 
 }

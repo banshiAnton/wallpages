@@ -57,7 +57,7 @@ const makeApiQuery = function(req, res, next) {
 
 const nomalizeArray = function(req, res, next) {
 
-    if( !req.files.images || !req.files.images.length ) {
+    if( !req.files.images ) {
         throw new ServerError('No images');
     }
 

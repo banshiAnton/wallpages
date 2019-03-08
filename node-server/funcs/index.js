@@ -139,7 +139,7 @@ const imgCutResolution = function (image, pathToFolder) {
     }
 };
 
-const saveToFolderAndDbImages = function ( pathToSave, image, Images, post_id = null, build = true, ) {
+const saveToFolderAndDbImages = function ( pathToSave, image, Images, post_id = null, build = true, defaultCategId = null ) {
 
         return new Promise((res, rej) => {
             if(!image.mimetype.match(/^image\//)) throw new Error('Type must be image');
@@ -152,7 +152,7 @@ const saveToFolderAndDbImages = function ( pathToSave, image, Images, post_id = 
         })
         .then( () => sharp( image.data ).metadata())
         .then( imgCutResolution( image, pathToSave ) )
-        .then( () => Images[ build ? 'build' : 'create' ]( { file: image.name, mimetype: image.mimetype, tags: image.tags || [], category_id: image.category || null, post_id } ) )
+        .then( () => Images[ build ? 'build' : 'create' ]( { file: image.name, mimetype: image.mimetype, tags: image.tags || [], category_id: image.category || defaultCategId, post_id } ) )
         .then( image => { return { image, success: true }} )
         .catch(error => {
             console.log('Error save images', error);
@@ -160,10 +160,13 @@ const saveToFolderAndDbImages = function ( pathToSave, image, Images, post_id = 
         })
 }
 
-const saveImages = function ( images, Images, post_id ) {
+const saveImages = async function ( images, Categories, Images, post_id ) {
     let promiseArr = [];
+
+    let category = await Categories.findOne( { where: { name: 'основной' } } )
+
     for ( let image of images ) {
-        promiseArr.push( saveToFolderAndDbImages( pathToSave, image, Images, post_id, false ) );
+        promiseArr.push( saveToFolderAndDbImages( pathToSave, image, Images, post_id, false, category.dataValues.id ) );
     }
 
     return parallel(promiseArr)
