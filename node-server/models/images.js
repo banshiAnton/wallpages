@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
                 this.setDataValue('tags', tagsArr.join(' '))
             },
             get() {
-                return this.getDataValue('tags').length ? this.getDataValue('tags').split(' ') : [];
+                return this.getDataValue('tags') ? this.getDataValue('tags').split(' ') : [];
             }
         },
 

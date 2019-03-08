@@ -3,7 +3,6 @@ const util = require('util');
 const Sequelize = require('sequelize');
 const path = require('path');
 const jwt = require('jsonwebtoken');
-const randomstring = require("randomstring");
 
 const { ServerError } = require('../funcs/error');
 
@@ -56,17 +55,25 @@ const makeApiQuery = function(req, res, next) {
     next();
 }
 
+const nomalizeArray = function(req, res, next) {
+
+    if( !req.files.images || !req.files.images.length ) {
+        throw new ServerError('No images');
+    }
+
+    if (!Array.isArray(req.files.images)) {
+        req.files.images = [req.files.images];
+    }
+
+    next();
+}
+
 
 const parseFilesData = function(req, res, next) {
 
         let filesData = JSON.parse(req.body.filesData);
         
         console.log('Client data', filesData, 'Files', req.files.images);
-
-
-        if (!Array.isArray(req.files.images)) {
-            req.files.images = [req.files.images];
-        }
 
         for (let file of req.files.images) {
             
@@ -77,12 +84,6 @@ const parseFilesData = function(req, res, next) {
 
             file.category = filesData[file.name].category;
             file.tags = filesData[file.name].tags;
-
-            if (file.name.lastIndexOf('.') === -1) {
-                throw { message: 'invalid ext' };
-            }
-
-            file.name = (randomstring.generate( 10 ) + file.name.slice( file.name.lastIndexOf('.') )).trim();
 
         }
 
@@ -149,6 +150,7 @@ const isAuth = function(isOnlyGodAdmin = false) {
     }
 }
 
+exports.nomalizeArray = nomalizeArray;
 exports.isInit = isInit;
 exports.isAuth = isAuth;
 exports.makeApiQuery = makeApiQuery;

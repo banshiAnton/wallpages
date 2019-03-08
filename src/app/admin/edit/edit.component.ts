@@ -72,6 +72,23 @@ export class EditComponent implements OnInit {
     });
   }
 
+  onChangeFiles( inputFiles, form ) {
+
+    // if ( this.post.images.length + inputFiles.files.length > 5 ) {
+    //  return alert('Максимальное чило изобрражений 5');
+    // }
+
+    const formData = new FormData(form);
+
+    this.service.postImage(formData, this.post.id).subscribe((data: any) => {
+      console.log('Save images', data);
+      if ( data.success ) {
+        window.location.reload();
+      }
+    });
+
+  }
+
   private findAndRemoveById(id: number) {
     const imageToDelete = this.post.images.find( (image: any) => image.id === +id );
 

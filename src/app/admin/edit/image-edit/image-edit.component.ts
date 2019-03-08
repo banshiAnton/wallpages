@@ -22,10 +22,10 @@ export class ImageEditComponent implements OnInit {
   }
 
   initTags() {
-    this.image.tags = this.categories.find(category => category.id === +this.image.category_id).tags
+    this.image.tags = this.image.category_id ? this.categories.find(category => category.id === +this.image.category_id).tags
                       .map(tag => new Tag(tag))
                       .concat(this.image.tags.filter(tag => !tag.readonly)
-                      .map(tag => new Tag(tag, false)));
+                      .map(tag => new Tag(tag, false))) : this.image.tags;
   }
 
   onChangeCategoty() {

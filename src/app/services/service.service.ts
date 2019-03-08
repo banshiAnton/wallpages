@@ -26,6 +26,12 @@ export class ServiceService {
     );
   }
 
+  postImage(data, post_id) {
+    return this.http.post(`${this.apiImageUrl}/image/${post_id}`, data).pipe(
+      catchError(error => of({success: false, error}))
+    );
+  }
+
   addCategory(name, tags) {
     console.log('Service', name, tags);
     return this.http.post(`${this.apiImageUrl}/add/category`, JSON.stringify({name, tags}), {

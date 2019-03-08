@@ -3,9 +3,10 @@ const fs = require('fs');
 
 const Sequelize = require('sequelize');
 
-const { categoryGetRes, createAlbum, makePost, getPosts, getPost, delteImage, deletePost } = require('../funcs');
+const { categoryGetRes, createAlbum, makePost, saveImages,
+        getPosts, getPost, delteImage, deletePost } = require('../funcs');
 
-const { parseFilesData, makeApiQuery, isAuth, isInit } = require('../middleware');
+const { parseFilesData, makeApiQuery, isAuth, isInit, nomalizeArray } = require('../middleware');
 
 const { Posts, Images, Categories } = require('../lib').mysql;
 
@@ -52,7 +53,7 @@ router.get('/', makeApiQuery, function (req, res, next) {
     }).catch(err => next(err))
 });
 
-router.post('/upload', isAuth(), isInit(), parseFilesData, function (req, res, next) {
+router.post('/upload', isAuth(), isInit(), nomalizeArray, parseFilesData, function (req, res, next) {
     console.log('Text', req.body);
 
     makePost(req.files.images, { Images, Posts, Categories }, {
@@ -94,6 +95,16 @@ router.delete('/post/:id', function (req, res, next) {
 router.delete('/images/:id', function (req, res, next) {
     delteImage( req.params.id, Images )
     .then( () => res.json( { success: true, id: req.params.id } ) )
+    .catch( error => {
+        console.log( 'Delete image error', error );
+        res.json( { success: false, error } );
+    } )
+});
+
+router.post('/image/:post_id', nomalizeArray, function (req, res, next) {
+    console.log('Files', req.files, req.body);
+    saveImages(req.files.images, Images, +req.params.post_id)
+    .then( images => res.json( { success: true } ) )
     .catch( error => {
         console.log( 'Delete image error', error );
         res.json( { success: false, error } );

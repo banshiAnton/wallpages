@@ -13,6 +13,8 @@ const unlinkFile = util.promisify(fs.unlink);
 const sharp = require('sharp');
 const fetch = require('node-fetch');
 
+const randomstring = require('randomstring');
+
 const FormData = require('form-data');
 const Sequelize = require('sequelize');
 
@@ -137,20 +139,42 @@ const imgCutResolution = function (image, pathToFolder) {
     }
 };
 
-const saveToFolderAndDbImages = function ( pathToSave, image, ImagesDb ) {
+const saveToFolderAndDbImages = function ( pathToSave, image, Images, post_id = null, build = true, ) {
 
         return new Promise((res, rej) => {
             if(!image.mimetype.match(/^image\//)) throw new Error('Type must be image');
+            if (image.name.lastIndexOf('.') === -1) {
+                throw new Error('Invalid ex');
+            }
+
+            image.name = (randomstring.generate( 10 ) + image.name.slice( image.name.lastIndexOf('.') )).trim();
             res();
         })
         .then( () => sharp( image.data ).metadata())
         .then( imgCutResolution( image, pathToSave ) )
-        .then( () => ImagesDb.build( { file: image.name, mimetype: image.mimetype, tags: image.tags, category_id: image.category } ) )
+        .then( () => Images[ build ? 'build' : 'create' ]( { file: image.name, mimetype: image.mimetype, tags: image.tags || [], category_id: image.category || null, post_id } ) )
         .then( image => { return { image, success: true }} )
         .catch(error => {
             console.log('Error save images', error);
             return { error, success: false, }
         })
+}
+
+const saveImages = function ( images, Images, post_id ) {
+    let promiseArr = [];
+    for ( let image of images ) {
+        promiseArr.push( saveToFolderAndDbImages( pathToSave, image, Images, post_id, false ) );
+    }
+
+    return parallel(promiseArr)
+            .then(results => {
+                console.log('Results', results);
+                if ( results.every( image => image.success ) ) {
+                    return results.map( obj => obj.image.dataValues )
+                }
+                console.log( 'Error save images', results );
+                throw new ServerError( 'Error save images' );
+            });
 }
 
 const makePost = async function(images, db, ops) {
@@ -870,6 +894,7 @@ const deletePost = async function ( id, Posts, Images ) {
             .then(() => post.destroy())
 }
 
+exports.saveImages = saveImages;
 exports.deletePost = deletePost;
 exports.delteImage = delteImage;
 exports.getPost = getPost;

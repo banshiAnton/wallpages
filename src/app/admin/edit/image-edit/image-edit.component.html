@@ -5,7 +5,7 @@
   <div class="col-md-7 col-12">
     <label>Категория</label>
     <select class="form-control" [(ngModel)]="image.category_id" (change)="onChangeCategoty($event);">
-      <option selected disabled>Choose category</option>
+      <option selected disabled value="null">Choose category</option>
       <option *ngFor="let category of categories" value="{{category.id}}">{{category?.name}}</option>
     </select>
     <div>
