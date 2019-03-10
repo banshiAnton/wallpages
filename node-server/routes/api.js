@@ -83,6 +83,10 @@ router.get('/post/:id', function (req, res, next) {
     } )
 });
 
+router.put('/post/:id', function (req, res, next) {
+    console.log('Body', req.body);
+});
+
 router.delete('/post/:id', function (req, res, next) {
     deletePost( req.params.id, Posts, Images )
     .then( () => res.json( { success: true } ) )
@@ -92,7 +96,7 @@ router.delete('/post/:id', function (req, res, next) {
     } )
 });
 
-router.delete('/images/:id', function (req, res, next) {
+router.delete('/image/:id', function (req, res, next) {
     delteImage( req.params.id, Images )
     .then( () => res.json( { success: true, id: req.params.id } ) )
     .catch( error => {

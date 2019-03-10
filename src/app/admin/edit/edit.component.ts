@@ -54,6 +54,9 @@ export class EditComponent implements OnInit {
 
   delete() {
     console.log('Post delete', this.post.id);
+
+    if ( !confirm('Вы действительно хотите удалить пост ?') ) { return; };
+
     this.service.deletePost(this.post.id).subscribe( (data: any) => {
       console.log('Delete post', data);
       if ( data.success ) {

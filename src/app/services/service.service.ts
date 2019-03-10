@@ -139,13 +139,19 @@ export class ServiceService {
   }
 
   deleteImage(id) {
-    return this.http.delete(`${this.apiImageUrl}/images/${id}`).pipe(
+    return this.http.delete(`${this.apiImageUrl}/image/${id}`).pipe(
       catchError(error => of({success: false, error}))
     );
   }
 
   deletePost(id) {
     return this.http.delete(`${this.apiImageUrl}/post/${id}`).pipe(
+      catchError(error => of({success: false, error}))
+    );
+  }
+
+  updatePost(post) {
+    return this.http.put(`${this.apiImageUrl}/post/${post.id}`, JSON.stringify(post)).pipe(
       catchError(error => of({success: false, error}))
     );
   }
