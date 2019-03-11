@@ -22,16 +22,5 @@ module.exports = (sequelize, DataTypes) => {
 
         isPublish: { type: DataTypes.BOOLEAN, defaultValue: false },
 
-    }, {
-        getterMethods: {
-            clientData() {
-                return {
-                    id: this.get('id'),
-                    file: this.get('file'), 
-                    tags: this.get('tags'),
-                    category_id: this.get('category_id')
-                }
-            }
-        }
     });
 }

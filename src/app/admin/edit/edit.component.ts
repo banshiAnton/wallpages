@@ -49,13 +49,17 @@ export class EditComponent implements OnInit {
   }
 
   update() {
+    this.formatTags();
     console.log('Post update', this.post);
+    this.service.updatePost(this.post).subscribe((data: any) => {
+      console.log('Data', data);
+    })
   }
 
   delete() {
     console.log('Post delete', this.post.id);
 
-    if ( !confirm('Вы действительно хотите удалить пост ?') ) { return; };
+    if ( !confirm('Вы действительно хотите удалить пост ?') ) { return; }
 
     this.service.deletePost(this.post.id).subscribe( (data: any) => {
       console.log('Delete post', data);
@@ -77,9 +81,9 @@ export class EditComponent implements OnInit {
 
   onChangeFiles( inputFiles, form ) {
 
-    // if ( this.post.images.length + inputFiles.files.length > 5 ) {
-    //  return alert('Максимальное чило изобрражений 5');
-    // }
+    if ( this.post.images.length + inputFiles.files.length > 5 ) {
+     return alert('Максимальное чило изобрражений 5');
+    }
 
     const formData = new FormData(form);
 
@@ -96,6 +100,12 @@ export class EditComponent implements OnInit {
     const imageToDelete = this.post.images.find( (image: any) => image.id === id );
 
     this.post.images.splice(this.post.images.indexOf(imageToDelete), 1);
+  }
+
+  private formatTags() {
+    this.post.images.forEach(image => {
+      image.tags = image.tags.map(tag => tag.display);
+    });
   }
 
 }

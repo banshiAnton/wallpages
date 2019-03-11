@@ -84,7 +84,7 @@ router.get('/post/:id', function (req, res, next) {
 });
 
 router.put('/post/:id', function (req, res, next) {
-    console.log('Body', req.body);
+    console.log('Body', req.params, req.body);
 });
 
 router.delete('/post/:id', function (req, res, next) {

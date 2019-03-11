@@ -151,7 +151,9 @@ export class ServiceService {
   }
 
   updatePost(post) {
-    return this.http.put(`${this.apiImageUrl}/post/${post.id}`, JSON.stringify(post)).pipe(
+    return this.http.put(`${this.apiImageUrl}/post/${post.id}`, JSON.stringify(post), {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json'})
+    }).pipe(
       catchError(error => of({success: false, error}))
     );
   }
