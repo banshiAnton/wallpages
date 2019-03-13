@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "node ./node-server/app.js",
-    "build": "ng build --output-hashing=all --output-path ./public --delete-output-path=true --watch",
+    "build": "ng build --output-hashing=all --output-path ./public --delete-output-path=true",
+    "build-dev": "ng build --output-hashing=all --output-path ./public --delete-output-path=true --watch",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
