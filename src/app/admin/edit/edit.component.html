@@ -15,7 +15,7 @@
           <owl-date-time-inline stepMinute="30" [(ngModel)]="post.publish_date"></owl-date-time-inline>
           <br>
           <br>
-          <h5>Date: {{ post?.publish_date | date:'y, MM, dd : HH:mm:ss' }}</h5>
+          <h5>Date: {{ post.publish_date | date:'y, MM, dd : HH:mm:ss' }}</h5>
         </div>
 
       </div>
@@ -40,5 +40,7 @@
 
   <button (click)="update();" class="btn btn-primary btn-lg">ОБНОВИТЬ</button><br>
   <button (click)="delete();" class="btn btn-danger btn-lg">УДАЛИТЬ</button>
+
+  <app-alert-div [state]="state"></app-alert-div>
 
 </div>

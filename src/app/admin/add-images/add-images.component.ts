@@ -70,8 +70,8 @@ export class AddImagesComponent implements OnInit {
       data.append('images', file);
     });
 
-    let publish_date = this.selectedDate ? new Date(this.selectedDate) : Date.now();
-    data.append('publish_date', +publish_date + '');
+    const publish_date = this.selectedDate ? +(new Date(this.selectedDate)) : Date.now();
+    data.append('publish_date', publish_date + '');
 
     data.append('filesData', JSON.stringify(this.imageData));
 

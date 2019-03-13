@@ -897,6 +897,25 @@ const deletePost = async function ( id, Posts, Images ) {
             .then(() => post.destroy())
 }
 
+const updatePost = async function ( post, Posts, Images ) {
+
+  let updated = await Posts.update( { text: post.text, appLinkId: ''+post.appLinkId, publish_date: post.publish_date } , { where: { id: post.id } } );
+  console.log('Updated post', updated);
+
+  let promisesArr = [];
+
+  post.images.forEach( image => promisesArr.push( Images.update( {
+      tags: image.tags, category_id: image.category_id
+  }, { where: { id: image.id } } ) ) );
+
+  let imagesResult = await parallel( promisesArr );
+  console.log('Updated images', imagesResult);
+
+  return true;
+
+}
+
+exports.updatePost = updatePost;
 exports.saveImages = saveImages;
 exports.deletePost = deletePost;
 exports.delteImage = delteImage;

@@ -20,6 +20,8 @@ export class EditComponent implements OnInit {
 
   isLoaded: boolean;
 
+  state = 0;
+
   constructor(private router: Router, private routerActive: ActivatedRoute, private service: ServiceService) {}
 
   ngOnInit() {
@@ -49,11 +51,21 @@ export class EditComponent implements OnInit {
   }
 
   update() {
-    this.formatTags();
+    this.prepareToSend();
+
     console.log('Post update', this.post);
+
+    this.state = 1;
+
     this.service.updatePost(this.post).subscribe((data: any) => {
       console.log('Data', data);
-    })
+      if ( data.success ) {
+        this.state = 2;
+        window.location.reload();
+      } else {
+        this.state = 3;
+      }
+    });
   }
 
   delete() {
@@ -104,8 +116,16 @@ export class EditComponent implements OnInit {
 
   private formatTags() {
     this.post.images.forEach(image => {
-      image.tags = image.tags.map(tag => tag.display);
+      image.tags = image.tags.filter( tag => !tag.readonly ).map( tag => tag.display );
     });
   }
 
+  private dateToNumber() {
+    this.post.publish_date = +(new Date(this.post.publish_date));
+  }
+
+  private prepareToSend() {
+    this.dateToNumber();
+    this.formatTags();
+  }
 }

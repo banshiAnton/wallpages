@@ -4,7 +4,7 @@ const fs = require('fs');
 const Sequelize = require('sequelize');
 
 const { categoryGetRes, createAlbum, makePost, saveImages,
-        getPosts, getPost, delteImage, deletePost } = require('../funcs');
+        getPosts, getPost, delteImage, deletePost, updatePost } = require('../funcs');
 
 const { parseFilesData, makeApiQuery, isAuth, isInit, nomalizeArray } = require('../middleware');
 
@@ -54,8 +54,7 @@ router.get('/', makeApiQuery, function (req, res, next) {
 });
 
 router.post('/upload', isAuth(), isInit(), nomalizeArray, parseFilesData, function (req, res, next) {
-    console.log('Text', req.body);
-
+    console.log('Create post', req.body);
     makePost(req.files.images, { Images, Posts, Categories }, {
         text: req.body.text ? req.body.text.trim() : '', publish_date: +req.body.publish_date,
         url: `${req.protocol}://${req.hostname}/images/`, appLinkId: req.body.appLinkId
@@ -68,51 +67,39 @@ router.post('/upload', isAuth(), isInit(), nomalizeArray, parseFilesData, functi
 router.get('/posts', function (req, res, next) {
     getPosts( Posts, Images )
     .then( posts => res.json( { success: true, posts } ) )
-    .catch( error => {
-        console.log( 'Posts error', error );
-        res.json( { success: false, error } );
-    } )
+    .catch(err => next(err))
 });
 
 router.get('/post/:id', function (req, res, next) {
     getPost( req.params.id, Posts, Images )
     .then( post => res.json( { success: true, post } ) )
-    .catch( error => {
-        console.log( 'Post error', error );
-        res.json( { success: false, error } );
-    } )
+    .catch(err => next(err))
 });
 
 router.put('/post/:id', function (req, res, next) {
-    console.log('Body', req.params, req.body);
+    console.log('Put post', req.params, req.body);
+    updatePost( req.body, Posts, Images )
+    .then( () => res.json( { success: true } ) )
+    .catch(error => next(error))
 });
 
 router.delete('/post/:id', function (req, res, next) {
     deletePost( req.params.id, Posts, Images )
     .then( () => res.json( { success: true } ) )
-    .catch( error => {
-        console.log( 'Post error', error );
-        res.json( { success: false, error } );
-    } )
+    .catch(err => next(err))
 });
 
 router.delete('/image/:id', function (req, res, next) {
     delteImage( req.params.id, Images )
     .then( () => res.json( { success: true, id: req.params.id } ) )
-    .catch( error => {
-        console.log( 'Delete image error', error );
-        res.json( { success: false, error } );
-    } )
+    .catch(err => next(err))
 });
 
 router.post('/image/:post_id', nomalizeArray, function (req, res, next) {
     console.log('Files', req.files, req.body);
     saveImages(req.files.images, Categories, Images, +req.params.post_id)
-    .then( images => res.json( { success: true } ) )
-    .catch( error => {
-        console.log( 'Delete image error', error );
-        res.json( { success: false, error } );
-    } )
+    .then( ( ) => res.json( { success: true } ) )
+    .catch(err => next(err))
 });
 
 router.get('/categories', function(req, res, next) {
