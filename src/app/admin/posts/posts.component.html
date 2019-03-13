@@ -10,14 +10,15 @@
         <div class="col-md-5 col-12">
             <img src="/images/{{image.file}}" class="img-fluid" alt="">
         </div>
-        <div class="col-md-7 col-12">
+        <div class="image-info col-md-7 col-12">
             <p>Категория: {{ image.category.name }}</p>
             <p>Теги: ( {{ image.category.tags }} ) {{ image.tags }}</p>
         </div>
       </div>
     </div>
     <div>
-      <a class="btn btn-primary" routerLink="../edit/{{post.id}}">Редактировать</a>
+      <button type="button" class="btn btn-primary" routerLink="../edit/{{post.id}}">Редактировать</button>
+      <button type="button" class="btn btn-danger" (click)="delete(post.id);">Удалить</button>
     </div>
   </div>
 </div>

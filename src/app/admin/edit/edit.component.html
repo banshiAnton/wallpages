@@ -38,8 +38,10 @@
     </div>
   </div>
 
-  <button (click)="update();" class="btn btn-primary btn-lg">ОБНОВИТЬ</button><br>
-  <button (click)="delete();" class="btn btn-danger btn-lg">УДАЛИТЬ</button>
+  <div class="row">
+    <button (click)="update();" class="btn btn-primary btn-lg">ОБНОВИТЬ</button>
+    <button (click)="delete();" class="btn btn-danger btn-lg">УДАЛИТЬ</button>
+  </div>
 
   <app-alert-div [state]="state"></app-alert-div>
 

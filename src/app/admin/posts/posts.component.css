@@ -1,6 +1,7 @@
 .post-list {
     width: 100%;
     flex-direction: column;
+    padding-left: 15px;
 }
 
 .post-list p {
@@ -13,11 +14,35 @@
     border: 2px solid blue;
 }
 
-.post a {
+button {
     font-size: 25px;
+}
+
+button:last-of-type {
+    margin-left: 10px;
+}
+
+.image-info p {
+    margin-bottom: 5px;
 }
 
 .images-list {
     align-items: center;
     padding-bottom: 20px;
+}
+
+.image-info {
+    padding-top: 10px;
+}
+
+@media screen and (max-width: 400px) {
+
+    .post-list p {
+        font-size: 15px;
+    }
+
+    a[type="button"], button {
+        font-size: 18px;
+        padding: 8px;
+    }
 }

@@ -1,17 +1,15 @@
 .img-item {
     padding: 2%;
     border: 2px solid rgb(63, 123, 141);
-    border-radius: 15px;
+    border-radius: 0;
     margin-bottom: 1%;
     width: 100%;
-}
-
-.img-fluid {
-    max-width: 60%;
+    align-items: center;
 }
 
 label {
     font-size: 18px;
+    margin-top: 10px;
 }
 
 button {
@@ -22,7 +20,7 @@ button {
 @media screen and (max-width: 400px) {
 
     .img-item {
-        padding: 5px 5px 10px 5px;
+        padding: 20px 5px 10px 5px;
         border: 1.5px solid rgb(63, 123, 141);
         border-radius: 0;
         margin-bottom: 5%;

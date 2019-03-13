@@ -1,13 +1,10 @@
 .img-item {
     padding: 1% 0 1% 1%;
     border: 2px solid rgb(63, 123, 141);
-    border-radius: 15px;
+    border-radius: 0;
     margin-bottom: 1%;
     width: 100%;
-}
-
-.img-fluid {
-    max-width: 60%;
+    align-items: center;
 }
 
 

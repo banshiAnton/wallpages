@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ServiceService } from '../../services/service.service';
 
 @Component({
@@ -10,7 +11,7 @@ export class PostsComponent implements OnInit {
 
   posts = [];
 
-  constructor( private service: ServiceService ) { }
+  constructor( private router: Router, private service: ServiceService ) { }
 
   ngOnInit() {
     this.getPosts();
@@ -25,8 +26,15 @@ export class PostsComponent implements OnInit {
     });
   }
 
-  editPost( id ) {
-    console.log(id);
+  delete(id) {
+    if ( !confirm('Вы действительно хотите удалить пост ?') ) { return; }
+
+    this.service.deletePost(id).subscribe( (data: any) => {
+      console.log('Delete post', data);
+      if ( data.success ) {
+        this.router.navigate(['admin/posts']);
+      }
+    } );
   }
 
 }

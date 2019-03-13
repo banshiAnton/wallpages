@@ -26,6 +26,10 @@ button {
     margin-top: 30px;
 }
 
+button:last-of-type {
+    margin-left: 15px;
+}
+
 
 @media screen and (max-width: 400px) {
 
