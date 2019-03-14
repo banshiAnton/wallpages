@@ -92,7 +92,7 @@ export class AddImagesComponent implements OnInit {
 
     console.log('Files', inputFiles.files, this.files);
 
-    if (inputFiles.files.length > 5 || this.imagesList.length > 5 || this.files.length > 5) {
+    if ( (inputFiles.files.length + this.files.length) > 5) {
       alert('Не больше 5 файлов');
       inputFiles.value = '';
       this.imagesList = this.files = [];
