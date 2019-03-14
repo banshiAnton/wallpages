@@ -70,7 +70,7 @@ export class AddImagesComponent implements OnInit {
       data.append('images', file);
     });
 
-    const publish_date = this.selectedDate ? +(new Date(this.selectedDate)) : Date.now();
+    const publish_date = this.selectedDate ? +(new Date(this.selectedDate)) : (Date.now() + 5 * 60 * 1000);
     data.append('publish_date', publish_date + '');
 
     data.append('filesData', JSON.stringify(this.imageData));
@@ -94,8 +94,6 @@ export class AddImagesComponent implements OnInit {
 
     if ( (inputFiles.files.length + this.files.length) > 5) {
       alert('Не больше 5 файлов');
-      inputFiles.value = '';
-      this.imagesList = this.files = [];
       return;
     }
 
