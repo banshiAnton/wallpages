@@ -89,18 +89,21 @@ export class AddImagesComponent implements OnInit {
   }
 
   onChange(inputFiles) {
-    // this.imagesList = [];
-    for (let i = 0; i < inputFiles.files.length; i++) {
-      this.files.push(inputFiles.files[i]);
-    }
 
-    console.log('Files', inputFiles.files, this.files); // FileReader
+    console.log('Files', inputFiles.files, this.files);
+
     if (inputFiles.files.length > 5 || this.imagesList.length > 5 || this.files.length > 5) {
       alert('Не больше 5 файлов');
       inputFiles.value = '';
       this.imagesList = this.files = [];
       return;
     }
+
+    // this.imagesList = [];
+    for (let i = 0; i < inputFiles.files.length; i++) {
+      this.files.push(inputFiles.files[i]);
+    }
+
     for (const file of inputFiles.files) {// readAsDataURL
       const reader = new FileReader();
       reader.addEventListener('load',  () => {

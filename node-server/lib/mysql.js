@@ -11,7 +11,7 @@ const Images = sequelize.import(path.join(__dirname, '../models/images'));
 const Posts = sequelize.import(path.join(__dirname, '../models/posts'));
 
 Categories.hasMany( Images, { foreignKey: 'category_id' } )
-Images.belongsTo( Categories, { foreignKey: 'category_id', as: 'category' } );
+Images.belongsTo( Categories, { foreignKey: 'category_id' } );
 
 Posts.hasMany( Images, { foreignKey: 'post_id' } )
 Images.belongsTo( Posts, { foreignKey: 'post_id' } );
