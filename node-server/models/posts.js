@@ -2,12 +2,12 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define("posts", {
 
         publish_date: {
-            type: DataTypes.STRING(1234),
+            type: DataTypes.STRING,
             allowNull: false
         },
 
         text: {
-            type: DataTypes.STRING
+            type: DataTypes.TEXT
         },
 
         appLinkId: {
