@@ -657,7 +657,7 @@ const postFBAlbum = async function ( post, categories ) {
 const postFBWall = async function( post, categories ) {
 
     let body = {};
-    body.message = post.text + '\n' + getTagsStr( categories, ' ' ) + appLinkStr( post.appLinkId );
+    //body.message = post.text + '\n' + getTagsStr( categories, ' ' ) + appLinkStr( post.appLinkId );
 
     let i = 0;
 
