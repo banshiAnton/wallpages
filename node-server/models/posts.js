@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define("posts", {
 
         publish_date: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING(1234),
             allowNull: false
         },
 
