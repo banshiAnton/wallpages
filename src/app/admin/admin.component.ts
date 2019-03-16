@@ -9,8 +9,9 @@ import { CookieService } from 'ngx-cookie-service';
 })
 export class AdminComponent implements OnInit {
 
-  isAuth = false;
+  isAuth = true;
   links: any;
+  authLinks: any;
 
   constructor(private service: ServiceService, private cookieService: CookieService) { }
 
@@ -19,14 +20,17 @@ export class AdminComponent implements OnInit {
   }
 
   isAuthCheck() {
-    this.service.getAdmin().subscribe((data: any) => {
-      this.isAuth = data.success;
-      if (!this.isAuth) {
-        this.service.getAuthLinks().subscribe((links: any) => {
-          console.log('Vk link', links);
-          this.links = links;
-        });
-      }
+    // this.service.getAdmin().subscribe((data: any) => {
+    //   this.isAuth = data.success;
+    //   if (!this.isAuth) {
+    //     this.service.getAuthLinks().subscribe((links: any) => {
+    //       console.log('Vk link', links);
+    //       this.links = links;
+    //     });
+    //   }
+    // });
+    this.service.getAuthLinks().subscribe((data: any) => {
+      this.authLinks = data;
     });
   }
 }

@@ -37,8 +37,4 @@ export class SetupComponent implements OnInit {
     });
   }
 
-  setVKToken() {
-    console.log(this.vkToken);
-  }
-
 }

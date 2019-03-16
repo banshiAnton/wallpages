@@ -117,7 +117,7 @@ router.get('/lastTokenUpd', isInit(), function(req, res, next) {
 });
 
 
-router.post('/add/category', isAuth(), function(req, res, next) {
+router.post('/add/category', function(req, res, next) {
 
     let name = req.body.name;
     let tags = req.body.tags;

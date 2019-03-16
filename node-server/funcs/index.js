@@ -355,20 +355,20 @@ const createAlbum = async function(name, tags, Categories) {
         throw check;
     };
 
-    let [vk, fb, ok] = await parallel([createAlbumVK(name),
-                                       createAlbumFB(name),
-                                       createAlbumOK(name)
+    let [fb] = await parallel([//createAlbumVK(name),
+                                       createAlbumFB(name)
+                                    //    createAlbumOK(name)
                                      ]);
 
-    console.log('Data create social', vk, fb, ok);
+    console.log('Data create social', fb);
 
-    if(!vk.success || !fb.success || !ok.success) {
-        throw {vk, fb, ok};
+    if(!fb.success) {
+        throw {fb};
     }
 
-    return Categories.create({name, tags, vkId: vk.data.response.id,
+    return Categories.create({name, tags, //vkId: vk.data.response.id,
                                           fbId: fb.data.id,
-                                          okId: ok.data
+                                        //   okId: ok.data
                                         });
 
 }

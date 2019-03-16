@@ -15,10 +15,10 @@ import { PostsComponent } from '../admin/posts/posts.component';
 import { EditComponent } from '../admin/edit/edit.component';
 
 const routes: Routes = [
-  { path: 'admin', component: AdminComponent, canActivateChild: [AuthGuard],
+  { path: 'admin', component: AdminComponent, canActivateChild: [],
     children: [
       { path: 'addImages', component: AddImagesComponent, canActivate: [ InitGuard ] },
-      { path: 'addCategoty', component: AddCategoryComponent, canActivate: [ InitGuard ] },
+      { path: 'addCategoty', component: AddCategoryComponent, canActivate: [  ] },
       { path: 'addAdmin', component: AddAdminComponent, canActivate: [ MainAdminGuard ] },
       { path: 'setup', component: SetupComponent, canActivate: [ MainAdminGuard ] },
       { path: 'posts', component: PostsComponent, canActivate: [ InitGuard ] },

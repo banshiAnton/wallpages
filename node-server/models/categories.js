@@ -2,15 +2,15 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define("categories", {
 
         vkId: {
-            type: DataTypes.STRING,unique: false, allowNull: false, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
+            type: DataTypes.STRING, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
         },
 
         okId: {
-            type: DataTypes.STRING,unique: false, allowNull: false, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
+            type: DataTypes.STRING, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
         },
 
         fbId: {
-            type: DataTypes.STRING,unique: false, allowNull: false, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
+            type: DataTypes.STRING, allowNull: false, validate: {not: {args: ["\w",'i'], msg: "Name must contain digits"} }
         },
 
         name: { type: DataTypes.STRING, unique: true, allowNull: false,
