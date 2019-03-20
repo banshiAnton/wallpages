@@ -129,7 +129,7 @@ router.get('/fbcb', function(req, res, next) {
         }
         process.env.fbToken = data.access_token;
         process.env.fbTokeLastUpd = Date.now() + '';
-        res.redirect('/admin/');
+        res.redirect('/addCategoty');
     })
     .catch(err => {
         console.log(err);
