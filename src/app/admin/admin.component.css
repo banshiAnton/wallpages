@@ -9,6 +9,11 @@
     padding-top: 50px;
 }
 
+.fb_name {
+    font-size: 3rem;
+    margin-top: 25px;
+}
+
 @media screen and (max-width: 400px) {
 
     .nav-item {

@@ -12,6 +12,7 @@ export class AdminComponent implements OnInit {
   isAuth = true;
   links: any;
   authLinks: any;
+  fb_name = '';
 
   constructor(private service: ServiceService, private cookieService: CookieService) { }
 
@@ -31,6 +32,9 @@ export class AdminComponent implements OnInit {
     // });
     this.service.getAuthLinks().subscribe((data: any) => {
       this.authLinks = data;
+      if (this.cookieService.get('fb_info')) {
+        this.fb_name = JSON.parse(this.cookieService.get('fb_info')).name;
+      }
     });
   }
 }
