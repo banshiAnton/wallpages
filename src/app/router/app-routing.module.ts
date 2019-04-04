@@ -18,14 +18,14 @@ const routes: Routes = [
   { path: '', component: AdminComponent, canActivateChild: [],
     // children: [
     //   { path: 'addImages', component: AddImagesComponent, canActivate: [ InitGuard ] },
-    //   { path: 'addCategoty', component: AddCategoryComponent, canActivate: [  ] },
+    //   { path: 'addCategory', component: AddCategoryComponent, canActivate: [  ] },
     //   { path: 'addAdmin', component: AddAdminComponent, canActivate: [ MainAdminGuard ] },
     //   { path: 'setup', component: SetupComponent, canActivate: [ MainAdminGuard ] },
     //   { path: 'posts', component: PostsComponent, canActivate: [ InitGuard ] },
     //   { path: 'edit/:postId', component: EditComponent, canActivate: [ InitGuard ] },
     // ]
   },
-  { path: 'addCategoty', component: AddCategoryComponent, canActivate: [  ] }
+  { path: 'addCategory', component: AddCategoryComponent, canActivate: [  ] }
 ];
 
 @NgModule({
