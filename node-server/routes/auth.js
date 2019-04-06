@@ -127,10 +127,11 @@ router.get('/fbcb', function(req, res, next) {
         if(!data.access_token) {
             throw data;
         }
+        process.env.tmpToken = data.access_token;
         // process.env.fbToken = data.access_token;
         process.env.fbTokeLastUpd = Date.now() + '';
         
-    }).then(() => fetch(`https://graph.facebook.com/v3.2/me?access_token=${data.access_token}`))
+    }).then(() => fetch(`https://graph.facebook.com/v3.2/me?access_token=${process.env.tmpToken}`))
     .then(data => data.json())
     .then(data => res.cookie('fb_info', JSON.stringify(data), {path: '/', httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000 }))
     .then(() => res.redirect('/addCategory'))
