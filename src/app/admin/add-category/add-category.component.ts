@@ -42,8 +42,8 @@ export class AddCategoryComponent implements OnInit {
 
     this.addState = 1;
 
-    console.log(this.tags, this.addName);
-    this.service.addCategory(this.addName.toLowerCase().replace(/\s/, ''), this.tags.map((item: any) => {
+    console.log(this.tags, this.addName.toLowerCase().replace(/\s/gi, ''));
+    this.service.addCategory(this.addName.toLowerCase().replace(/\s/gi, ''), this.tags.map((item: any) => {
       return item.value;
     })).subscribe((data: any) => {
       console.log(data);
