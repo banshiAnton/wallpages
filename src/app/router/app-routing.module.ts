@@ -15,6 +15,8 @@ import { PostsComponent } from '../admin/posts/posts.component';
 import { EditComponent } from '../admin/edit/edit.component';
 
 const routes: Routes = [
+  // { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
   { path: 'admin', component: AdminComponent, canActivateChild: [AuthGuard],
     children: [
       { path: 'addImages', component: AddImagesComponent, canActivate: [ InitGuard ] },
@@ -24,8 +26,7 @@ const routes: Routes = [
       { path: 'posts', component: PostsComponent, canActivate: [ InitGuard ] },
       { path: 'edit/:postId', component: EditComponent, canActivate: [ InitGuard ] },
     ]
-  },
-  { path: 'home', component: HomeComponent }
+  }
 ];
 
 @NgModule({

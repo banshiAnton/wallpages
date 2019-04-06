@@ -2,6 +2,14 @@
     width: 100%;
 }
 
+.navbar-nav {
+    flex-direction: column;
+}
+
+.navbar-toggler {
+    color: white;
+}
+
 .tags {
     display: block;
     background-color: darkgrey;
@@ -37,8 +45,19 @@
     margin-right: 2%;
 }
 
-@media screen and (max-width: 400px) {
+@media (min-width: 600px) {
+    .navbar-expand-lg .navbar-toggler {
+        display: none;
+    }
+    .navbar-expand-lg .navbar-collapse {
+        display: flex;
+        flex-basis: auto;
+    }
+}
+
+@media (max-width: 600px) {
     .row {
         flex-direction: column;
     }
 }
+
