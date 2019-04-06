@@ -299,6 +299,8 @@ const createAlbumFB = function(name) {
 
     graph.setAccessToken(process.env.fbToken);
 
+    name = name.replace(/\s/, '');
+
     return graphPost(`/${process.env.fbGid}/albums`, {name})
            .then(data => {
             return {success: true, data};
