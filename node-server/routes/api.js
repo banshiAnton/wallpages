@@ -106,7 +106,7 @@ router.get('/categories', function(req, res, next) {
     Categories.findAll()
     .then(result => categoryGetRes(result))
     .then(resultForm => {
-        console.log(resultForm);
+        console.log('Categories', resultForm);
         res.json(resultForm);
     })
     .catch(err => next(err))

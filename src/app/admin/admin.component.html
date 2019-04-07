@@ -3,6 +3,14 @@
 </div>
 
 <div *ngIf="isAuth">
+  <div class="date-last-token-upd">
+      <div>
+          OK: {{ ok | date:'medium' }}
+      </div>
+      <div>
+          FB: {{ fb | date:'medium' }}
+      </div>
+  </div>
   <nav class="nav nav-pills">
     <a class="nav-item" routerLink="setup">Начальная настройка</a>
     <a class="nav-item" routerLink="addCategory">Категории</a><br>

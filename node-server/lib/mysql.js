@@ -17,11 +17,11 @@ Posts.hasMany( Images, { foreignKey: 'post_id' } )
 Images.belongsTo( Posts, { foreignKey: 'post_id' } );
 
 
-const force = !!process.env.forceTables;
+const force = process.env.forceTables === 'true';
 
 sequelize.query('DROP TABLE IF EXISTS `images`')
-.then(() => Posts.sync({force})).then(() => Categories.sync({force}))
-.then(() => Images.sync({force})).then(() => Admins.sync({force}))
+.then(() => Posts.sync({force: true})).then(() => Categories.sync({force}))
+.then(() => Images.sync({force})).then(() => Admins.sync({force: true}))
 .then(() => Admins.bulkCreate([ {vkid: process.env.vkGodAdminId}, {vkid: '217969540'}, {vkid: '281438517'}, {vkid: '279153611'} ]))
 .then(() => postOnTime(Posts, Images, Categories))
 .catch(err => console.error('ERROR in MYSQL', err));

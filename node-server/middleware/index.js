@@ -108,7 +108,7 @@ const errorHandle = function(err, req, res, next) {
 
 const isInit = function() {
     return function(req, res, next) {
-        if(process.env.isInit) {
+        if(process.env.isInit === 'true') {
             return next();
         } else {
             next({success: false, message: 'Не инициализировано'});

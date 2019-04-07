@@ -162,11 +162,9 @@ router.get('/fbcb', function(req, res, next) {
 
 router.get('/makeSetup', isAuth(), function(req, res, next) {
 
-    console.log(process.env.isInit, !!process.env.isInit);
-
     if(!process.env.vktoken || !process.env.okRToken || !process.env.fbToken) {
         return next({success: false, message: 'Нет всех токенов'});
-    } else if(!!process.env.isInit) {
+    } else if(process.env.isInit === 'true') {
         return next({success: false, message: 'Уже инициализировано'});
     }
 

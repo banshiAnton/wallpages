@@ -10,6 +10,7 @@ export class HomeComponent implements OnInit {
 
   categories = [];
   images = [];
+  show = false;
 
   constructor(private service: ServiceService) { }
 
@@ -17,6 +18,7 @@ export class HomeComponent implements OnInit {
     this.loadCategoris();
     this.loadImages();
   }
+
 
   loadCategoris() {
     this.service.getCategories().subscribe((data: any) => {
@@ -38,7 +40,7 @@ export class HomeComponent implements OnInit {
   }
 
   selectCategory(category) {
-    const query: any = { count: 10, offset: 0, category: category.id };
+    const query: any = { count: 10, offset: 0, category: category };
     console.log(query);
     this.service.getImages(query).subscribe((data: any) => {
       if (data.success) {
