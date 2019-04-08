@@ -3,10 +3,6 @@
     margin: 0;
 }
 
-#dowpMenu {
-    display: none;
-}
-
 .navbar-nav {
     flex-direction: column;
 }
@@ -21,10 +17,6 @@
     text-align: center;
 }
 
-.categ-btn {
-    display: none;
-    margin-bottom: 10px;
-}
 
 .categ-list {
     
@@ -56,9 +48,34 @@
     margin-right: 2%;
 }
 
+.menu-item {
+    display: none;
+    position: relative;
+}
+
+#dropDownMenu {
+    position: absolute;
+    width: 100%;
+    z-index: 2;
+    top: 0;
+    opacity: 0;
+    height: 100%;
+    margin: 0;
+}
+
+#dropDownMenu > select {
+    height: 100%;
+}
+
+.categ-btn {
+    z-index: 1;
+    position: relative;
+}
+
+
 @media (max-width: 768px) {
 
-    .categ-btn, #dowpMenu {
+    .menu-item {
         display: block;
         width: 100%;
     } 

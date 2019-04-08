@@ -22,7 +22,6 @@ export class HomeComponent implements OnInit {
 
   loadCategoris() {
     this.service.getCategories().subscribe((data: any) => {
-      console.log('Categs', data);
       if (data.success) {
         data.categories.forEach(categ => categ.name = categ.name[0].toUpperCase() + categ.name.slice(1));
         this.categories = data.categories;
@@ -40,8 +39,7 @@ export class HomeComponent implements OnInit {
   }
 
   selectCategory(category) {
-    const query: any = { count: 10, offset: 0, category: category };
-    console.log(query);
+    const query = { count: 10, offset: 0, category: category || null };
     this.service.getImages(query).subscribe((data: any) => {
       if (data.success) {
         this.images = data.results;

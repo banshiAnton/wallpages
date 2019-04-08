@@ -88,7 +88,6 @@ export class ServiceService {
   }
 
   getImages(query = {count: 10, offset: 0, category: null}) {
-    console.log(query);
     console.log(`${this.apiImageUrl}?${query.category ? 'category=' + query.category : ''}&count=${query.count}&offset=${query.offset}`);
     return this.http.get(`${this.apiImageUrl}?${query.category ? 'category=' +query.category : ''}&count=${query.count}&offset=${query.offset}`)
     .pipe(

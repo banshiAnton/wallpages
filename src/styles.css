@@ -35,9 +35,9 @@ button[class="owl-dt-control-button owl-dt-control-arrow-button"] {
     color: black;
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 768px) {
 
     body {
-        padding: 15px 15px 100px 15px;;
+        padding: 5px 5px 20px 5px;
     }
 }

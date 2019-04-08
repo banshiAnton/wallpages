@@ -9,12 +9,17 @@
     padding-top: 50px;
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 768px) {
 
     .nav-item {
         display: block;
         width: 100%;
         font-size: 25px;
         padding: 1% 1% 1% 0;
+    }
+
+    :host {
+        padding: 0 15px;
+        display: block;
     }
 }
